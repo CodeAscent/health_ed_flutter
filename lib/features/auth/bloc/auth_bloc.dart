@@ -12,6 +12,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this.authRepository) : super(AuthInitial()) {
     on<AuthLoginRequested>(authLogin);
     on<AuthUserDataRequested>(authUser);
+    on<AuthRegistrationRequested>(authRegister);
+  }
+  Future<void> authRegister(
+      AuthRegistrationRequested event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final res = await authRepository.signUp(
+          email: event.email,
+          password: event.password,
+          fullName: event.fullName,
+          gender: event.gender,
+          dob: event.dob);
+      print(res);
+      emit(AuthRegisterSuccess(message: res['message']));
+    } catch (e) {
+      emit(AuthFailure(message: e.toString()));
+    }
   }
 
   Future<void> authLogin(

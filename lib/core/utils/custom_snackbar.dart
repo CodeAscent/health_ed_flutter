@@ -4,6 +4,7 @@ import 'package:toastification/toastification.dart';
 
 customSnackbar(String message, ContentType type) async {
   toastification.dismissAll();
+
   toastification.show(
     type: ToastificationType.error,
     style: ToastificationStyle.flatColored,

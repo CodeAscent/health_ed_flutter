@@ -3,14 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/core/theme/app_theme.dart';
+import 'package:health_ed_flutter/core/utils/custom_loader.dart';
 import 'package:health_ed_flutter/features/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/features/auth/repository/auth_repository.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/signup_screen.dart';
 import 'package:toastification/toastification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  LocalStorage.initialize();
+  await LocalStorage.initialize();
 
   runApp(MultiBlocProvider(
     providers: [
@@ -37,7 +39,7 @@ class MyApp extends StatelessWidget {
             if (snapshot.hasData) {
               return LoginScreen();
             }
-            return LoginScreen();
+            return SignupScreen();
           },
         ),
       ),

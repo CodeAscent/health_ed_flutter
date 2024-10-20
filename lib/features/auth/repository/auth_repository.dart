@@ -22,6 +22,32 @@ class AuthRepository {
     }
   }
 
+  Future signUp(
+      {required String email,
+      required String password,
+      required String fullName,
+      required String gender,
+      required String dob}) async {
+    try {
+      final body = {
+        "email": email,
+        "password": password,
+        "fullName": fullName,
+        "dateOfBirth": dob,
+        "gender": gender,
+      };
+      final res = await HttpWrapper.postRequest(ApiUrls.register, body);
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return data;
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future fetchUser() async {
     try {
       final res = await HttpWrapper.getRequest(ApiUrls.get_user);

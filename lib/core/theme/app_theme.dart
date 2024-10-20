@@ -17,12 +17,16 @@ class AppTheme {
           surfaceTintColor: Colors.white,
         ),
         inputDecorationTheme: InputDecorationTheme(
-          contentPadding: const EdgeInsets.all(20),
+          fillColor: Colors.white,
+          focusColor: Colors.white,
+          isDense: true,
+          filled: true,
+          contentPadding: const EdgeInsets.all(15),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(25),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(25),
             borderSide: const BorderSide(color: ColorPallete.disabled),
           ),
         ));

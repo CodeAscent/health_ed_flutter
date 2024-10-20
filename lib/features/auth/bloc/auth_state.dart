@@ -12,15 +12,18 @@ final class AuthLoginSuccess extends AuthState {
   AuthLoginSuccess({required this.user});
 }
 
+final class AuthRegisterSuccess extends AuthState {
+  final String message;
+  AuthRegisterSuccess({required this.message});
+}
+
 final class AuthFailure extends AuthState {
   final String message;
-
   AuthFailure({required this.message});
 }
 
-final class  AuthUserFetchSuccess extends AuthState{
-final User user;
+final class AuthUserFetchSuccess extends AuthState {
+  final User user;
 
   AuthUserFetchSuccess({required this.user});
-
 }
