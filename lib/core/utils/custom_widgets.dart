@@ -109,13 +109,13 @@ class CustomGradientButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 60,
+        height: 47,
         child: Center(
             child: Text(
           label,
           style: TextStyle(
             color: isDisabled! ? Colors.black : Colors.white,
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: FontWeight.w900,
           ),
         )),
