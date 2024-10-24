@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/signup_screen.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../bloc/intro/nextpage_event.dart';
@@ -79,17 +82,17 @@ class OnboardingScreen extends StatelessWidget {
                         children: [
                           _buildPage(
                             title: "Challenge Your Mind",
-                            description: "Get a new creative question...",
+                            description: "Get a new creative question every day & learn something new daily!",
                             imagePath: 'assets/images/intro_icon1.png',
                           ),
                           _buildPage(
-                            title: "Automatic Attendance Tracking",
-                            description: "Just log in and we'll handle the rest...",
+                            title: "Automatic\nAttendance Tracking",
+                            description: "Just log in and out each day, and we’ll handle the rest.",
                             imagePath: 'assets/images/intro_icon2.png',
                           ),
                           _buildPage(
-                            title: "Track Your Child's Progress",
-                            description: "Get detailed insights...",
+                            title: "Track Your Child’s\nProgress Effortlessly",
+                            description: "Get weekly, monthly, and yearly report cards with detailed insights.",
                             imagePath: 'assets/images/intro_icon3.png',
                           ),
                         ],
@@ -100,24 +103,39 @@ class OnboardingScreen extends StatelessWidget {
                 // Next button at the bottom
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final currentPage = _pageController.page?.toInt() ?? 0;
-                      if (currentPage < 2) {
-                        _pageController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeIn,
-                        );
-                      }
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text("Next"),
-                        SizedBox(width: 5),
-                        Icon(Icons.arrow_forward),
-                      ],
-                    ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final currentPage = _pageController.page?.toInt() ?? 0;
+                            if (currentPage < 2) {
+                              _pageController.nextPage(
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeIn,
+                              );
+                            }else{
+                              Get.off(() => SignupScreen());
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0), // Increase the radius
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Next",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -151,10 +169,13 @@ class OnboardingScreen extends StatelessWidget {
         Text(
           description,
           textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.visible,
           style: TextStyle(
             fontSize: 16,
             color: Colors.white.withOpacity(0.8), // Lighter text for description
           ),
+
         ),
         SizedBox(height: 32),
         Image.asset(imagePath),
