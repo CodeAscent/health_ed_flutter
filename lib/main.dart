@@ -19,6 +19,7 @@ import 'package:toastification/toastification.dart';
 import 'features/activity/bloc/DragEvent.dart';
 import 'features/activity/views/MatchScreen.dart';
 import 'features/activity/views/PictureDescriptionScreen.dart';
+import 'features/activity/views/VideoDescriptionScreen.dart';
 import 'features/auth/views/screens/assessment_screen.dart';
 import 'features/home/bloc/QuizBloc.dart';
 import 'features/home/bloc/QuizEvent.dart';
@@ -27,6 +28,8 @@ import 'features/home/bloc/dashboard_bloc.dart';
 import 'features/home/views/screens/activity_Instructions_screen.dart';
 import 'features/home/views/screens/activity_video_understanding_screen.dart';
 import 'features/home/views/screens/all_activity_screen.dart';
+import 'features/home/views/screens/blog_details_screen.dart';
+import 'features/home/views/screens/blog_list_screen.dart';
 import 'features/home/views/screens/home_screen.dart';
 
 
@@ -64,7 +67,7 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         theme: AppTheme.lightTheme(),
         title: 'Health Ed Tech',
-        home:  PictureDescriptionScreen(),
+        home:  BlogDetailsScreen(),
       ),
     );
   }

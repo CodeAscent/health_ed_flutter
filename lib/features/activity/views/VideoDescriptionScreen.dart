@@ -5,22 +5,25 @@ import 'package:health_ed_flutter/core/theme/app_colors.dart';
 
 import '../../../core/utils/custom_widgets.dart';
 
-class PictureDescriptionScreen extends StatefulWidget {
+class VideoDescriptionScreen extends StatefulWidget {
   @override
-  _PictureDescriptionScreenState createState() =>
-      _PictureDescriptionScreenState();
+  _VideoDescriptionScreenState createState() =>
+      _VideoDescriptionScreenState();
 }
 
-class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
+class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
   String selectedLanguage = 'English';
   bool isDragging = false;
 
-  // Track the matched shapes
+  // Track the matched shapes and selection state
   Map<String, bool> matchedShapes = {
     "Circle": false,
     "Star": false,
     "Triangle": false,
   };
+
+  // Track selected card
+  List<bool> selectedCards = [false, false, false, false];
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,7 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
           decoration: BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
-              image: AssetImage('assets/bg/videobgimage.png'),
+              image: AssetImage('assets/bg/videobg.png'),
             ),
           ),
           child: Padding(
@@ -93,10 +96,11 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
                     SizedBox(width: 20),
                     Expanded(
                       child: Text(
-                        'Watch Carefully',
+                        'Watch this video before answering questions',
                         style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600
                         ),
                       ),
                     ),
@@ -110,11 +114,11 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
                   width: MediaQuery.of(context).size.width,
                   height: 227,
                   child: Image.asset(
-                    'assets/bg/imageActivity.png',
+                    'assets/bg/videoactivity.png',
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 30),
                 Row(
                   children: [
                     GestureDetector(
@@ -129,88 +133,78 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
                     SizedBox(width: 20),
                     Expanded(
                       child: Text(
-                        'How many children are their in the picture?',
+                        'Which animal was in this video?',
                         style: TextStyle(
                             fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600),
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600
+                        ),
                       ),
                     ),
                   ],
                 ),
-                Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 16.0),
-                    child: Card(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/icons/volume_up.png',
-                                  width: 30,
-                                ),
-                                SizedBox(
-                                    width: 20), // Spacing between icon and text
-                                Expanded(
-                                  child: Text(
-                                    '5 Children', // Replace with actual text
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                              ]),
-                          /*    // Vertically scrollable ListView
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: 10, // Replace with the actual count of your items
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                        child: Card(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                              Image.asset(
-                              'assets/icons/volume_up.png',
-                              width: 30,
-                            ),
-                                SizedBox(width: 20), // Spacing between icon and text
-                                Expanded(
-                                  child: Text(
-                                    'Spot no. of children $index', // Replace with actual text
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                SizedBox(height: 20),
+
+                // Grid with options
+                SizedBox(
+                  height: 200,
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 2.5,
+                    children: [
+                      _buildOptionCard("Lion", 0),
+                      _buildOptionCard("Elephant", 1),
+                      _buildOptionCard("Tiger", 2),
+                      _buildOptionCard("Giraffe", 3),
+                    ],
                   ),
-                ),*/
-                        )))
+                ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionCard(String text, int index) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          // Toggle selection state
+          selectedCards[index] = !selectedCards[index];
+        });
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        color: selectedCards[index] ? Colors.green : Colors.white.withOpacity(0.9),
+        child: Stack(
+          children: [
+            Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            if (selectedCards[index])
+              Positioned(
+                right: 4,
+                top: 3,
+                child: Icon(
+                  Icons.check_circle,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+          ],
         ),
       ),
     );
