@@ -130,8 +130,10 @@ class CustomTransparentContainer extends StatelessWidget {
 
 
 class AppBackButton extends StatelessWidget {
+  final Color? color;
   const AppBackButton({
     super.key,
+    this.color
   });
 
   @override
@@ -139,7 +141,7 @@ class AppBackButton extends StatelessWidget {
     return IconButton(
         onPressed: () {},
         icon: CircleAvatar(
-          backgroundColor: Colors.white,
+          backgroundColor: color != null?color: ColorPallete.grayBlue,
           child: Icon(
             Icons.navigate_before,
             color: Colors.black,

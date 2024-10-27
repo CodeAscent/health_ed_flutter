@@ -1,46 +1,76 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import '../../../../core/utils/custom_widgets.dart';
 import '../../bloc/dashboard_bloc.dart';
 import '../../bloc/dashboard_state.dart';
 import 'dart:math' as math;
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenWidgetState createState() => _HomeScreenWidgetState();
+}
+
+class _HomeScreenWidgetState extends State<HomeScreen> {
+  int _activeDayIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<DashboardBloc, DashboardState>(
-        builder: (context, state) {
-          if (state is DashboardLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is DashboardLoaded) {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(),
-                    SizedBox(height: 20),
-                    _buildUserStreaks(state),
-                    SizedBox(height: 20),
-                    _buildProgressBars(state),
-                    SizedBox(height: 20),
-                    _buildRecentQuizzes(state),
-                    SizedBox(height: 20),
-                    _buildCategoryChart()   ,
-                    SizedBox(height: 20),
-                    _barChart() ,
-                    SizedBox(height: 20),
-                    _buildWeeklyReport(state)
-                  ],
+      body: SafeArea(
+        child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(
+                  'assets/bg/auth_bg.png',
                 ),
               ),
-            );
-          } else {
-            return Center(child: Text('Something went wrong!'));
-          }
-        },
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 6),
+                  CustomTransparentContainer(
+                    child: SingleChildScrollView(
+                      child: BlocBuilder<DashboardBloc, DashboardState>(
+                        builder: (context, state) {
+                          if (state is DashboardLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (state is DashboardLoaded) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildHeader(),
+                                SizedBox(height: 20),
+                                _buildUserStreaks(state),
+                                SizedBox(height: 20),
+                                _buildProgressBars(state),
+                                SizedBox(height: 20),
+                                _buildRecentQuizzes(state),
+                                SizedBox(height: 20),
+                                _buildCategoryChart()   ,
+                                SizedBox(height: 20),
+                                _barChart() ,
+                                SizedBox(height: 20),
+                                _buildWeeklyReport(state,context)
+                              ],
+                            );
+                          } else {
+                            return Center(child: Text('Something went wrong!'));
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            )),
       ),
     );
   }
@@ -265,7 +295,8 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildQuizCard(String day, bool completed) {
-    return Container(
+    return
+      Container(
       margin: EdgeInsets.symmetric(horizontal: 12),
       width: 90,
       padding: EdgeInsets.all(12),
@@ -373,82 +404,204 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWeeklyReport(DashboardLoaded state) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 8,
-              spreadRadius: 2)
-        ],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildWeeklyTabs(),
-          SizedBox(height: 10),
-          _buildReportTable(state),
-        ],
-      ),
+  Widget _buildWeeklyReport(DashboardLoaded state, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start, // Aligns children to the start
+      children: [
+        Text(
+          "Weekly Report",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+        SizedBox(height: 20),
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 8,
+                spreadRadius: 2,
+              ),
+            ],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildWeeklyTabs(),
+              SizedBox(height: 12),
+              Text.rich(
+                TextSpan(
+                  text: "Total screen time : ",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: "30 mins",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10),
+              _buildReportTable(state),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildWeeklyTabs() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildTab("Day 1", true),
-        _buildTab("Day 2", true),
-        _buildTab("Day 3", false),
-      ],
-    );
-  }
-
-  Widget _buildTab(String label, bool active) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: active ? Colors.blue : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(label,
-          style: TextStyle(color: active ? Colors.white : Colors.black)),
+      children: List.generate(6, (index) {
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _activeDayIndex = index; // Update the active day index on tap
+            });
+          },
+          child: Container(
+            padding: EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              gradient: _activeDayIndex == index ?  ColorPallete.gradient:null,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              "Day ${index + 1}",
+              style: TextStyle(
+                color: _activeDayIndex == index ? Colors.white : Colors.black,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 
   Widget _buildReportTable(DashboardLoaded state) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal, // Enable horizontal scrolling if needed
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical, // Enable vertical scrolling to handle overflow
-        child: DataTable(
-          columns: [
-            DataColumn(label: Text("Activities",style: TextStyle(fontSize: 14))),
-            DataColumn(label: Text("Status",style: TextStyle(fontSize: 14))),
-            DataColumn(label: Text("Screen Time",style: TextStyle(fontSize: 14))),
-          ],
-          rows: state.report.map((activity) {
-            return DataRow(cells: [
-              DataCell(
-                  Text(activity.name,style: TextStyle(fontSize: 14))),
-              DataCell(Text(activity.status,style: TextStyle(fontSize: 14))),
-              DataCell(Text(activity.screenTime,style: TextStyle(fontSize: 14))),
-            ]);
-          }).toList(),
-          // Custom border to add a top line and remove left/right borders
-          border: TableBorder(
-            top: BorderSide(width: 1, color: Colors.grey),              // Line on top of DataColumns
-            horizontalInside: BorderSide(width: 1, color: Colors.grey), // Lines between rows
-            verticalInside: BorderSide(width: 1, color: Colors.grey),   // Lines between columns
-          ),
-        ),
+    return Table(
+      border: TableBorder(
+        top: BorderSide(color: Colors.grey.withOpacity(0.3), style: BorderStyle.solid, width: 1),
+        horizontalInside: BorderSide(color: Colors.grey.withOpacity(0.3), style: BorderStyle.solid, width: 1), // Lines between rows
+        verticalInside: BorderSide(color: Colors.grey.withOpacity(0.3), style: BorderStyle.solid, width: 1),   // Middle column line
       ),
+      children: [
+        TableRow(children: [
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Activities', style: TextStyle(fontSize: 14.0))
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Status', style: TextStyle(fontSize: 13.0))
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Screen time', style: TextStyle(fontSize: 14.0))
+          )]),
+        ]),
+        TableRow(children: [
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('1')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Completed')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('10 mins')
+          )]),
+        ]),
+        TableRow(children: [
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('2')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Completed')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('10 mins')
+          )]),
+        ]),
+        TableRow(children: [
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('3')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Completed')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('---')
+          )]),
+        ]),
+        TableRow(children: [
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('4')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Incomplete')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('10 mins')
+          )]),
+        ]),
+        TableRow(children: [
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('5')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Incomplete')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('10 mins')
+          )]),
+        ]),
+        TableRow(children: [
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('6')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Incomplete')
+          )]),
+          Column(children: [Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('10 mins')
+          )]),
+        ]),
+      ],
     );
   }
+
 
 
 

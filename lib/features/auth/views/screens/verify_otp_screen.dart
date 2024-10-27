@@ -103,7 +103,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
             return CustomLoader();
           }
 
-          return Scaffold(
+          return
+            Scaffold(
             body: SafeArea(
               child: Container(
                   decoration: BoxDecoration(
