@@ -32,7 +32,6 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 6),
                   CustomTransparentContainer(
                     child: SingleChildScrollView(
                       child: BlocBuilder<DashboardBloc, DashboardState>(
@@ -64,9 +63,6 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                         },
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
                   ),
                 ],
               ),

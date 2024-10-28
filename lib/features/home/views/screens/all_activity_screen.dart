@@ -7,8 +7,7 @@ import 'package:health_ed_flutter/features/home/model/Activity.dart';
 import '../../bloc/ActivityBlock.dart';
 import '../../bloc/QuizBloc.dart';
 import '../../bloc/QuizState.dart';
-import '../../widget/ActivityCardItem.dart';
-import '../../widget/QuizItem.dart';
+import '../../widgets/ActivityCardItem.dart';
 
 class AllActivityScreen extends StatelessWidget {
   @override

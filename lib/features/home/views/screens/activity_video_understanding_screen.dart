@@ -20,100 +20,102 @@ class _ActivityVideoUnderstandingScreenState extends State<ActivityVideoUndersta
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ScreenBloc(),
-      child: SafeArea(
-        child:
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/bg/videobgimage.png'),
+      child:
+      SafeArea(
+        child:Scaffold(
+          body:Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/bg/videobgimage.png'),
+              ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomTransparentContainer(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // First Row: Back button and Language Dropdown
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          AppBackButton(),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  spreadRadius: 1,
-                                  blurRadius: 1,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: GestureDetector(
-                              onTap: () => _showCupertinoDropdown(context),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    selectedLanguage,
-                                    style: TextStyle(fontSize: 12, color: Colors.black),
-                                  ),
-                                  Icon(
-                                    CupertinoIcons.chevron_down,
-                                    color: Colors.black,
-                                    size: 14,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomTransparentContainer(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // First Row: Back button and Language Dropdown
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            AppBackButton(),
+                            Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 1,
+                                    blurRadius: 1,
+                                    offset: Offset(0, 2),
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      // Second Row: Speaker Icon and "Tiger" text
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              // Add sound play functionality here
-                            },
-                            child: Image.asset(
-                              'assets/icons/volume_up1.png',
-                              width: 40,
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Tiger',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.black,
+                              child: GestureDetector(
+                                onTap: () => _showCupertinoDropdown(context),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      selectedLanguage,
+                                      style: TextStyle(fontSize: 12, color: Colors.black),
+                                    ),
+                                    Icon(
+                                      CupertinoIcons.chevron_down,
+                                      color: Colors.black,
+                                      size: 14,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      _buildSlider(),
-                      SizedBox(height: 5),
-                      _buildIndicator(),
-                      SizedBox(height: 5),
-                      _buildAcknowledgementButton(context),
-                    ],
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        // Second Row: Speaker Icon and "Tiger" text
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                // Add sound play functionality here
+                              },
+                              child: Image.asset(
+                                'assets/icons/volume_up1.png',
+                                width: 40,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Tiger',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        _buildSlider(),
+                        SizedBox(height: 5),
+                        _buildIndicator(),
+                        SizedBox(height: 5),
+                        _buildAcknowledgementButton(context),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+        )
       ),
     );
   }

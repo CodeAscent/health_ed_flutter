@@ -69,11 +69,22 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  fonts:
+    - family: Gilroy
+      fonts:
+        - asset: assets/fonts/Gilroy-Regular.ttf
+        - asset: assets/fonts/Gilroy-Bold.ttf
+          weight: 700
+
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
     - assets/bg/
     - assets/icons/
+    - assets/icons/home/
+    - assets/icons/report/
+    - assets/icons/profile/
+    - assets/icons/blog/
     - assets/images/
   #   - images/a_dot_ham.jpeg
 

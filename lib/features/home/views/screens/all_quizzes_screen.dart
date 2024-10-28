@@ -5,7 +5,7 @@ import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 
 import '../../bloc/QuizBloc.dart';
 import '../../bloc/QuizState.dart';
-import '../../widget/QuizItem.dart';
+import '../../widgets/QuizItem.dart';
 
 class AllQuizzesScreen extends StatelessWidget {
   @override

@@ -7,6 +7,7 @@ import 'package:health_ed_flutter/features/activity/views/DragDropScreen.dart';
 import 'package:health_ed_flutter/features/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/features/auth/repository/auth_repository.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/onboarding_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/question_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/signup_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/splash_screen.dart';
@@ -31,6 +32,7 @@ import 'features/home/views/screens/all_activity_screen.dart';
 import 'features/home/views/screens/blog_details_screen.dart';
 import 'features/home/views/screens/blog_list_screen.dart';
 import 'features/home/views/screens/home_screen.dart';
+import 'features/navigation/views/screens/MainScreen.dart';
 
 
 void main() async {
@@ -67,7 +69,7 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         theme: AppTheme.lightTheme(),
         title: 'Health Ed Tech',
-        home:  BlogDetailsScreen(),
+        home:  MainScreen(),
       ),
     );
   }

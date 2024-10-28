@@ -108,7 +108,7 @@ class _MatchScreenState extends State<MatchScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           // Draggable Widget for Triangle
-                          _buildDraggable("Star"),
+                          _buildDraggable("Circle"),
                           SizedBox(height: 8),
                           Text(
                             "Star",
