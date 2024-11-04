@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/signup_screen.dart';
 import '../../../../core/utils/custom_widgets.dart';
 import '../../bloc/language/language_bloc.dart';
 import '../../bloc/language/language_event.dart';
 import '../../bloc/language/language_state.dart';
+import 'login_screen.dart';
 
 class LanguageScreen extends StatelessWidget {
   final List<String> languages = ['English', 'Hindi', 'Odia'];
@@ -116,7 +120,7 @@ class LanguageScreen extends StatelessWidget {
               CustomGradientButton(
                 label: 'Continue',
                 onTap: () {
-
+                  Get.off(() => const SignupScreen());
                 },
               ),
               const SizedBox(height: 30),

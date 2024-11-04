@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/utils/custom_constants.dart';
 import 'package:health_ed_flutter/core/utils/custom_loader.dart';
 import 'package:health_ed_flutter/core/utils/custom_snackbar.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/features/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/question_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -21,11 +24,17 @@ class _SignupScreenState extends State<SignupScreen> {
   final _fullname = TextEditingController();
   final _dob = TextEditingController();
   final _gender = TextEditingController();
-  final _password = TextEditingController();
-  final _confirmPassword = TextEditingController();
-  final _email = TextEditingController();
+  final _familyType = TextEditingController();
+  final _fatherOccupation = TextEditingController();
+  final _motherOccupation = TextEditingController();
+  final _siblings = TextEditingController();
+  final _childLanguage = TextEditingController();
+  final _homeLanguage = TextEditingController();
+  final _state = TextEditingController();
+  final _city = TextEditingController();
+  final _speechTherapy = TextEditingController(text: 'No');
+  final _medium = TextEditingController(text: 'Online');
   final _unformattedDob = TextEditingController();
-  bool showPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,16 +71,14 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppBackButton(),
+                        AppBackButton(color: Colors.white,),
                         CustomTransparentContainer(
                           child: SingleChildScrollView(
-                            child: Column(
+                            child:
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Create Account',
-                                  style: kCustomHeadingTS(),
-                                ),
+                                Text('Create Account'),
                                 Text('Join us & start your learning journey'),
                                 CustomTextFieldWithLabel(
                                   controller: _fullname,
@@ -79,13 +86,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                   hintText: 'Enter your full name',
                                 ),
                                 CustomTextFieldWithLabel(
-                                  controller: _email,
-                                  label: 'Email',
-                                  hintText: 'Enter your email',
-                                ),
-                                CustomTextFieldWithLabel(
                                   controller: _dob,
-                                  label: 'Birthdate',
+                                  label: 'Date of Birth',
                                   hintText: 'DD/MM/YYYY',
                                   readOnly: true,
                                   sufix: kCustomDatePicker(context),
@@ -95,68 +97,164 @@ class _SignupScreenState extends State<SignupScreen> {
                                   label: 'Gender',
                                   hintText: 'Select your gender',
                                   readOnly: true,
-                                  sufix: kGenderPicker(context),
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Gender',
+                                    options: ['Male', 'Female', 'Other'],
+                                    controller: _gender,
+                                  ),
                                 ),
                                 CustomTextFieldWithLabel(
-                                  isPassword: !showPassword,
-                                  controller: _password,
-                                  label: 'Password',
-                                  hintText: 'Enter your password',
-                                  sufix: kShowPassword(),
+                                  controller: _familyType,
+                                  label: 'Family Type',
+                                  hintText: 'Select Your Family Type',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Family Type',
+                                    options: ['Nuclear', 'Joint'],
+                                    controller: _familyType,
+                                  ),
+                                ),
+                                // New fields added below
+                                CustomTextFieldWithLabel(
+                                  controller: _fatherOccupation,
+                                  label: 'Father Occupation',
+                                  hintText: 'Select occupation',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Father Occupation',
+                                    options: ['Employed', 'Self-employed', 'Unemployed'],
+                                    controller: _fatherOccupation,
+                                  ),
                                 ),
                                 CustomTextFieldWithLabel(
-                                  isPassword: !showPassword,
-                                  controller: _confirmPassword,
-                                  label: 'Confirm Password',
-                                  hintText: 'Confirm your password',
-                                  sufix: kShowPassword(),
+                                  controller: _motherOccupation,
+                                  label: 'Mother Occupation',
+                                  hintText: 'Select occupation',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Mother Occupation',
+                                    options: ['Employed', 'Self-employed', 'Homemaker'],
+                                    controller: _motherOccupation,
+                                  ),
                                 ),
-                                SizedBox(
-                                  height: 30,
+                                CustomTextFieldWithLabel(
+                                  controller: _siblings,
+                                  label: 'No. of Siblings',
+                                  hintText: 'Select number',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'No. of Siblings',
+                                    options: ['0', '1', '2', '3', '4+'],
+                                    controller: _siblings,
+                                  ),
                                 ),
+                                CustomTextFieldWithLabel(
+                                  controller: _childLanguage,
+                                  label: 'Languages Spokenby the Child',
+                                  hintText: 'Select language',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Languages Spoken\nby the Child',
+                                    options: ['English', 'Hindi', 'Other'],
+                                    controller: _childLanguage,
+                                  ),
+                                ),
+                                CustomTextFieldWithLabel(
+                                  controller: _homeLanguage,
+                                  label: 'Languages Spoken at Home',
+                                  hintText: 'Select language',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Languages Spoken\nat Home',
+                                    options: ['English', 'Hindi', 'Other'],
+                                    controller: _homeLanguage,
+                                  ),
+                                ),
+                                CustomTextFieldWithLabel(
+                                  controller: _state,
+                                  label: 'Current State',
+                                  hintText: 'Select your state',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Current State',
+                                    options: ['State 1', 'State 2', 'State 3'], // Populate with actual state options
+                                    controller: _state,
+                                  ),
+                                ),
+                                CustomTextFieldWithLabel(
+                                  controller: _city,
+                                  label: 'Current City/District',
+                                  hintText: 'Select your city',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Current City/District',
+                                    options: ['City 1', 'City 2', 'City 3'], // Populate with actual city options
+                                    controller: _city,
+                                  ),
+                                ),
+                                CustomTextFieldWithLabel(
+                                  controller: _speechTherapy,
+                                  label: 'Speech Therapy',
+                                  hintText: 'Yes or No',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Speech Therapy',
+                                    options: ['Yes', 'No'],
+                                    controller: _speechTherapy,
+                                  ),
+                                ),
+                                CustomTextFieldWithLabel(
+                                  controller: _medium,
+                                  label: 'Medium',
+                                  hintText: 'Select medium',
+                                  readOnly: true,
+                                  sufix: customPicker(
+                                    context: context,
+                                    title: 'Medium',
+                                    options: ['Online', 'Offline'],
+                                    controller: _medium,
+                                  ),
+                                ),
+                                SizedBox(height: 30),
                                 CustomGradientButton(
                                   label: 'Continue',
                                   onTap: () {
-                                    if (formKey.currentState!.validate()) {
-                                      if (_password.text !=
-                                          _confirmPassword.text) {
-                                        customSnackbar(
-                                            'Passwords does not match',
-                                            ContentType.failure);
-                                        return;
-                                      } else {
-                                        context.read<AuthBloc>().add(
-                                              AuthRegistrationRequested(
-                                                email: _email.text,
-                                                password: _password.text,
-                                                fullName: _fullname.text,
-                                                gender: _gender.text,
-                                                dob: _unformattedDob
-                                                    .text, // Ensure this is properly formatted (e.g., DD/MM/YYYY)
-                                              ),
-                                            );
-                                      }
-                                    }
+                                    Get.off(() => QuestionScreen());
                                   },
                                 ),
                                 SizedBox(height: 10),
                                 Center(
-                                  child: Text.rich(
-                                    TextSpan(
-                                        text: 'Already have an account? ',
-                                        children: [
-                                          TextSpan(
-                                            text: 'Login',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w900),
-                                            onEnter: (event) {},
-                                          )
-                                        ]),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: 'Already have an account? ',
+                                      style: TextStyle(color: Colors.black),
+                                      children: [
+                                        TextSpan(
+                                          text: 'Login',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            color: ColorPallete.primary,
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              Get.to(() => LoginScreen());
+                                            },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 40,
-                                ),
+                                SizedBox(height: 40),
                               ],
                             ),
                           ),
@@ -174,16 +272,7 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  IconButton kShowPassword() {
-    return IconButton(
-        onPressed: () {
-          setState(() {
-            showPassword = !showPassword;
-          });
-        },
-        icon:
-            showPassword ? Icon(Icons.visibility) : Icon(Icons.visibility_off));
-  }
+
 
   IconButton kCustomDatePicker(BuildContext context) {
     return IconButton(
@@ -201,62 +290,66 @@ class _SignupScreenState extends State<SignupScreen> {
         icon: Icon(Icons.calendar_month));
   }
 
-  IconButton kGenderPicker(BuildContext context) {
+  IconButton customPicker({
+    required BuildContext context,
+    required String title,
+    required List<String> options,
+    required TextEditingController controller,
+  }) {
     return IconButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return StatefulBuilder(builder: (context, setState) {
-                return AlertDialog(
-                  title: Row(
-                    children: [
-                      Text('Gender'),
-                      Spacer(),
-                      IconButton(
-                          onPressed: () {
-                            Get.back();
-                          },
-                          icon: Icon(
-                            CupertinoIcons.xmark,
-                            size: 35,
-                          ))
-                    ],
-                  ),
-                  content: SizedBox(
-                    height: 180,
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                title: Row(
+                  children: [
+                    Text(title),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      icon: Icon(
+                        CupertinoIcons.xmark,
+                        size: 35,
+                      ),
+                    ),
+                  ],
+                ),
+                content: SizedBox(
+                  width: double.maxFinite, // Ensures dialog takes full width
+                  child: SingleChildScrollView(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CustomGradientButton(
-                          onTap: () {
-                            setState(() {
-                              _gender.text = 'MALE';
-                            });
-                          },
-                          label: 'MALE',
-                          isDisabled: _gender.text != 'MALE',
-                        ),
-                        SizedBox(height: 10),
-                        CustomGradientButton(
-                          onTap: () {
-                            setState(() {
-                              _gender.text = 'FEMALE';
-                            });
-                          },
-                          label: 'FEMALE',
-                          isDisabled: _gender.text != 'FEMALE',
-                        )
-                      ],
+                      mainAxisSize: MainAxisSize.min, // Allow the column to take up minimum height
+                      children: options.map((option) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5.0),
+                          child: CustomGradientButton(
+                            onTap: () {
+                              setState(() {
+                                controller.text = option;
+                              });
+                              Get.back(); // Close the dialog on selection
+                            },
+                            label: option,
+                            isDisabled: controller.text != option,
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
-                );
-              });
-            },
-          );
-        },
-        icon: Icon(Icons.arrow_downward));
+                ),
+              );
+            });
+          },
+        );
+      },
+      icon: Icon(Icons.arrow_downward),
+    );
   }
+
 
   TextStyle kCustomHeadingTS() {
     return TextStyle(fontSize: 25, fontWeight: FontWeight.w800);

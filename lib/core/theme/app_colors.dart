@@ -6,6 +6,7 @@ class ColorPallete {
   static const Color disabled = Color.fromARGB(255, 186, 182, 182);
   static const Color whiteShade = Color(0xffF4F5FD);
   static const Color greyShade = Color(0xffC6C6C6);
+  static const Color greyShade1 = Color(0xffE6E6E6);
   static const Color greyColor = Color(0xff808080);
   static const Color greenShade = Color(0xff1CED51);
   static const Color greenColor = Color(0xff34C759);

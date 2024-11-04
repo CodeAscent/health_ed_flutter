@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:health_ed_flutter/features/home/views/screens/blog_details_screen.dart';
 
 import '../../../../core/utils/custom_widgets.dart';
 
@@ -54,7 +57,13 @@ class _BlogListScreenState extends State<BlogListScreen> {
                 ListView.builder(
                   itemCount: 10, // Replace with the actual count of your items
                   itemBuilder: (context, index) {
-                    return Padding(
+                    return  GestureDetector(
+                        onTap: () {
+                      // Navigate to your target screen, e.g., DetailScreen
+                      Get.to(() => BlogDetailsScreen()); // Pass any data if needed
+                    },
+                    child:
+                      Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child:
                       Row(
@@ -112,7 +121,7 @@ class _BlogListScreenState extends State<BlogListScreen> {
                           ),
                         ],
                       ),
-                    );
+                    ));
                   },
                 )
               ),

@@ -1,18 +1,23 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/features/home/views/screens/all_activity_screen.dart';
+import 'package:health_ed_flutter/features/home/views/screens/all_quizzes_screen.dart';
 import 'package:health_ed_flutter/features/home/views/screens/blog_list_screen.dart';
 import 'package:health_ed_flutter/features/home/views/screens/home_screen.dart';
 import 'package:health_ed_flutter/features/profile%20/views/screens/ProfileScreen.dart';
 
+import '../../../home/views/screens/ReportScreen.dart';
 import '../../bloc/bottom_navigation_cubit.dart';
 
 class MainScreen extends StatelessWidget {
   final List<Widget> _screens = [
     HomeScreen(),
     BlogListScreen(),
-    HomeScreen(),
+    ReportScreen(),
     ProfileScreen(),
   ];
 
@@ -43,7 +48,7 @@ class MainScreen extends StatelessWidget {
               child: FloatingActionButton(
                 backgroundColor: ColorPallete.primary,
                 elevation: 0,
-                onPressed: () => debugPrint("Add Button pressed"),
+                onPressed: () =>Get.to(()=>AllQuizzesScreen()),
                 shape: RoundedRectangleBorder(
                   side: const BorderSide(width: 3, color: ColorPallete.whiteShade),
                   borderRadius: BorderRadius.circular(100),

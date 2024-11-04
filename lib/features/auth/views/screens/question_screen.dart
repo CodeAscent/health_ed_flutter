@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/features/navigation/views/screens/MainScreen.dart';
 
 import '../../../../core/utils/custom_widgets.dart';
+import '../../bloc/intro/slider_bloc.dart';
 import '../../widgets/congrats_popup.dart';
 
 class QuestionScreen extends StatefulWidget {
@@ -14,7 +19,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocProvider(
+        create: (context) => SliderBloc(),
+        child:
+      Scaffold(
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
@@ -31,8 +39,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomTransparentContainer(
-                  child: Expanded(
-                    child: Column(
+                  child:
+                    Column(
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,12 +138,15 @@ class _QuestionScreenState extends State<QuestionScreen> {
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CongratsPopup(level: '2'); // Adjust the level as needed
-                                      },
+                                    Get.dialog(
+                                      CongratsPopup(level: '2'), // Adjust the level as needed
                                     );
+
+                                    // Delay the navigation by 3 seconds
+                                    Future.delayed(Duration(seconds: 3), () {
+                                      Get.back(); // Closes the dialog
+                                      Get.to(MainScreen()); // Replace with your new screen
+                                    });
                                   },
                                   style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.symmetric(vertical: 15), // Removed horizontal padding
@@ -163,14 +174,15 @@ class _QuestionScreenState extends State<QuestionScreen> {
                         SizedBox(height: 40),
                       ],
                     ),
-                  ),
+
                 ),
               ],
             ),
           ),
         ),
       ),
-    );
+    ));
+
   }
 
   // Custom method to build option tiles

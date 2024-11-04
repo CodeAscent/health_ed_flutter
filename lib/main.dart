@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         theme: AppTheme.lightTheme(),
         title: 'Health Ed Tech',
-        home:  MainScreen(),
+        home:  SplashScreen(),
       ),
     );
   }

@@ -1,21 +1,18 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
-import 'package:health_ed_flutter/features/home/views/screens/all_activity_screen.dart';
 import '../../../../core/utils/custom_widgets.dart';
 import '../../bloc/dashboard_bloc.dart';
 import '../../bloc/dashboard_state.dart';
 import 'dart:math' as math;
 
-class HomeScreen extends StatefulWidget {
+class ReportScreen extends StatefulWidget {
   @override
-  _HomeScreenWidgetState createState() => _HomeScreenWidgetState();
+  _ReportScreenWidgetState createState() => _ReportScreenWidgetState();
 }
 
-class _HomeScreenWidgetState extends State<HomeScreen> {
+class _ReportScreenWidgetState extends State<ReportScreen> {
   int _activeDayIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -47,17 +44,17 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                               children: [
                                 _buildHeader(),
                                 SizedBox(height: 20),
-                                _buildUserStreaks(state),
+                                _buildWeeklyReport(state,context),
                                 SizedBox(height: 20),
-                                _buildProgressBars(state),
+                                _buildCategoryChart(),
                                 SizedBox(height: 20),
-                                _buildRecentQuizzes(state),
+                                _categoryBarChart(),
                                 SizedBox(height: 20),
-                                _buildCategoryChart()   ,
+                                _buildCategoryChart(),
                                 SizedBox(height: 20),
                                 _barChart() ,
                                 SizedBox(height: 20),
-                                _buildWeeklyReport(state,context)
+
                               ],
                             );
                           } else {
@@ -84,221 +81,23 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Hello 👋",
+                Text("Report",
                     style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                Row(
-                  children: [
-                    Container(
-                      width: 8, // Circle width
-                      height: 8, // Circle height
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.green, // Circle color
-                      ),
-                    ),
-                    SizedBox(width: 6), // Space between circle and text
-                    Text("Online", style: TextStyle(color: Colors.green)),
-                  ],
-                ),
+                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               ],
             ),
             Icon(Icons.notifications, size: 28),
           ],
         ),
-        Text("John’s overview",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+
       ],
     );
   }
 
-  Widget _buildUserStreaks(DashboardLoaded state) {
-    // Sample list for days streaks
-    List<String> streaks = [
-      "D5 🔥",
-      "D6 🔥",
-      "D7 🔥",
-      "D8 🔥",
-      "D9 🔥",
-      "D9 🔥",
-      "D9 🔥",
-      "D9 🔥"
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 8,
-              spreadRadius: 2)
-        ],
-        borderRadius: BorderRadius.circular(15),
-      ),
-      padding: EdgeInsets.all(12),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text("Days streaks",
-                  style: TextStyle(fontSize: 18, color: Colors.grey)),
-              Spacer(),
-              Text("This week",
-                  style: TextStyle(fontSize: 18, color: Colors.grey)),
-            ],
-          ),
-          SizedBox(height: 22),
-          Container(
-            height: 40, // Set height for the list
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal, // Horizontal scrolling
-              itemCount: streaks.length, // Number of items in the list
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    streaks[index],
-                    style: TextStyle(fontSize: 18),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProgressBars(DashboardLoaded state) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 8,
-              spreadRadius: 2)
-        ],
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Progress",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14)),
-          SizedBox(
-            height: 8,
-          ),
-          _buildProgressRow("Weekly", state.weeklyProgress, 48, Colors.green),
-          _buildProgressRow(
-              "Monthly", state.monthlyProgress, 224, Colors.yellow),
-          _buildProgressRow(
-              "Yearly", state.yearlyProgress, 2920, Colors.purple),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProgressRow(String label, int progress, int total, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Progress/total, progress bar, and label in one row
-        Row(
-          children: [
-            Text("$progress/$total"), // Progress/total on the left
-            SizedBox(
-                width:
-                    15), // Add some space between the text and the progress bar
-
-            // Stack to overlay percentage text on the progress bar
-            Expanded(
-              child: Stack(
-                alignment:
-                    Alignment.center, // Center the text in the progress bar
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12), // Rounded corners
-                    child: LinearProgressIndicator(
-                      value: progress / total,
-                      color: color,
-                      backgroundColor: color.withOpacity(0.2),
-                      minHeight: 15, // Adjust the height of the progress bar
-                    ),
-                  ),
-                  // Percentage text inside the progress bar with left margin
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment
-                          .centerLeft, // Align in the left of the progress bar
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: 8.0), // Add left margin
-                        child: Text(
-                          "${(progress / total * 100).toStringAsFixed(1)}%", // Show percentage
-                          style: TextStyle(
-                            color: Colors.white, // Color of the percentage text
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 10), // Add space between progress bar and label
-
-            // Label on the right
-            Text(label,
-                style:
-                    TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
-          ],
-        ),
-        SizedBox(height: 8),
-      ],
-    );
-  }
-
-  Widget _buildRecentQuizzes(DashboardLoaded state) {
-    return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start, // Align children to the start (left)
-      children: [
-        Text("Recent Quizzes",
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 14)),
-        SizedBox(height: 10),
-        Container(
-          height: 60, // Adjust height as needed for the quiz cards
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount:
-                state.quizzes.length, // Get the number of quizzes dynamically
-            itemBuilder: (context, index) {
-              return _buildQuizCard("Day ${index + 1}", state.quizzes[index]);
-            },
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildQuizCard(String day, bool completed) {
-    return GestureDetector(
-      onTap: () {
-        Get.to(()=>AllActivityScreen());
-      },
-      child: Container(
+    return
+      Container(
         margin: EdgeInsets.symmetric(horizontal: 12),
         width: 90,
         padding: EdgeInsets.all(12),
@@ -306,22 +105,24 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 8,
-              spreadRadius: 2,
-            ),
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 8,
+                spreadRadius: 2),
           ],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Center content vertically
+          mainAxisAlignment:
+          MainAxisAlignment.center, // Center content vertically
           children: [
             Text(day),
             SizedBox(height: 8), // Add space between text and progress bar
             ClipRRect(
               borderRadius: BorderRadius.circular(16), // Rounded corners
               child: LinearProgressIndicator(
-                value: completed ? 1.0 : 0.6, // Use completed status to set the progress
+                value: completed
+                    ? 1.0
+                    : 0.6, // Use completed status to set the progress
                 color: Colors.green,
                 backgroundColor: Colors.grey.withOpacity(0.2),
                 minHeight: 8, // Adjust the height of the progress bar
@@ -329,10 +130,8 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
-
 
   Widget _buildCategoryChart() {
     return Container(
@@ -389,7 +188,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center, // Center align the row content
                   children: [
                     Text(
-                      "Week Wise".tr,
+                      "Week Wise",
                       style: TextStyle(color: Colors.black, fontSize: 12),
                     ),
                     SizedBox(width: 4), // Optional: Add some space between text and icon
@@ -471,7 +270,6 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
       children: List.generate(6, (index) {
         return GestureDetector(
           onTap: () {
-
             setState(() {
               _activeDayIndex = index; // Update the active day index on tap
             });
@@ -639,21 +437,21 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                   return
                     Container(
 
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(height: 30,),
-                          Transform.rotate(
-                            angle: -math.pi / 2, // Rotate text -90 degrees
-                            child: Text(
-                              _getDayName(value.toInt()), // Get the day name
-                              style: TextStyle(fontSize: 12), // Adjust font size if needed
-                              textAlign: TextAlign.center, // Center align text
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 30,),
+                            Transform.rotate(
+                              angle: -math.pi / 2, // Rotate text -90 degrees
+                              child: Text(
+                                _getDayName(value.toInt()), // Get the day name
+                                style: TextStyle(fontSize: 12), // Adjust font size if needed
+                                textAlign: TextAlign.center, // Center align text
+                              ),
                             ),
-                          ),
-                        ],
-                      )
-                  );
+                          ],
+                        )
+                    );
                 },
               ),
             ),
@@ -685,6 +483,87 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
             ]),
             BarChartGroupData(x: 4, barRods: [
               BarChartRodData(toY: 4, color: Colors.purple, width: 16),
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _categoryBarChart() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 8,
+            spreadRadius: 2,
+          )
+        ],
+        borderRadius: BorderRadius.circular(15),
+      ),
+      height: 400, // Set the height of the chart
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          barTouchData: BarTouchData(enabled: true),
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 80, // Increased reserved size for more space
+                getTitlesWidget: (value, meta) {
+                  return
+                    Container(
+
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 30,),
+                            Transform.rotate(
+                              angle: -math.pi / 2, // Rotate text -90 degrees
+                              child: Text(
+                                _getDayName(value.toInt()), // Get the day name
+                                style: TextStyle(fontSize: 12), // Adjust font size if needed
+                                textAlign: TextAlign.center, // Center align text
+                              ),
+                            ),
+                          ],
+                        )
+                    );
+                },
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: true),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+          ),
+          borderData: FlBorderData(
+            show: false, // Remove the border
+          ),
+          barGroups: [
+            BarChartGroupData(x: 0, barRods: [
+              BarChartRodData(toY: 4, color: Colors.black, width: 16),
+            ]),
+            BarChartGroupData(x: 1, barRods: [
+              BarChartRodData(toY: 8, color: Colors.blue, width: 16),
+            ]),
+            BarChartGroupData(x: 2, barRods: [
+              BarChartRodData(toY: 5, color: Colors.green, width: 16),
+            ]),
+            BarChartGroupData(x: 3, barRods: [
+              BarChartRodData(toY: 5, color: Colors.blueAccent, width: 16),
+            ]),
+            BarChartGroupData(x: 4, barRods: [
+              BarChartRodData(toY: 4, color: Colors.black, width: 16),
             ]),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/language_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/signup_screen.dart';
@@ -22,18 +23,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateToNextScreen() async {
-    // Adding a 3-second delay
     await Future.delayed(const Duration(seconds: 3));
-
-    // Check if the token is present in local storage
     String? token = await LocalStorage.getString('token');
-
     if (token != null) {
-      // Navigate to LoginScreen if the token is available
-      Get.off(() => const LoginScreen());
+      Get.off(() =>  LoginScreen());
     } else {
-      // Navigate to SignUpScreen if the token is null
-      Get.off(() => OnboardingScreen());
+      Get.off(() => LanguageScreen());
     }
   }
 

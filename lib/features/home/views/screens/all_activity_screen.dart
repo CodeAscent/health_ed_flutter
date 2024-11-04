@@ -1,8 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
+import 'package:health_ed_flutter/features/activity/views/MatchScreen.dart';
+import 'package:health_ed_flutter/features/activity/views/PictureDescriptionScreen.dart';
+import 'package:health_ed_flutter/features/activity/views/VideoDescriptionScreen.dart';
 import 'package:health_ed_flutter/features/home/model/Activity.dart';
+import 'package:health_ed_flutter/features/home/views/screens/activity_Instructions_screen.dart';
 
 import '../../bloc/ActivityBlock.dart';
 import '../../bloc/QuizBloc.dart';
@@ -53,7 +59,25 @@ class AllActivityScreen extends StatelessWidget {
                               itemCount: activities.length,
                               itemBuilder: (context, index) {
                                 final activity = activities[index];
-                                return ActivityCardItem(activity: activity);
+                                return GestureDetector(
+                                  onTap:(){
+                                    if(index==0)
+                                      {
+                                        Get.to(()=>ActivityInstructionsScreen());
+                                      }else if(index==1)
+                                      {
+                                        Get.to(MatchScreen());
+                                      }else if(index==2)
+                                      {
+                                        Get.to(PictureDescriptionScreen());
+                                      }else if(index==3)
+                                      {
+                                        Get.to(VideoDescriptionScreen());
+                                      }
+                                  },
+                                  child:ActivityCardItem(activity: activity),
+                                );
+
                               },
                             ),
                           );

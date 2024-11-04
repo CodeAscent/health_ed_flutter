@@ -23,7 +23,8 @@ class _MatchScreenState extends State<MatchScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
+      child:Scaffold(body:
+      Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             fit: BoxFit.cover,
@@ -108,10 +109,10 @@ class _MatchScreenState extends State<MatchScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           // Draggable Widget for Triangle
-                          _buildDraggable("Circle"),
+                          _buildDraggable("Triangle"),
                           SizedBox(height: 8),
                           Text(
-                            "Star",
+                            "Triangle",
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 28,
@@ -138,7 +139,8 @@ class _MatchScreenState extends State<MatchScreen> {
             ],
           ),
         ),
-      ),
+      ))
+
     );
   }
 

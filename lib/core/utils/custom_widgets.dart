@@ -53,56 +53,81 @@ class CustomTextFieldWithLabel extends StatelessWidget {
   }
 }
 
-class CustomMobileTextField extends StatelessWidget {
-  final String label;
+class CustomTextFieldWithPrefix extends StatelessWidget {
   final TextEditingController? controller;
   final String hintText;
-  final Widget? sufix;
+  final Widget? suffix;
   final bool? readOnly;
   final bool? isPassword;
-  const CustomMobileTextField(
-      {super.key,
-        required this.label,
-        this.controller,
-        required this.hintText,
-        this.sufix,
-        this.readOnly = false,
-        this.isPassword = false});
+
+  const CustomTextFieldWithPrefix({
+    super.key,
+    this.controller,
+    required this.hintText,
+    this.suffix,
+    this.readOnly = false,
+    this.isPassword = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 10),
-        Row(
-          children: [
-          TextFormField(
-            validator: (value) {
-              if (controller!.text == '') {
-                customSnackbar(
-                    'Please enter a valid $label', ContentType.failure);
-              } else {
-                return null;
-              }
-            },
-            obscureText: isPassword!,
-            readOnly: readOnly!,
-            decoration: InputDecoration(
-                hintText: hintText,
-                suffixIcon: sufix,
-                fillColor: Colors.white,
-                filled: true
+        SizedBox(height: 20),
+        TextFormField(
+          validator: (value) {
+            if (controller?.text.isEmpty ?? true) {
+              customSnackbar('Please enter a valid mobile number',
+                ContentType.failure,
+              );
+            } else {
+              return null;
+            }
+          },
+          obscureText: isPassword!,
+          readOnly: readOnly!,
+          decoration: InputDecoration(
+            hintText: hintText,
+            prefixIcon:
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 2,horizontal: 9),
+              padding: EdgeInsets.symmetric(horizontal: 10), // Adjust padding for better alignment
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(26),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min, // Ensure the row takes only the required width
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '+91',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: 4), // Add space between text and icon
+                  Icon(
+                    Icons.keyboard_arrow_down, // Dropdown arrow icon
+                    color: Colors.black, // Set icon color
+                    size: 20, // Adjust icon size if needed
+                  ),
+                ],
+              ),
             ),
-            controller: controller,
-
+            suffixIcon: suffix,
+            fillColor: Colors.white,
+            filled: true,
           ),
-        ],)
-
+          controller: controller,
+        ),
       ],
     );
   }
 }
+
 
 
 class CustomTransparentContainer extends StatelessWidget {
@@ -139,7 +164,9 @@ class AppBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () {},
+        onPressed: () {
+          Get.back();
+        },
         icon: CircleAvatar(
           backgroundColor: color != null?color: ColorPallete.grayBlue,
           child: Icon(

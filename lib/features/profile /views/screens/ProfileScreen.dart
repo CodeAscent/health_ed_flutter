@@ -56,9 +56,9 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                                 CircleAvatar(
                                   radius: 14,
-                                  backgroundColor: Colors.blue,
+                                  backgroundColor: ColorPallete.primary,
                                   child: Icon(
-                                    Icons.edit_calendar_sharp,
+                                    Icons.edit_note_sharp,
                                     size: 14,
                                     color: Colors.white,
                                   ),
@@ -119,19 +119,19 @@ class ProfileScreen extends StatelessWidget {
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey),
+              borderSide: BorderSide(color: Colors.grey, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: ColorPallete.primary),
+              borderSide: BorderSide(color: ColorPallete.primary, width: 1),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey),
+              borderSide: BorderSide(color: ColorPallete.greyShade1, width: 1),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.red),
+              borderSide: BorderSide(color: ColorPallete.greyShade1, width: 1),
             ),
             suffixIcon: suffixIcon != null
                 ? Icon(suffixIcon, color: Colors.green)

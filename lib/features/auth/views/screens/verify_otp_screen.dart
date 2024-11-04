@@ -120,7 +120,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppBackButton(),
+                        AppBackButton(color: Colors.white),
                         SizedBox(height: 6),
                         CustomTransparentContainer(
                           child: SingleChildScrollView(
