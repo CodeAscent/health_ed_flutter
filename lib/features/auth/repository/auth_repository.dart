@@ -2,18 +2,23 @@ import 'dart:convert';
 
 import 'package:health_ed_flutter/core/services/api_urls.dart';
 import 'package:health_ed_flutter/core/services/http_wrapper.dart';
+import 'package:health_ed_flutter/features/auth/models/request/LoginRequest.dart';
+
+import '../models/request/RegistrationRequest.dart';
+import '../models/response/LoginResponse.dart';
+import '../models/response/RegisterResponse.dart';
 
 class AuthRepository {
-  Future login({required String email, required String password}) async {
+
+  Future<LoginResponse> login(LoginRequest loginRequest) async {
     try {
-      final body = {
-        "email": email,
-        "password": password,
-      };
-      final res = await HttpWrapper.postRequest(ApiUrls.login, body);
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.login,
+        loginRequest.toJson(),
+      );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        return data;
+        return LoginResponse.fromJson(data);
       } else {
         throw data['message'];
       }
@@ -22,24 +27,15 @@ class AuthRepository {
     }
   }
 
-  Future signUp(
-      {required String email,
-      required String password,
-      required String fullName,
-      required String gender,
-      required String dob}) async {
+  Future<RegisterResponse> signUp(RegistrationRequest registrationRequest) async {
     try {
-      final body = {
-        "email": email,
-        "password": password,
-        "fullName": fullName,
-        "dateOfBirth": dob,
-        "gender": gender,
-      };
-      final res = await HttpWrapper.postRequest(ApiUrls.register, body);
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.register,
+        registrationRequest.toJson(),
+      );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        return data;
+        return RegisterResponse.fromJson(data);
       } else {
         throw data['message'];
       }
@@ -47,6 +43,7 @@ class AuthRepository {
       rethrow;
     }
   }
+
 
   Future fetchUser() async {
     try {
@@ -61,4 +58,5 @@ class AuthRepository {
       rethrow;
     }
   }
+
 }

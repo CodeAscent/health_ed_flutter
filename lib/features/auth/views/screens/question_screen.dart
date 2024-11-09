@@ -15,7 +15,7 @@ class QuestionScreen extends StatefulWidget {
 }
 
 class _QuestionScreenState extends State<QuestionScreen> {
-  int selectedOption = 0; // Tracks the selected option
+  int selectedOption = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -185,12 +185,12 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   }
 
-  // Custom method to build option tiles
+
   Widget buildOptionTile(String optionText, int value) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedOption = value; // Update selected option on tap
+          selectedOption = value;
         });
       },
       child: Container(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:health_ed_flutter/core/style/text_style.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/utils/custom_snackbar.dart';
 
@@ -26,7 +28,7 @@ class CustomTextFieldWithLabel extends StatelessWidget {
       children: [
         SizedBox(height: 20),
         Text(label,
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+            style: AppTextStyles.h1),
         SizedBox(height: 10),
         TextFormField(
           validator: (value) {
@@ -76,29 +78,41 @@ class CustomTextFieldWithPrefix extends StatelessWidget {
       children: [
         SizedBox(height: 20),
         TextFormField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(10),
+          ],
           validator: (value) {
             if (controller?.text.isEmpty ?? true) {
-              customSnackbar('Please enter a valid mobile number',
+              customSnackbar(
+                'Please enter a valid mobile number',
                 ContentType.failure,
               );
-            } else {
-              return null;
+              return 'Please enter a valid mobile number';
+            } else if (controller!.text.length != 10) {
+              customSnackbar(
+                'Mobile number must be 10 digits',
+                ContentType.failure,
+              );
+              return 'Mobile number must be 10 digits';
             }
+            return null;
           },
           obscureText: isPassword!,
           readOnly: readOnly!,
           decoration: InputDecoration(
             hintText: hintText,
-            prefixIcon:
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 2,horizontal: 9),
-              padding: EdgeInsets.symmetric(horizontal: 10), // Adjust padding for better alignment
+            prefixIcon: Container(
+              margin: EdgeInsets.symmetric(vertical: 2, horizontal: 9),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(26),
               ),
               child: Row(
-                mainAxisSize: MainAxisSize.min, // Ensure the row takes only the required width
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -108,11 +122,11 @@ class CustomTextFieldWithPrefix extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(width: 4), // Add space between text and icon
+                  SizedBox(width: 4),
                   Icon(
-                    Icons.keyboard_arrow_down, // Dropdown arrow icon
-                    color: Colors.black, // Set icon color
-                    size: 20, // Adjust icon size if needed
+                    Icons.keyboard_arrow_down,
+                    color: Colors.black,
+                    size: 20,
                   ),
                 ],
               ),
@@ -121,7 +135,6 @@ class CustomTextFieldWithPrefix extends StatelessWidget {
             fillColor: Colors.white,
             filled: true,
           ),
-          controller: controller,
         ),
       ],
     );

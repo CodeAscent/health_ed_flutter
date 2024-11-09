@@ -68,15 +68,18 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
   fonts:
-    - family: Gilroy
-      fonts:
-        - asset: assets/fonts/Gilroy-Regular.ttf
-        - asset: assets/fonts/Gilroy-Bold.ttf
-          weight: 700
+      - family: Gilroy
+        fonts:
+          - asset: assets/fonts/Gilroy-Regular.ttf
+            weight: 400      # Regular weight
+          - asset: assets/fonts/Gilroy-SemiBold.ttf
+            weight: 600      # SemiBold weight
+          - asset: assets/fonts/Gilroy-Bold.ttf
+            weight: 700      # Bold weight
 
-  # To add assets to your application, add an assets section, like this:
+
+    # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
     - assets/bg/

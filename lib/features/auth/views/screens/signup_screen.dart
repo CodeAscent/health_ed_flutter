@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:health_ed_flutter/core/style/text_style.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/utils/custom_constants.dart';
 import 'package:health_ed_flutter/core/utils/custom_loader.dart';
@@ -12,6 +13,9 @@ import 'package:health_ed_flutter/features/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/question_screen.dart';
 
+import '../../models/request/RegistrationRequest.dart';
+import '../../repository/auth_repository.dart';
+
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
@@ -20,11 +24,13 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  final AuthRepository _authRepository = AuthRepository();
   final formKey = GlobalKey<FormState>();
   final _fullname = TextEditingController();
   final _dob = TextEditingController();
   final _gender = TextEditingController();
   final _familyType = TextEditingController();
+  final _email = TextEditingController();
   final _fatherOccupation = TextEditingController();
   final _motherOccupation = TextEditingController();
   final _siblings = TextEditingController();
@@ -35,6 +41,68 @@ class _SignupScreenState extends State<SignupScreen> {
   final _speechTherapy = TextEditingController(text: 'No');
   final _medium = TextEditingController(text: 'Online');
   final _unformattedDob = TextEditingController();
+
+  bool validateForm() {
+    if (_fullname.text.isEmpty) {
+      customSnackbar("Full Name is required", ContentType.failure);
+      return false;
+    }
+    if (_dob.text.isEmpty) {
+      customSnackbar("Date of Birth is required", ContentType.failure);
+      return false;
+    }
+    if (_gender.text.isEmpty) {
+      customSnackbar("Gender is required", ContentType.failure);
+      return false;
+    }
+    if (_familyType.text.isEmpty) {
+      customSnackbar("Family Type is required", ContentType.failure);
+      return false;
+    }
+    if (_fatherOccupation.text.isEmpty) {
+      customSnackbar("Father's Occupation is required", ContentType.failure);
+      return false;
+    }
+    if (_motherOccupation.text.isEmpty) {
+      customSnackbar("Mother's Occupation is required", ContentType.failure);
+      return false;
+    }
+    if (_siblings.text.isEmpty) {
+      customSnackbar("Number of Siblings is required", ContentType.failure);
+      return false;
+    }
+    if (_childLanguage.text.isEmpty) {
+      customSnackbar("Child's Language is required", ContentType.failure);
+      return false;
+    }
+    if (_homeLanguage.text.isEmpty) {
+      customSnackbar("Home Language is required", ContentType.failure);
+      return false;
+    }
+    if (_state.text.isEmpty) {
+      customSnackbar("State is required", ContentType.failure);
+      return false;
+    }
+    if (_city.text.isEmpty) {
+      customSnackbar("City is required", ContentType.failure);
+      return false;
+    }
+    if (_speechTherapy.text.isEmpty) {
+      customSnackbar("Speech Therapy selection is required", ContentType.failure);
+      return false;
+    }
+    if (_medium.text.isEmpty) {
+      customSnackbar("Medium is required", ContentType.failure);
+      return false;
+    }
+
+
+
+    return true;
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +124,7 @@ class _SignupScreenState extends State<SignupScreen> {
           }
 
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             body: SafeArea(
               child: Container(
                   decoration: BoxDecoration(
@@ -78,12 +147,17 @@ class _SignupScreenState extends State<SignupScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Create Account'),
-                                Text('Join us & start your learning journey'),
+                                Text('Create Account',style: AppTextStyles.h2,),
+                                Text('Join us & start your learning journey',style: AppTextStyles.h7,),
                                 CustomTextFieldWithLabel(
                                   controller: _fullname,
                                   label: 'Full Name',
                                   hintText: 'Enter your full name',
+                                ),
+                                CustomTextFieldWithLabel(
+                                  controller: _email,
+                                  label: 'Email',
+                                  hintText: 'Enter your email',
                                 ),
                                 CustomTextFieldWithLabel(
                                   controller: _dob,
@@ -149,7 +223,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   sufix: customPicker(
                                     context: context,
                                     title: 'No. of Siblings',
-                                    options: ['0', '1', '2', '3', '4+'],
+                                    options: ['0', '1', '2', '3','4'],
                                     controller: _siblings,
                                   ),
                                 ),
@@ -229,7 +303,25 @@ class _SignupScreenState extends State<SignupScreen> {
                                 CustomGradientButton(
                                   label: 'Continue',
                                   onTap: () {
-                                    Get.off(() => QuestionScreen());
+                                    if (validateForm()) {
+                                      final registrationRequest = RegistrationRequest(
+                                        fullName: _fullname.text,
+                                        familyType: _familyType.text,
+                                        email: _email.text,
+                                        dateOfBirth: _dob.text,
+                                        fatherOccupation: _fatherOccupation.text,
+                                        motherOccupation: _motherOccupation.text,
+                                        noOfSiblings: int.tryParse(_siblings.text) ?? 0,
+                                        languageSpokenByChild: _childLanguage.text,
+                                        languageSpokenAtHome: _homeLanguage.text,
+                                        currentCityDistrict: _city.text,
+                                        currentState: _state.text,
+                                        isChildTakingSpeechTherapy: _speechTherapy.text == 'Yes',
+                                        medium: _medium.text,
+                                        gender: _gender.text,
+                                      );
+                                      context.read<AuthBloc>().add(AuthRegistrationRequested(registrationRequest));
+                                    }
                                   },
                                 ),
                                 SizedBox(height: 10),
@@ -260,7 +352,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: 40,
+                          height: 10,
                         ),
                       ],
                     ),

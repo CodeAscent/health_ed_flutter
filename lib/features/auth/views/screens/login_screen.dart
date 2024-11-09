@@ -1,18 +1,16 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:health_ed_flutter/core/theme/app_colors.dart';
-import 'package:health_ed_flutter/core/utils/custom_constants.dart';
 import 'package:health_ed_flutter/core/utils/custom_loader.dart';
 import 'package:health_ed_flutter/core/utils/custom_snackbar.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/features/auth/bloc/auth_bloc.dart';
-import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
+import 'package:health_ed_flutter/features/auth/models/request/LoginRequest.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/verify_otp_screen.dart';
+
 
 class LoginScreen extends StatefulWidget {
 
@@ -105,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           return
             Scaffold(
+              resizeToAvoidBottomInset: false,
               body: SafeArea(
                 child: Container(
                     decoration: BoxDecoration(
@@ -148,7 +147,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   CustomGradientButton(
                                     label: 'Send me the code',
                                       onTap: () {
-                                        Get.to(() =>  VerifyOtpScreen(_mobileNoController.text));
+                                        // Get.to(() =>  VerifyOtpScreen(_mobileNoController.text));
+                                        if (_mobileNoController.text.length>=10) {
+                                          final loginRequest = LoginRequest(
+                                              mobile: _mobileNoController.text
+                                          );
+                                          context.read<AuthBloc>().add(AuthLoginRequested(loginRequest: loginRequest));
+                                        }else{
+                                          customSnackbar("Please enter a valid mobile number", ContentType.failure);
+                                        }
                                       },
                                   ),
                                   SizedBox(

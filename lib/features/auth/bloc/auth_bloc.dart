@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:bloc/bloc.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
+import 'package:health_ed_flutter/features/auth/models/request/LoginRequest.dart';
 import 'package:health_ed_flutter/features/auth/models/user.dart';
 import 'package:health_ed_flutter/features/auth/repository/auth_repository.dart';
 import 'package:meta/meta.dart';
+
+import '../models/request/RegistrationRequest.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -18,14 +24,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AuthRegistrationRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final res = await authRepository.signUp(
-          email: event.email,
-          password: event.password,
-          fullName: event.fullName,
-          gender: event.gender,
-          dob: event.dob);
-      print(res);
-      emit(AuthRegisterSuccess(message: res['message']));
+      final res = await authRepository.signUp(event.registrationRequest);
+      emit(AuthRegisterSuccess(message: res.message));
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }
@@ -35,11 +35,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AuthLoginRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final res = await authRepository.login(
-          email: event.email, password: event.password);
-      final user = User.fromMap(res['user']);
-      await LocalStorage.prefs.setString('token', res['token']);
-      emit(AuthLoginSuccess(user: user));
+      final res = await authRepository.login(event.loginRequest);
+      // final user = User.fromMap(res['user']);
+      // await LocalStorage.prefs.setString('token', res['token']);
+      emit(AuthLoginSuccess(message: res.message));
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }
