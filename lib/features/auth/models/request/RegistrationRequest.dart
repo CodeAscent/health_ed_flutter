@@ -13,6 +13,7 @@ class RegistrationRequest {
   final bool isChildTakingSpeechTherapy;
   final String medium;
   final String gender;
+  final String preferredLanguage;
 
   RegistrationRequest({
     required this.fullName,
@@ -29,6 +30,7 @@ class RegistrationRequest {
     required this.isChildTakingSpeechTherapy,
     required this.medium,
     required this.gender,
+    required this.preferredLanguage,
   });
 
   Map<String, dynamic> toJson() {
@@ -47,6 +49,7 @@ class RegistrationRequest {
       "isChildTakingSpeechTherapy": isChildTakingSpeechTherapy,
       "medium": medium,
       "gender": gender,
+      "preferredLanguage": preferredLanguage,
     };
   }
 }

@@ -27,14 +27,14 @@ class CustomTextFieldWithLabel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 20),
-        Text(label,
-            style: AppTextStyles.h1),
+        Text(label, style: AppTextStyles.h1),
         SizedBox(height: 10),
         TextFormField(
           validator: (value) {
             if (controller!.text == '') {
               customSnackbar(
                   'Please enter a valid $label', ContentType.failure);
+              return '';
             } else {
               return null;
             }
@@ -42,13 +42,11 @@ class CustomTextFieldWithLabel extends StatelessWidget {
           obscureText: isPassword!,
           readOnly: readOnly!,
           decoration: InputDecoration(
-            hintText: hintText,
-            suffixIcon: sufix,
-            fillColor: Colors.white,
-            filled: true
-          ),
+              hintText: hintText,
+              suffixIcon: sufix,
+              fillColor: Colors.white,
+              filled: true),
           controller: controller,
-
         ),
       ],
     );
@@ -141,8 +139,6 @@ class CustomTextFieldWithPrefix extends StatelessWidget {
   }
 }
 
-
-
 class CustomTransparentContainer extends StatelessWidget {
   final Widget child;
   const CustomTransparentContainer({
@@ -157,7 +153,8 @@ class CustomTransparentContainer extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         width: Get.width,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.93),  // Apply opacity only to the background color
+          color: Colors.white
+              .withOpacity(0.93), // Apply opacity only to the background color
           borderRadius: BorderRadius.circular(25),
         ),
         child: child,
@@ -166,13 +163,9 @@ class CustomTransparentContainer extends StatelessWidget {
   }
 }
 
-
 class AppBackButton extends StatelessWidget {
   final Color? color;
-  const AppBackButton({
-    super.key,
-    this.color
-  });
+  const AppBackButton({super.key, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +174,7 @@ class AppBackButton extends StatelessWidget {
           Get.back();
         },
         icon: CircleAvatar(
-          backgroundColor: color != null?color: ColorPallete.grayBlue,
+          backgroundColor: color != null ? color : ColorPallete.grayBlue,
           child: Icon(
             Icons.navigate_before,
             color: Colors.black,
@@ -189,6 +182,7 @@ class AppBackButton extends StatelessWidget {
         ));
   }
 }
+
 class AppGreyBackButton extends StatelessWidget {
   const AppGreyBackButton({
     super.key,
@@ -203,7 +197,7 @@ class AppGreyBackButton extends StatelessWidget {
           child: Icon(
             size: 40,
             Icons.navigate_before,
-            color:ColorPallete.primary,
+            color: ColorPallete.primary,
           ),
         ));
   }

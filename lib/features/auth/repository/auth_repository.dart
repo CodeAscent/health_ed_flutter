@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:health_ed_flutter/core/services/api_urls.dart';
 import 'package:health_ed_flutter/core/services/http_wrapper.dart';
 import 'package:health_ed_flutter/features/auth/models/request/LoginRequest.dart';
+import 'package:logger/logger.dart';
 
 import '../models/request/RegistrationRequest.dart';
 import '../models/response/LoginResponse.dart';
 import '../models/response/RegisterResponse.dart';
 
 class AuthRepository {
-
   Future<LoginResponse> login(LoginRequest loginRequest) async {
     try {
       final res = await HttpWrapper.postRequest(
@@ -27,7 +27,8 @@ class AuthRepository {
     }
   }
 
-  Future<RegisterResponse> signUp(RegistrationRequest registrationRequest) async {
+  Future<RegisterResponse> signUp(
+      RegistrationRequest registrationRequest) async {
     try {
       final res = await HttpWrapper.postRequest(
         ApiUrls.register,
@@ -44,7 +45,6 @@ class AuthRepository {
     }
   }
 
-
   Future fetchUser() async {
     try {
       final res = await HttpWrapper.getRequest(ApiUrls.get_user);
@@ -58,5 +58,4 @@ class AuthRepository {
       rethrow;
     }
   }
-
 }

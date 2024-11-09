@@ -88,7 +88,8 @@ class _SignupScreenState extends State<SignupScreen> {
       return false;
     }
     if (_speechTherapy.text.isEmpty) {
-      customSnackbar("Speech Therapy selection is required", ContentType.failure);
+      customSnackbar(
+          "Speech Therapy selection is required", ContentType.failure);
       return false;
     }
     if (_medium.text.isEmpty) {
@@ -96,13 +97,8 @@ class _SignupScreenState extends State<SignupScreen> {
       return false;
     }
 
-
-
     return true;
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -140,15 +136,22 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppBackButton(color: Colors.white,),
+                        AppBackButton(
+                          color: Colors.white,
+                        ),
                         CustomTransparentContainer(
                           child: SingleChildScrollView(
-                            child:
-                            Column(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Create Account',style: AppTextStyles.h2,),
-                                Text('Join us & start your learning journey',style: AppTextStyles.h7,),
+                                Text(
+                                  'Create Account',
+                                  style: AppTextStyles.h2,
+                                ),
+                                Text(
+                                  'Join us & start your learning journey',
+                                  style: AppTextStyles.h7,
+                                ),
                                 CustomTextFieldWithLabel(
                                   controller: _fullname,
                                   label: 'Full Name',
@@ -199,7 +202,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                   sufix: customPicker(
                                     context: context,
                                     title: 'Father Occupation',
-                                    options: ['Employed', 'Self-employed', 'Unemployed'],
+                                    options: [
+                                      'Employed',
+                                      'Self-employed',
+                                      'Unemployed'
+                                    ],
                                     controller: _fatherOccupation,
                                   ),
                                 ),
@@ -211,7 +218,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                   sufix: customPicker(
                                     context: context,
                                     title: 'Mother Occupation',
-                                    options: ['Employed', 'Self-employed', 'Homemaker'],
+                                    options: [
+                                      'Employed',
+                                      'Self-employed',
+                                      'Homemaker'
+                                    ],
                                     controller: _motherOccupation,
                                   ),
                                 ),
@@ -223,7 +234,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   sufix: customPicker(
                                     context: context,
                                     title: 'No. of Siblings',
-                                    options: ['0', '1', '2', '3','4'],
+                                    options: ['0', '1', '2', '3', '4'],
                                     controller: _siblings,
                                   ),
                                 ),
@@ -259,7 +270,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                   sufix: customPicker(
                                     context: context,
                                     title: 'Current State',
-                                    options: ['State 1', 'State 2', 'State 3'], // Populate with actual state options
+                                    options: [
+                                      'State 1',
+                                      'State 2',
+                                      'State 3'
+                                    ], // Populate with actual state options
                                     controller: _state,
                                   ),
                                 ),
@@ -271,7 +286,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                   sufix: customPicker(
                                     context: context,
                                     title: 'Current City/District',
-                                    options: ['City 1', 'City 2', 'City 3'], // Populate with actual city options
+                                    options: [
+                                      'City 1',
+                                      'City 2',
+                                      'City 3'
+                                    ], // Populate with actual city options
                                     controller: _city,
                                   ),
                                 ),
@@ -304,23 +323,33 @@ class _SignupScreenState extends State<SignupScreen> {
                                   label: 'Continue',
                                   onTap: () {
                                     if (validateForm()) {
-                                      final registrationRequest = RegistrationRequest(
+                                      final registrationRequest =
+                                          RegistrationRequest(
                                         fullName: _fullname.text,
                                         familyType: _familyType.text,
                                         email: _email.text,
                                         dateOfBirth: _dob.text,
-                                        fatherOccupation: _fatherOccupation.text,
-                                        motherOccupation: _motherOccupation.text,
-                                        noOfSiblings: int.tryParse(_siblings.text) ?? 0,
-                                        languageSpokenByChild: _childLanguage.text,
-                                        languageSpokenAtHome: _homeLanguage.text,
+                                        fatherOccupation:
+                                            _fatherOccupation.text,
+                                        motherOccupation:
+                                            _motherOccupation.text,
+                                        noOfSiblings:
+                                            int.tryParse(_siblings.text) ?? 0,
+                                        languageSpokenByChild:
+                                            _childLanguage.text,
+                                        languageSpokenAtHome:
+                                            _homeLanguage.text,
                                         currentCityDistrict: _city.text,
                                         currentState: _state.text,
-                                        isChildTakingSpeechTherapy: _speechTherapy.text == 'Yes',
+                                        isChildTakingSpeechTherapy:
+                                            _speechTherapy.text == 'Yes',
                                         medium: _medium.text,
                                         gender: _gender.text,
+                                        preferredLanguage: 'en',
                                       );
-                                      context.read<AuthBloc>().add(AuthRegistrationRequested(registrationRequest));
+                                      context.read<AuthBloc>().add(
+                                          AuthRegistrationRequested(
+                                              registrationRequest));
                                     }
                                   },
                                 ),
@@ -363,8 +392,6 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
-
-
 
   IconButton kCustomDatePicker(BuildContext context) {
     return IconButton(
@@ -414,7 +441,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   width: double.maxFinite, // Ensures dialog takes full width
                   child: SingleChildScrollView(
                     child: Column(
-                      mainAxisSize: MainAxisSize.min, // Allow the column to take up minimum height
+                      mainAxisSize: MainAxisSize
+                          .min, // Allow the column to take up minimum height
                       children: options.map((option) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -441,7 +469,6 @@ class _SignupScreenState extends State<SignupScreen> {
       icon: Icon(Icons.arrow_downward),
     );
   }
-
 
   TextStyle kCustomHeadingTS() {
     return TextStyle(fontSize: 25, fontWeight: FontWeight.w800);
