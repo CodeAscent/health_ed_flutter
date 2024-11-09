@@ -13,6 +13,9 @@ import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/features/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
 
+import '../../models/request/LoginRequest.dart';
+import '../../models/request/OtpVerifyRequest.dart';
+
 class VerifyOtpScreen extends StatefulWidget {
   final String phoneNumber;
   VerifyOtpScreen(this.phoneNumber);
@@ -25,6 +28,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   late List<FocusNode> focusNodes;
   List<TextEditingController> controllers = List.generate(4, (_) => TextEditingController());
   String otp = "";
+  bool isResend  = false;
 
   // Timer related variables
   late int secondsRemaining;
@@ -65,7 +69,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
   // Handle Resend OTP logic
   void resendOtp() {
+    isResend = true;
+    final loginRequest = LoginRequest(
+        mobile: widget.phoneNumber
+    );
+    context.read<AuthBloc>().add(AuthLoginRequested(loginRequest: loginRequest));
     setState(() {
+      controllers.forEach((controller) => controller.clear());
       secondsRemaining = 30;
       enableResend = false;
     });
@@ -90,21 +100,22 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     return Form(
       child: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthFailure) {
+          if (state is AuthOtpVerifyFailure) {
             customSnackbar(state.message, ContentType.failure);
           }
-          if (state is AuthRegisterSuccess) {
+          else if (state is AuthOtpVerifySuccess) {
             customSnackbar(state.message, ContentType.success);
-            Get.to(() => LoginScreen());
+            // Get.to(() => LoginScreen());
           }
         },
         builder: (context, state) {
-          if (state is AuthLoading) {
+          if ((state is AuthLoading)&&!isResend) {
             return CustomLoader();
           }
 
           return
             Scaffold(
+            resizeToAvoidBottomInset: false,
             body: SafeArea(
               child: Container(
                   decoration: BoxDecoration(
@@ -166,6 +177,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                             // Move to the previous field if cleared
                                             FocusScope.of(context).requestFocus(focusNodes[index - 1]);
                                           }
+
+                                          setState(() {
+                                            otp = controllers.map((controller) => controller.text).join();
+                                          });
                                         },
                                         onTap: () {
                                           // If user taps on any field, focus the first unfilled box
@@ -206,6 +221,21 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                 ),
                                 CustomGradientButton(
                                   label: 'Continue',
+                                  onTap: () {
+                                    // Get.to(() =>  VerifyOtpScreen(_mobileNoController.text));
+                                    isResend = false;
+                                    if (otp.length==4) {
+
+                                      final verifyRequest = OtpVerifyRequest(
+                                          mobile: widget.phoneNumber,
+                                          otp: int.parse(otp)
+                                      );
+                                      context.read<AuthBloc>().add(AuthOtpVerifyRequested(otpVerifyRequest: verifyRequest));
+
+                                    }else{
+                                      customSnackbar("Please enter a valid mobile number", ContentType.failure);
+                                    }
+                                  },
                                 ),
                                 SizedBox(
                                   height: 40,

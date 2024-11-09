@@ -15,7 +15,7 @@ customSnackbar(String message, ContentType type) async {
     ),
     description: RichText(
         text: TextSpan(text: message, style: TextStyle(color: Colors.black))),
-    alignment: Alignment.topRight,
+    alignment: Alignment.bottomRight,
     direction: TextDirection.ltr,
     animationDuration: const Duration(milliseconds: 300),
 

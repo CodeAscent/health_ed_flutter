@@ -22,6 +22,18 @@ final class AuthFailure extends AuthState {
   AuthFailure({required this.message});
 }
 
+final class AuthOtpVerifySuccess extends AuthState {
+  final String message;
+  AuthOtpVerifySuccess({required this.message});
+}
+
+final class AuthOtpVerifyFailure extends AuthState {
+  final String message;
+  AuthOtpVerifyFailure({required this.message});
+}
+
+
+
 final class AuthUserFetchSuccess extends AuthState {
   final User user;
 

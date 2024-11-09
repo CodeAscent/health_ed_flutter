@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:health_ed_flutter/core/services/api_urls.dart';
 import 'package:health_ed_flutter/core/services/http_wrapper.dart';
 import 'package:health_ed_flutter/features/auth/models/request/LoginRequest.dart';
+import 'package:health_ed_flutter/features/auth/models/request/OtpVerifyRequest.dart';
+import 'package:health_ed_flutter/features/auth/models/response/OtpVerifyResponse.dart';
 import 'package:logger/logger.dart';
 
 import '../models/request/RegistrationRequest.dart';
@@ -19,6 +21,23 @@ class AuthRepository {
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return LoginResponse.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<OtpVerifyResponse> verifyOtp(OtpVerifyRequest otpVerifyRequest) async {
+    try {
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.verifyOtp,
+        otpVerifyRequest.toJson(),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return OtpVerifyResponse.fromJson(data);
       } else {
         throw data['message'];
       }

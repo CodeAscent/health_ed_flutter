@@ -111,7 +111,7 @@ class _SignupScreenState extends State<SignupScreen> {
           }
           if (state is AuthRegisterSuccess) {
             customSnackbar(state.message, ContentType.success);
-            Get.to(() => LoginScreen());
+            // Get.to(() => LoginScreen());
           }
         },
         builder: (context, state) {

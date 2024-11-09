@@ -72,15 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // BlocProvider.of<PhoneVerificationBloc>(context).add(ResendOtpEvent(widget.phoneNumber));
   }
 
-  // Check for the first unfilled box and focus it
-  void _focusNextEmptyField() {
-    for (int i = 0; i < controllers.length; i++) {
-      if (controllers[i].text.isEmpty) {
-        FocusScope.of(context).requestFocus(focusNodes[i]);
-        break;
-      }
-    }
-  }
+
 
 
   @override
@@ -91,9 +83,9 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is AuthFailure) {
             customSnackbar(state.message, ContentType.failure);
           }
-          if (state is AuthRegisterSuccess) {
+          if (state is AuthLoginSuccess) {
             customSnackbar(state.message, ContentType.success);
-
+            Get.to(() => VerifyOtpScreen(_mobileNoController.text));
           }
         },
         builder: (context, state) {

@@ -120,7 +120,7 @@ class LanguageScreen extends StatelessWidget {
               CustomGradientButton(
                 label: 'Continue',
                 onTap: () {
-                  Get.off(() => const SignupScreen());
+                  Get.off(() =>LoginScreen());
                 },
               ),
               const SizedBox(height: 30),

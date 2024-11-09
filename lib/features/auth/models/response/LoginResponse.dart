@@ -9,7 +9,6 @@ class LoginResponse {
     required this.data,
   });
 
-  // Factory constructor to create an instance from JSON
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     return LoginResponse(
       success: json['success'],

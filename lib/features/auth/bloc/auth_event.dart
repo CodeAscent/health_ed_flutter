@@ -9,11 +9,18 @@ class AuthLoginRequested extends AuthEvent {
   AuthLoginRequested({required this.loginRequest});
 }
 
+class AuthOtpVerifyRequested extends AuthEvent {
+  final OtpVerifyRequest otpVerifyRequest;
+  AuthOtpVerifyRequested({required this.otpVerifyRequest});
+}
+
 class AuthRegistrationRequested extends AuthEvent {
   final RegistrationRequest registrationRequest;
 
   AuthRegistrationRequested(this.registrationRequest);
 }
+
+
 
 
 class AuthUserDataRequested extends AuthEvent {}
