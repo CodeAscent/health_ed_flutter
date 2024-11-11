@@ -23,8 +23,13 @@ final class AuthFailure extends AuthState {
 }
 
 final class AuthOtpVerifySuccess extends AuthState {
-  final String message;
-  AuthOtpVerifySuccess({required this.message});
+  final OtpVerifyResponse otpVerifyResponse;
+  AuthOtpVerifySuccess({required this.otpVerifyResponse});
+}
+
+final class AuthAssessmentQuestionSuccess extends AuthState {
+  final AssessmentQuestionResponse assessmentQuestionResponse;
+  AuthAssessmentQuestionSuccess({required this.assessmentQuestionResponse});
 }
 
 final class AuthOtpVerifyFailure extends AuthState {
@@ -34,8 +39,3 @@ final class AuthOtpVerifyFailure extends AuthState {
 
 
 
-final class AuthUserFetchSuccess extends AuthState {
-  final User user;
-
-  AuthUserFetchSuccess({required this.user});
-}

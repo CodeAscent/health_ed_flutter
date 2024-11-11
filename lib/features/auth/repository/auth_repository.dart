@@ -4,6 +4,7 @@ import 'package:health_ed_flutter/core/services/api_urls.dart';
 import 'package:health_ed_flutter/core/services/http_wrapper.dart';
 import 'package:health_ed_flutter/features/auth/models/request/LoginRequest.dart';
 import 'package:health_ed_flutter/features/auth/models/request/OtpVerifyRequest.dart';
+import 'package:health_ed_flutter/features/auth/models/response/AssessmentQuestionResponse.dart';
 import 'package:health_ed_flutter/features/auth/models/response/OtpVerifyResponse.dart';
 import 'package:logger/logger.dart';
 
@@ -38,6 +39,21 @@ class AuthRepository {
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return OtpVerifyResponse.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+  Future<AssessmentQuestionResponse> getAssessmentQuestion() async {
+    try {
+      final res = await HttpWrapper.getRequest(
+        ApiUrls.onboarding_questions
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return AssessmentQuestionResponse.fromJson(data);
       } else {
         throw data['message'];
       }

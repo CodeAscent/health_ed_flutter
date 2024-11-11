@@ -10,6 +10,7 @@ import 'package:health_ed_flutter/core/utils/custom_loader.dart';
 import 'package:health_ed_flutter/core/utils/custom_snackbar.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/features/auth/bloc/auth_bloc.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/assessment_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/question_screen.dart';
 
@@ -111,7 +112,7 @@ class _SignupScreenState extends State<SignupScreen> {
           }
           if (state is AuthRegisterSuccess) {
             customSnackbar(state.message, ContentType.success);
-            // Get.to(() => LoginScreen());
+            Get.to(() => AssessmentScreen());
           }
         },
         builder: (context, state) {

@@ -8,7 +8,7 @@ class HttpWrapper {
   static final _logger = Logger();
 
   static Future<Map<String, String>> headers() async {
-    String? token = await LocalStorage.prefs.getString('token');
+    String? token = await LocalStorage.getToken();
     return {
       'content-type': "application/json",
       if (token != null) "Authorization": "Bearer $token",

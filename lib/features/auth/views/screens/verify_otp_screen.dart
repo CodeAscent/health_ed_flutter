@@ -11,7 +11,10 @@ import 'package:health_ed_flutter/core/utils/custom_loader.dart';
 import 'package:health_ed_flutter/core/utils/custom_snackbar.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/features/auth/bloc/auth_bloc.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/assessment_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/signup_screen.dart';
+import 'package:health_ed_flutter/features/navigation/views/screens/MainScreen.dart';
 
 import '../../models/request/LoginRequest.dart';
 import '../../models/request/OtpVerifyRequest.dart';
@@ -104,7 +107,20 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
             customSnackbar(state.message, ContentType.failure);
           }
           else if (state is AuthOtpVerifySuccess) {
-            customSnackbar(state.message, ContentType.success);
+            customSnackbar(state.otpVerifyResponse.message!, ContentType.success);
+            if(state.otpVerifyResponse.data!.currentStep==1&&state.otpVerifyResponse.data!.user!.fullName==null)
+              {
+                Get.off(() => SignupScreen());
+              }else if(state.otpVerifyResponse.data!.currentStep==1&&state.otpVerifyResponse.data!.user!.fullName!=null)
+              {
+                Get.off(() => AssessmentScreen());
+              }else if(state.otpVerifyResponse.data!.currentStep==2)
+              {
+                Get.off(() => AssessmentScreen());
+              }else
+              {
+                Get.off(() => MainScreen());
+              }
             // Get.to(() => LoginScreen());
           }
         },

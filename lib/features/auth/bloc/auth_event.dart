@@ -23,4 +23,4 @@ class AuthRegistrationRequested extends AuthEvent {
 
 
 
-class AuthUserDataRequested extends AuthEvent {}
+class AuthAssessmentQuestionDataRequested extends AuthEvent {}
