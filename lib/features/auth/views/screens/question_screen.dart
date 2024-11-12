@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import '../../../../core/tts/text_to_speech.dart';
 import '../../../../core/utils/custom_loader.dart';
 import '../../../../core/utils/custom_snackbar.dart';
 import '../../../../core/utils/custom_widgets.dart';
+import '../../../../core/utils/helper.dart';
 import '../../bloc/auth_bloc.dart';
 import '../../bloc/intro/slider_bloc.dart';
 import '../../models/response/AssessmentQuestionResponse.dart';
@@ -24,7 +26,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
   int currentQuestionIndex = 0;
   List<Questions> questionData = [];
   String languageCode = "en-US";
+  String selectedLanguage = 'English';
   final TextToSpeech _tts = TextToSpeech();
+
 
   @override
   void initState() {
@@ -50,8 +54,21 @@ class _QuestionScreenState extends State<QuestionScreen> {
           }
 
           var currentQuestion = questionData[currentQuestionIndex];
-          var questionText = currentQuestion.questionText?.hi ?? "No Question Text";
-          var options = currentQuestion.options ?? [];
+
+           String? questionText;
+           switch (selectedLanguage) {
+             case "English":
+               questionText = currentQuestion.questionText?.en;
+               break;
+             case "Hindi":
+               questionText = currentQuestion.questionText?.hi;
+               break;
+             case "Odia":
+               questionText = currentQuestion.questionText?.or;
+               break;
+             default:
+               questionText = "No Question Text";
+           }          var options = currentQuestion.options ?? [];
 
           return Scaffold(
             body: SafeArea(
@@ -97,13 +114,46 @@ class _QuestionScreenState extends State<QuestionScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 GestureDetector(
-                                  onTap: (){    _tts.speak(questionText, languageCode: languageCode);},
+                                  onTap: (){    _tts.speak(questionText!, languageCode: languageCode);},
                                   child:Image.asset('assets/icons/volume_up.png', width: 24, height: 24),),
                                 SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    questionText,
+                                    questionText!,
                                     style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
+                                SizedBox(width: 4),
+                                Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.6), // Background color
+                                    borderRadius: BorderRadius.circular(5), // Rounded corners
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1), // Shadow color
+                                        spreadRadius: 1,
+                                        blurRadius: 1,
+                                        offset: Offset(0, 2), // Shadow position
+                                      ),
+                                    ],
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () => _showCupertinoDropdown(context),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          selectedLanguage,
+                                          style: TextStyle(fontSize: 12, color: Colors.black),
+                                        ),
+                                        Icon(
+                                          CupertinoIcons.chevron_down,
+                                          color: Colors.black,
+                                          size: 14,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
@@ -112,10 +162,27 @@ class _QuestionScreenState extends State<QuestionScreen> {
                             Column(
                               children: List.generate(
                                 options.length,
-                                    (index) => buildOptionTile(
-                                  "${String.fromCharCode(65 + index)}. ${options[index].en ?? ''}",
-                                  index + 1,
-                                ),
+                                    (index) {
+                                  // Determine option text based on the selected language
+                                  String optionText;
+                                  switch (selectedLanguage) {
+                                    case "English":
+                                      optionText = options[index].en ?? '';
+                                      break;
+                                    case "Hindi":
+                                      optionText = options[index].hi ?? '';
+                                      break;
+                                    case "Odia":
+                                      optionText = options[index].or ?? '';
+                                      break;
+                                    default:
+                                      optionText = "No Option Text";
+                                  }
+                                  return buildOptionTile(
+                                    "${getRomanNumeral(index)}. $optionText",
+                                    index + 1,
+                                  );
+                                },
                               ),
                             ),
                             Spacer(),
@@ -160,12 +227,12 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                     child: ElevatedButton(
                                       onPressed: currentQuestionIndex < questionData.length - 1
                                           ? () {
-                                        setState(() {
+                                        setState((){
                                           currentQuestionIndex++;
                                           selectedOption = 0; // Reset selection for new question
                                         });
                                       }
-                                          : () {
+                                      : () {
                                         Get.dialog(CongratsPopup(level: '2'));
                                         Future.delayed(Duration(seconds: 3), () {
                                           Get.back();
@@ -209,6 +276,49 @@ class _QuestionScreenState extends State<QuestionScreen> {
           return CustomLoader();
         }
       },
+    );
+  }
+  void _showCupertinoDropdown(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: Text('Select Language'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: Text('Hindi'),
+            onPressed: () {
+              setState(() {
+                selectedLanguage = 'Hindi';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('English'),
+            onPressed: () {
+              setState(() {
+                selectedLanguage = 'English';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Odia'),
+            onPressed: () {
+              setState(() {
+                selectedLanguage = 'Odia';
+              });
+              Navigator.pop(context);
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: Text('Cancel'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
     );
   }
 

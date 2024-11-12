@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:health_ed_flutter/features/auth/models/response/OtpVerifyResponse.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
@@ -18,9 +19,23 @@ class LocalStorage {
 
     if (responseString != null) {
       final responseJson = jsonDecode(responseString);
-      return responseJson['token']; // Access the token field
+      return responseJson['token'];
     }
-
-    return null; // Return null if the response is not found
+    return null;
   }
+
+  static Future<Data?> getUserData() async {
+    final responseString = prefs.getString('userData');
+    if (responseString != null) {
+      // Parse JSON string to a Map
+      final Map<String, dynamic> jsonData = jsonDecode(responseString);
+
+      // Convert the Map to a Data model instance
+      final data = Data.fromJson(jsonData);
+
+      return data;
+    }
+    return null;
+  }
+
 }

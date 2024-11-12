@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/local/local_storage.dart';
+
 class ProfileState {
   final String name;
   final String phoneNumber;
@@ -32,13 +34,23 @@ class ProfileState {
   }
 }
 
+
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit()
-      : super(ProfileState(
-    name: 'John Medison',
-    phoneNumber: '+91 7056634258',
-    email: 'john@gmail.com',
-  ));
+  ProfileCubit() : super(ProfileState(name: '', phoneNumber: '', email: ''));
+
+  Future<void> loadUserData() async {
+    final userData = await LocalStorage.getUserData();
+
+    if (userData != null) {
+      emit(state.copyWith(
+        name: userData.user!.fullName ?? '',
+        phoneNumber: userData.user!.mobile ?? '',
+        email: userData.user!.email ?? '',
+        isPhoneValid: validatePhone(userData.user!.mobile ?? ''),
+        isEmailValid: validateEmail(userData.user!.email ?? ''),
+      ));
+    }
+  }
 
   void updateName(String name) => emit(state.copyWith(name: name));
   void updatePhoneNumber(String phone) =>
@@ -56,3 +68,4 @@ class ProfileCubit extends Cubit<ProfileState> {
     return email.contains('@');
   }
 }
+
