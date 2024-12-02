@@ -1,4 +1,4 @@
 class AppConfig {
   static String base_url =
-      "https://health-ed-tech-backend-uth4.onrender.com/api/v1/";
+      "http://13.233.156.158/api/v1/";
 }

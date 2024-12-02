@@ -27,6 +27,11 @@ final class AuthOtpVerifySuccess extends AuthState {
   AuthOtpVerifySuccess({required this.otpVerifyResponse});
 }
 
+final class AuthSubmitQuestionSuccess extends AuthState {
+  final SubmitQuestionResponse submitQuestionResponse;
+  AuthSubmitQuestionSuccess({required this.submitQuestionResponse});
+}
+
 final class AuthAssessmentQuestionSuccess extends AuthState {
   final AssessmentQuestionResponse assessmentQuestionResponse;
   AuthAssessmentQuestionSuccess({required this.assessmentQuestionResponse});

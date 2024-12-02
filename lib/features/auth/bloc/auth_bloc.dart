@@ -7,11 +7,13 @@ import 'package:health_ed_flutter/features/auth/models/request/LoginRequest.dart
 import 'package:health_ed_flutter/features/auth/models/request/OtpVerifyRequest.dart';
 import 'package:health_ed_flutter/features/auth/models/response/AssessmentQuestionResponse.dart';
 import 'package:health_ed_flutter/features/auth/models/response/OtpVerifyResponse.dart';
+import 'package:health_ed_flutter/features/auth/models/response/SubmitQuestionResponse.dart';
 import 'package:health_ed_flutter/features/auth/models/user.dart';
 import 'package:health_ed_flutter/features/auth/repository/auth_repository.dart';
 import 'package:meta/meta.dart';
 
 import '../models/request/RegistrationRequest.dart';
+import '../models/request/SubmitQuestionRequest.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -22,6 +24,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoginRequested>(authLogin);
     on<AuthOtpVerifyRequested>(verifyOtp);
     on<AuthRegistrationRequested>(authRegister);
+    on<SubmitQuestionRequested>(submitAnswer);
     on<AuthAssessmentQuestionDataRequested>(getAssessmentQuestion);
   }
   Future<void> authRegister(
@@ -66,8 +69,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final res = await authRepository.getAssessmentQuestion();
-      await LocalStorage.prefs.setString('userData', jsonEncode(res.data));
       emit(AuthAssessmentQuestionSuccess(assessmentQuestionResponse: res));
+    } catch (e) {
+      emit(AuthFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> submitAnswer(
+      SubmitQuestionRequested event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final res = await authRepository.submitAnswer(event.submitQuestionRequest);
+      emit(AuthSubmitQuestionSuccess(submitQuestionResponse:res));
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }

@@ -10,12 +10,28 @@ import 'package:health_ed_flutter/features/activity/views/VideoDescriptionScreen
 import 'package:health_ed_flutter/features/home/model/Activity.dart';
 import 'package:health_ed_flutter/features/home/views/screens/activity_Instructions_screen.dart';
 
+import '../../../../core/utils/custom_loader.dart';
 import '../../bloc/ActivityBlock.dart';
 import '../../bloc/QuizBloc.dart';
 import '../../bloc/QuizState.dart';
+import '../../bloc/home_bloc.dart';
+import '../../bloc/home_event.dart';
+import '../../bloc/home_state.dart';
 import '../../widgets/ActivityCardItem.dart';
+class AllActivityScreen extends StatefulWidget {
+  final String activityId;
+  const AllActivityScreen({Key? key, required this.activityId}) : super(key: key);
+  @override
+  _AllActivityScreenState createState() => _AllActivityScreenState();
+}
 
-class AllActivityScreen extends StatelessWidget {
+class _AllActivityScreenState extends State<AllActivityScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomeBloc>().add(GetAllActivityRequested(activityId: widget.activityId));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,36 +67,41 @@ class AllActivityScreen extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 10),
-                      BlocBuilder<ActivityCubit, List<Activity>>(
-                        builder: (context, activities) {
+                      BlocConsumer<HomeBloc, HomeState>(
+                        listener: (context, state) {
+
+                        },
+                        builder: (context, state) {
+                        if (state is AllActivityLoading) {
+                        return Center(child: CircularProgressIndicator());
+                        } else if (state is GetAllActivitySuccess) {
                           return Expanded( // Wrap with Expanded to resolve the issue
-                            child: ListView.builder(
-                              padding: EdgeInsets.symmetric(horizontal: 2, vertical: 8),
-                              itemCount: activities.length,
-                              itemBuilder: (context, index) {
-                                final activity = activities[index];
-                                return GestureDetector(
-                                  onTap:(){
-                                    if(index==0)
-                                      {
-                                        Get.to(()=>ActivityInstructionsScreen());
-                                      }else if(index==1)
-                                      {
+                              child: ListView.builder(
+                                padding: EdgeInsets.symmetric(horizontal: 2, vertical: 8),
+                                itemCount: state.resAllActivity.data!.activities!.length,
+                                itemBuilder: (context, index) {
+                                  final activity = state.resAllActivity.data!.activities![index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (index == 0) {
+                                        Get.to(() => ActivityInstructionsScreen(activityId:state.resAllActivity.data!.activities![index].sId!,));
+                                      } else if (index == 1) {
                                         Get.to(MatchScreen());
-                                      }else if(index==2)
-                                      {
+                                      } else if (index == 2) {
                                         Get.to(PictureDescriptionScreen());
-                                      }else if(index==3)
-                                      {
+                                      } else if (index == 3) {
                                         Get.to(VideoDescriptionScreen());
                                       }
-                                  },
-                                  child:ActivityCardItem(activity: activity),
-                                );
-
-                              },
-                            ),
-                          );
+                                    },
+                                    child: ActivityCardItem(activity: activity),
+                                  );
+                                },
+                              ),
+                            );
+                        }else if(state is GetAllActivityFailure) {
+                          return Center(child: Text(state.message));
+                        }
+                          return CustomLoader();
                         },
                       ),
                     ],

@@ -3,11 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import '../../../../core/utils/custom_loader.dart';
 import '../../../../core/utils/custom_widgets.dart';
 import '../../../activity/views/DragDropScreen.dart';
 import '../../bloc/ActivityInstructionsCubit.dart';
+import '../../bloc/home_bloc.dart';
+import '../../bloc/home_event.dart';
+import '../../bloc/home_state.dart';
 
 class ActivityInstructionsScreen extends StatefulWidget {
+  final String activityId;
+  const ActivityInstructionsScreen({Key? key, required this.activityId}) : super(key: key);
   @override
   _ActivityInstructionsScreenState createState() => _ActivityInstructionsScreenState();
 }
@@ -15,6 +21,11 @@ class ActivityInstructionsScreen extends StatefulWidget {
 class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen> {
   String selectedLanguage = 'English'; // Default language
 
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomeBloc>().add(GetActivityInstructionRequested(activityId: widget.activityId));
+  }
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -96,9 +107,29 @@ class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen>
                           ],
                         ),
                         SizedBox(height: 10),
+
                         Expanded(
                           child: SingleChildScrollView(
-                            child: Column(
+                            child:  BlocConsumer<HomeBloc, HomeState>(
+                              listener: (context, state) {
+
+                              },
+                              builder: (context, state) {
+                                if (state is ActivityInstructionLoading) {
+                                  return Center(child: CircularProgressIndicator());
+                                } else if (state is GetActivityInstructionSuccess) {
+                                  return Expanded(
+                                    child:Text("data")
+                                  );
+                                }else if(state is GetActivityInstructionFailure) {
+                                  return Center(child: Text(state.message));
+                                }
+                                return CustomLoader();
+                              },
+                            ),
+
+
+                       /*     Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
@@ -111,7 +142,7 @@ class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen>
                                 buildStep("Step 3: Submit Your Answer", "When you’re done, click the Submit button to move on...", context),
                                 buildStep("Step 4: Track Your Progress", "Once you’re finished, you’ll see how well you did...", context),
                               ],
-                            ),
+                            ),*/
                           ),
                         ),
                         CustomGradientButton(

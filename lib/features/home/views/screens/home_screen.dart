@@ -296,7 +296,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
   Widget _buildQuizCard(String day, bool completed) {
     return GestureDetector(
       onTap: () {
-        Get.to(()=>AllActivityScreen());
+
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 12),

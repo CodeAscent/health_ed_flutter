@@ -20,6 +20,12 @@ class AuthRegistrationRequested extends AuthEvent {
   AuthRegistrationRequested(this.registrationRequest);
 }
 
+class SubmitQuestionRequested extends AuthEvent {
+  final SubmitQuestionRequest submitQuestionRequest;
+
+  SubmitQuestionRequested({required this.submitQuestionRequest});
+}
+
 
 
 

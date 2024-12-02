@@ -2,12 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
+import 'package:health_ed_flutter/features/home/bloc/home_bloc.dart';
+import 'package:health_ed_flutter/features/home/bloc/home_state.dart';
 
-import '../../bloc/QuizBloc.dart';
-import '../../bloc/QuizState.dart';
+import '../../../../core/utils/custom_loader.dart';
+
+import '../../bloc/home_event.dart';
 import '../../widgets/QuizItem.dart';
 
-class AllQuizzesScreen extends StatelessWidget {
+class AllQuizzesScreen extends StatefulWidget {
+  @override
+  _QuizzeScreenState createState() => _QuizzeScreenState();
+}
+
+class _QuizzeScreenState extends State<AllQuizzesScreen> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomeBloc>().add(GetAllDayRequested());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,11 +59,13 @@ class AllQuizzesScreen extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 10),
-                      BlocBuilder<QuizBloc, QuizState>(
+                      BlocConsumer<HomeBloc, HomeState>(
+                        listener: (context, state) {
+                        },
                         builder: (context, state) {
-                          if (state is QuizLoading) {
+                          if (state is AllDaysLoading) {
                             return Center(child: CircularProgressIndicator());
-                          } else if (state is QuizLoaded) {
+                          } else if (state is GetAllDaySuccess) {
                             return Padding(
                               padding: const EdgeInsets.all(1.0),
                               child: GridView.builder(
@@ -59,19 +77,21 @@ class AllQuizzesScreen extends StatelessWidget {
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 30,
                                 ),
-                                itemCount: state.quizLockStates.length,
+                                itemCount: state.getAllDaysResponse.data!.days!.length,
                                 itemBuilder: (context, index) {
                                   return QuizItem(
-                                    day: 'Day ${index + 1}',
-                                    completed: false,
-                                    isLocked: state.quizLockStates[index],
+                                    dayId:state.getAllDaysResponse.data!.days![index].sId!,
+                                    day: 'Day ${state.getAllDaysResponse.data!.days![index].dayNumber}',
+                                    progress: state.getAllDaysResponse.data!.days![index].progress!.toDouble(),
+                                    isLocked: state.getAllDaysResponse.data!.days![index].locked!,
                                   );
                                 },
                               ),
                             );
-                          } else {
-                            return Center(child: Text('Something went wrong'));
+                          }else if(state is GetAllDayFailure) {
+                            return Center(child: Text(state.message));
                           }
+                            return CustomLoader();
                         },
                       ),
                     ],

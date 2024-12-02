@@ -115,6 +115,7 @@ class ProfileScreen extends StatelessWidget {
         SizedBox(height: 5),
         TextField(
           onChanged: onChanged,
+          enabled: false,
           controller: TextEditingController()..text = initialValue,
           decoration: InputDecoration(
             border: OutlineInputBorder(

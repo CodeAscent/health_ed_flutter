@@ -4,7 +4,9 @@ import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/language_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/question_screen.dart';
 import 'package:health_ed_flutter/features/auth/views/screens/signup_screen.dart';
+import 'package:health_ed_flutter/features/navigation/views/screens/MainScreen.dart';
 
 import 'onboarding_screen.dart';
 
@@ -24,9 +26,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 3));
-    String? token = await LocalStorage.getString('token');
+    String? token = await LocalStorage.getString('userData');
     if (token != null) {
-      Get.off(() =>  LoginScreen());
+      Get.off(() =>  MainScreen());
     } else {
       Get.off(() => LanguageScreen());
     }

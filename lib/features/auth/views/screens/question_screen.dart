@@ -12,7 +12,7 @@ import '../../../../core/utils/custom_snackbar.dart';
 import '../../../../core/utils/custom_widgets.dart';
 import '../../../../core/utils/helper.dart';
 import '../../bloc/auth_bloc.dart';
-import '../../bloc/intro/slider_bloc.dart';
+import '../../models/request/SubmitQuestionRequest.dart';
 import '../../models/response/AssessmentQuestionResponse.dart';
 import '../../widgets/congrats_popup.dart';
 
@@ -29,6 +29,22 @@ class _QuestionScreenState extends State<QuestionScreen> {
   String selectedLanguage = 'English';
   final TextToSpeech _tts = TextToSpeech();
 
+  bool areAllQuestionsAnswered() {
+    return questionData.every((question) => question.selectedOption != null);
+  }
+
+  SubmitQuestionRequest createSubmitRequest() {
+    List<Answers> answers = questionData.map((question) {
+      return Answers(
+        questionId: question.sId,
+        selectedOptionIndex: question.selectedOption,
+      );
+    }).toList();
+
+    return SubmitQuestionRequest(answers: answers);
+  }
+
+
 
   @override
   void initState() {
@@ -43,6 +59,13 @@ class _QuestionScreenState extends State<QuestionScreen> {
       listener: (context, state) {
         if (state is AuthFailure) {
           customSnackbar(state.message, ContentType.failure);
+        }
+        else if (state is AuthSubmitQuestionSuccess) {
+          Get.dialog(CongratsPopup(level: state.submitQuestionResponse.data!.onboardingScore.toString()));
+          Future.delayed(Duration(seconds: 4), () {
+            Get.back();
+            Get.to(MainScreen());
+          });
         }
       },
       builder: (context, state) {
@@ -233,11 +256,18 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                         });
                                       }
                                       : () {
-                                        Get.dialog(CongratsPopup(level: '2'));
-                                        Future.delayed(Duration(seconds: 3), () {
-                                          Get.back();
-                                          Get.to(MainScreen());
-                                        });
+                                        if (areAllQuestionsAnswered()) {
+                                          SubmitQuestionRequest request = createSubmitRequest();
+                                          context.read<AuthBloc>().add(SubmitQuestionRequested(submitQuestionRequest:request));
+                                          //
+                                          // Get.dialog(CongratsPopup(level: '2'));
+                                          // Future.delayed(Duration(seconds: 3), () {
+                                          //   Get.back();
+                                          //   Get.to(MainScreen());
+                                          // });
+                                        } else {
+                                          customSnackbar("Please answer all questions before proceeding.", ContentType.failure);
+                                        }
                                       },
                                       style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.symmetric(vertical: 15),
@@ -272,7 +302,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
               ),
             ),
           );
-        } else {
+        }
+        else {
           return CustomLoader();
         }
       },

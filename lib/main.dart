@@ -14,6 +14,7 @@ import 'package:health_ed_flutter/features/auth/views/screens/splash_screen.dart
 import 'package:health_ed_flutter/features/auth/views/screens/verify_otp_screen.dart';
 import 'package:health_ed_flutter/features/home/bloc/ActivityBlock.dart';
 import 'package:health_ed_flutter/features/home/bloc/ActivityInstructionsCubit.dart';
+import 'package:health_ed_flutter/features/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/features/home/views/screens/all_quizzes_screen.dart';
 import 'package:toastification/toastification.dart';
 
@@ -26,6 +27,7 @@ import 'features/home/bloc/QuizBloc.dart';
 import 'features/home/bloc/QuizEvent.dart';
 import 'features/home/bloc/VideoScreenBloc.dart';
 import 'features/home/bloc/dashboard_bloc.dart';
+import 'features/home/repository/home_repository.dart';
 import 'features/home/views/screens/activity_Instructions_screen.dart';
 import 'features/home/views/screens/activity_video_understanding_screen.dart';
 import 'features/home/views/screens/all_activity_screen.dart';
@@ -51,6 +53,7 @@ void main() async {
       BlocProvider(create: (_) => ActivityInstructionsCubit()),
       BlocProvider(create: (_) => ScreenBloc()),
       BlocProvider(create: (_) => DragBloc()),
+      BlocProvider(create: (_) => HomeBloc(HomeRepository())),
       BlocProvider(create: (context) => QuizBloc()..add(LoadQuizData()),
       ),
 

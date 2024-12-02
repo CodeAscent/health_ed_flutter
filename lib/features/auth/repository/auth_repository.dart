@@ -4,8 +4,10 @@ import 'package:health_ed_flutter/core/services/api_urls.dart';
 import 'package:health_ed_flutter/core/services/http_wrapper.dart';
 import 'package:health_ed_flutter/features/auth/models/request/LoginRequest.dart';
 import 'package:health_ed_flutter/features/auth/models/request/OtpVerifyRequest.dart';
+import 'package:health_ed_flutter/features/auth/models/request/SubmitQuestionRequest.dart';
 import 'package:health_ed_flutter/features/auth/models/response/AssessmentQuestionResponse.dart';
 import 'package:health_ed_flutter/features/auth/models/response/OtpVerifyResponse.dart';
+import 'package:health_ed_flutter/features/auth/models/response/SubmitQuestionResponse.dart';
 import 'package:logger/logger.dart';
 
 import '../models/request/RegistrationRequest.dart';
@@ -72,6 +74,24 @@ class AuthRepository {
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return RegisterResponse.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SubmitQuestionResponse> submitAnswer(
+      SubmitQuestionRequest submitQuestionRequest) async {
+    try {
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.submit_onboarding_questions,
+        submitQuestionRequest.toJson(),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return SubmitQuestionResponse.fromJson(data);
       } else {
         throw data['message'];
       }
