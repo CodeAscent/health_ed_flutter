@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import '../../../../core/utils/custom_loader.dart';
@@ -10,29 +11,32 @@ import '../../bloc/ActivityInstructionsCubit.dart';
 import '../../bloc/home_bloc.dart';
 import '../../bloc/home_event.dart';
 import '../../bloc/home_state.dart';
+import '../../repository/home_repository.dart';
 
-class ActivityInstructionsScreen extends StatefulWidget {
+class ActivityInstructionsScreen extends StatelessWidget {
   final String activityId;
+
   const ActivityInstructionsScreen({Key? key, required this.activityId}) : super(key: key);
-  @override
-  _ActivityInstructionsScreenState createState() => _ActivityInstructionsScreenState();
-}
 
-class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen> {
-  String selectedLanguage = 'English'; // Default language
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<HomeBloc>().add(GetActivityInstructionRequested(activityId: widget.activityId));
-  }
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ActivityInstructionsCubit(),
-      child: SafeArea(
+      create: (_) => HomeBloc(HomeRepository())..add(GetActivityInstructionRequested(activityId: activityId)),
+      child: ActivityInstructionContent(activityId: activityId),
+    );
+  }
+}
+
+class ActivityInstructionContent extends StatelessWidget {
+  final String activityId;
+
+  const ActivityInstructionContent({Key? key, required this.activityId}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return
+      SafeArea(
         child: Scaffold(
-          body:Container(
+          body: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
@@ -49,7 +53,6 @@ class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             AppBackButton(),
                             SizedBox(width: 8),
@@ -57,47 +60,17 @@ class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen>
                               child: Text(
                                 'Activity Instructions',
                                 style: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                   color: Colors.black,
                                 ),
                               ),
                             ),
-                            Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.6), // Background color
-                                borderRadius: BorderRadius.circular(5), // Rounded corners
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1), // Shadow color
-                                    spreadRadius: 1,
-                                    blurRadius: 1,
-                                    offset: Offset(0, 2), // Shadow position
-                                  ),
-                                ],
-                              ),
-                              child: GestureDetector(
-                                onTap: () => _showCupertinoDropdown(context),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      selectedLanguage,
-                                      style: TextStyle(fontSize: 12, color: Colors.black),
-                                    ),
-                                    Icon(
-                                      CupertinoIcons.chevron_down,
-                                      color: Colors.black,
-                                      size: 14,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            _buildLanguageDropdown(context),
                             SizedBox(width: 8),
                             GestureDetector(
                               onTap: () {
-                                // Add sound play functionality here
+                                // Add sound play functionality
                               },
                               child: Image.asset(
                                 'assets/icons/volume_up1.png',
@@ -107,48 +80,34 @@ class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen>
                           ],
                         ),
                         SizedBox(height: 10),
-
                         Expanded(
-                          child: SingleChildScrollView(
-                            child:  BlocConsumer<HomeBloc, HomeState>(
-                              listener: (context, state) {
-
-                              },
-                              builder: (context, state) {
-                                if (state is ActivityInstructionLoading) {
-                                  return Center(child: CircularProgressIndicator());
-                                } else if (state is GetActivityInstructionSuccess) {
-                                  return Expanded(
-                                    child:Text("data")
-                                  );
-                                }else if(state is GetActivityInstructionFailure) {
-                                  return Center(child: Text(state.message));
-                                }
-                                return CustomLoader();
-                              },
-                            ),
-
-
-                       /*     Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Get ready for an exciting challenge! In this activity, you’ll have fun while learning something new...",
-                                  style: TextStyle(fontSize: 14, color: ColorPallete.greyColor),
-                                ),
-                                SizedBox(height: 8),
-                                buildStep("Step 1: Understand the Task", "Read each question or prompt carefully...", context),
-                                buildStep("Step 2: Complete the Activity", "Use the provided tools—whether it’s dragging items...", context),
-                                buildStep("Step 3: Submit Your Answer", "When you’re done, click the Submit button to move on...", context),
-                                buildStep("Step 4: Track Your Progress", "Once you’re finished, you’ll see how well you did...", context),
-                              ],
-                            ),*/
+                          child: BlocBuilder<HomeBloc, HomeState>(
+                            builder: (context, state) {
+                              if (state is ActivityInstructionLoading) {
+                                return Center(child: CircularProgressIndicator());
+                              } else if (state is GetActivityInstructionSuccess) {
+                                return SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      HtmlWidget(
+                                        state.resActivityInstructions.data!.instructions!.hi!,
+                                        textStyle: TextStyle(fontSize: 14, color: ColorPallete.greyColor),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else if (state is GetActivityInstructionFailure) {
+                                return Center(child: Text(state.message));
+                              }
+                              return CustomLoader();
+                            },
                           ),
                         ),
                         CustomGradientButton(
                           label: 'Done',
                           onTap: () {
-                            Get.to(DragDropScreen());
+                            Get.to(() => DragDropScreen());
                           },
                         ),
                       ],
@@ -159,7 +118,40 @@ class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen>
               ),
             ),
           ),
-        )
+        ),
+      );
+  }
+
+  Widget _buildLanguageDropdown(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showCupertinoDropdown(context),
+      child: Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Text(
+              "selectedLanguage",
+              style: TextStyle(fontSize: 12, color: Colors.black),
+            ),
+            Icon(
+              CupertinoIcons.chevron_down,
+              color: Colors.black,
+              size: 14,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -170,33 +162,9 @@ class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen>
       builder: (BuildContext context) => CupertinoActionSheet(
         title: Text('Select Language'),
         actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: Text('Hindi'),
-            onPressed: () {
-              setState(() {
-                selectedLanguage = 'Hindi';
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('English'),
-            onPressed: () {
-              setState(() {
-                selectedLanguage = 'English';
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Odia'),
-            onPressed: () {
-              setState(() {
-                selectedLanguage = 'Odia';
-              });
-              Navigator.pop(context);
-            },
-          ),
+          _buildLanguageOption('Hindi'),
+          _buildLanguageOption('English'),
+          _buildLanguageOption('Odia'),
         ],
         cancelButton: CupertinoActionSheetAction(
           child: Text('Cancel'),
@@ -208,25 +176,15 @@ class _ActivityInstructionsScreenState extends State<ActivityInstructionsScreen>
     );
   }
 
-  Widget buildStep(String title, String description, BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-            color: Colors.black,
-          ),
-        ),
-        Text(
-          description,
-          style: TextStyle(fontSize: 14, color: ColorPallete.greyColor),
-        ),
-        SizedBox(height: 8),
-      ],
+  CupertinoActionSheetAction _buildLanguageOption(String language) {
+    return CupertinoActionSheetAction(
+      child: Text(language),
+      onPressed: () {
+        // setState(() {
+        //   selectedLanguage = language;
+        // });
+        // Navigator.pop(context);
+      },
     );
   }
 }
-

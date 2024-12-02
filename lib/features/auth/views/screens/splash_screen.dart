@@ -43,15 +43,15 @@ class _SplashScreenState extends State<SplashScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              ColorPallete.ceruleanBlue, // Cerulean Blue
-              ColorPallete.navyBlue, // Navy Blue
+              ColorPallete.ceruleanBlue,
+              ColorPallete.navyBlue,
             ],
           ),
         ),
         child: Center(
           child: Image.asset(
-            'assets/icons/icon.png', // Replace with your image path
-            width: 150, // Adjust size as needed
+            'assets/icons/icon.png',
+            width: 150,
             height: 150,
           ),
         ),

@@ -53,7 +53,6 @@ void main() async {
       BlocProvider(create: (_) => ActivityInstructionsCubit()),
       BlocProvider(create: (_) => ScreenBloc()),
       BlocProvider(create: (_) => DragBloc()),
-      BlocProvider(create: (_) => HomeBloc(HomeRepository())),
       BlocProvider(create: (context) => QuizBloc()..add(LoadQuizData()),
       ),
 

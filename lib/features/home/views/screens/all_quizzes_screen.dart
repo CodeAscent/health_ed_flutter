@@ -1,29 +1,24 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/features/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/features/home/bloc/home_state.dart';
+import 'package:health_ed_flutter/features/home/bloc/home_event.dart';
+import 'package:health_ed_flutter/core/utils/custom_loader.dart';
+import 'package:health_ed_flutter/features/home/repository/home_repository.dart';
+import 'package:health_ed_flutter/features/home/widgets/QuizItem.dart';
 
-import '../../../../core/utils/custom_loader.dart';
-
-import '../../bloc/home_event.dart';
-import '../../widgets/QuizItem.dart';
-
-class AllQuizzesScreen extends StatefulWidget {
+class AllQuizzesScreen extends StatelessWidget {
   @override
-  _QuizzeScreenState createState() => _QuizzeScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => HomeBloc(HomeRepository())..add(GetAllDayRequested()),
+      child: AllQuizzesContent(),
+    );
+  }
 }
 
-class _QuizzeScreenState extends State<AllQuizzesScreen> {
-
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<HomeBloc>().add(GetAllDayRequested());
-  }
-
+class AllQuizzesContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +45,7 @@ class _QuizzeScreenState extends State<AllQuizzesScreen> {
                           SizedBox(width: 8),
                           Text(
                             'All Quizzes',
-                              style: TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
@@ -59,9 +54,7 @@ class _QuizzeScreenState extends State<AllQuizzesScreen> {
                         ],
                       ),
                       SizedBox(height: 10),
-                      BlocConsumer<HomeBloc, HomeState>(
-                        listener: (context, state) {
-                        },
+                      BlocBuilder<HomeBloc, HomeState>(
                         builder: (context, state) {
                           if (state is AllDaysLoading) {
                             return Center(child: CircularProgressIndicator());
@@ -80,7 +73,7 @@ class _QuizzeScreenState extends State<AllQuizzesScreen> {
                                 itemCount: state.getAllDaysResponse.data!.days!.length,
                                 itemBuilder: (context, index) {
                                   return QuizItem(
-                                    dayId:state.getAllDaysResponse.data!.days![index].sId!,
+                                    dayId: state.getAllDaysResponse.data!.days![index].sId!,
                                     day: 'Day ${state.getAllDaysResponse.data!.days![index].dayNumber}',
                                     progress: state.getAllDaysResponse.data!.days![index].progress!.toDouble(),
                                     isLocked: state.getAllDaysResponse.data!.days![index].locked!,
@@ -88,10 +81,10 @@ class _QuizzeScreenState extends State<AllQuizzesScreen> {
                                 },
                               ),
                             );
-                          }else if(state is GetAllDayFailure) {
+                          } else if (state is GetAllDayFailure) {
                             return Center(child: Text(state.message));
                           }
-                            return CustomLoader();
+                          return CustomLoader();
                         },
                       ),
                     ],

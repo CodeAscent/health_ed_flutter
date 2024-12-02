@@ -48,6 +48,7 @@ dependencies:
   confetti: ^0.8.0
   fl_chart: ^0.69.0
   flutter_tts: ^4.1.0
+  flutter_widget_from_html: ^0.15.3
 
 dev_dependencies:
   flutter_test:
