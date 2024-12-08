@@ -8,4 +8,5 @@ class ApiUrls {
   static String all_days = 'days/all-days';
   static String activity_instruction = 'days/activity-instructions';
   static String all_activity = 'days/all-activities';
+  static String all_question = 'question/get-by-activity';
 }

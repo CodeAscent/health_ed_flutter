@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:health_ed_flutter/features/home/model/response/GetAllDaysResponse.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllActivity.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResActivityInstructions.dart';
+import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
 
 @immutable
 abstract class HomeState {}
@@ -16,6 +17,8 @@ class AllDaysLoading extends HomeState {}
 class AllActivityLoading extends HomeState {}
 
 class ActivityInstructionLoading extends HomeState {}
+
+class ActivityQuestionLoading extends HomeState {}
 
 class GetAllDayFailure extends HomeState {
   final String message;
@@ -45,4 +48,14 @@ class GetAllActivityFailure extends HomeState {
 class GetAllActivitySuccess extends HomeState {
   final ResAllActivity resAllActivity;
   GetAllActivitySuccess({required this.resAllActivity});
+}
+
+class GetAllQuestionFailure extends HomeState {
+  final String message;
+  GetAllQuestionFailure({required this.message});
+}
+
+class GetAllQuestionSuccess extends HomeState {
+  final ResAllQuestion resAllQuestion;
+  GetAllQuestionSuccess({required this.resAllQuestion});
 }

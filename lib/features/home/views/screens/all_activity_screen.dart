@@ -15,23 +15,22 @@ import 'activity_Instructions_screen.dart';
 
 class AllActivityScreen extends StatelessWidget {
   final String activityId;
-
-  const AllActivityScreen({Key? key, required this.activityId}) : super(key: key);
+  final String dayName;
+  const AllActivityScreen({Key? key, required this.activityId, required this.dayName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => HomeBloc(HomeRepository())..add(GetAllActivityRequested(activityId: activityId)),
-      child: AllActivityContent(activityId: activityId),
+      child: AllActivityContent(activityId: activityId,dayName:dayName),
     );
   }
 }
 
 class AllActivityContent extends StatelessWidget {
   final String activityId;
-
-  const AllActivityContent({Key? key, required this.activityId}) : super(key: key);
-
+  final String dayName;
+  const AllActivityContent({Key? key, required this.activityId, required this.dayName}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +56,7 @@ class AllActivityContent extends StatelessWidget {
                           AppBackButton(),
                           SizedBox(width: 8),
                           Text(
-                            'Day 1',
+                             dayName,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,

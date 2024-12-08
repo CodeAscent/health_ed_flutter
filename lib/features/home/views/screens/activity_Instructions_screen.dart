@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/features/home/views/screens/activity_video_understanding_screen.dart';
 import '../../../../core/utils/custom_loader.dart';
 import '../../../../core/utils/custom_widgets.dart';
-import '../../../activity/views/DragDropScreen.dart';
-import '../../bloc/ActivityInstructionsCubit.dart';
 import '../../bloc/home_bloc.dart';
 import '../../bloc/home_event.dart';
 import '../../bloc/home_state.dart';
@@ -58,7 +57,7 @@ class ActivityInstructionContent extends StatelessWidget {
                             SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Activity Instructions',
+                                'Instructions',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -107,7 +106,7 @@ class ActivityInstructionContent extends StatelessWidget {
                         CustomGradientButton(
                           label: 'Done',
                           onTap: () {
-                            Get.to(() => DragDropScreen());
+                            Get.to(() => ActivityVideoUnderstandingScreen(activityId:activityId,));
                           },
                         ),
                       ],

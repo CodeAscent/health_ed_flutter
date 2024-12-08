@@ -25,7 +25,7 @@ class QuizItem extends StatelessWidget {
       builder: (context, constraints) {
         return GestureDetector(
           onTap:(){
-            Get.to(()=>AllActivityScreen(activityId:dayId));
+            Get.to(()=>AllActivityScreen(activityId:dayId,dayName:day,));
           },
           child:Stack(
             clipBehavior: Clip.none,

@@ -14,3 +14,8 @@ class GetAllActivityRequested extends HomeEvent {
   final String activityId;
   GetAllActivityRequested({required this.activityId});
 }
+
+class GetAllQuestionRequested extends HomeEvent {
+  final String activityId;
+  GetAllQuestionRequested({required this.activityId});
+}

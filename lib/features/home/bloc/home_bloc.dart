@@ -10,6 +10,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<GetAllDayRequested>(_getAllDays);
     on<GetActivityInstructionRequested>(_getActivityInstruction);
     on<GetAllActivityRequested>(_getAllActivity);
+    on<GetAllQuestionRequested>(_getAllQuestion);
   }
 
   Future<void> _getAllDays(
@@ -44,6 +45,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(GetAllActivitySuccess(resAllActivity: response));
     } catch (error) {
       emit(GetAllActivityFailure(message: error.toString()));
+    }
+  }
+
+  Future<void> _getAllQuestion(
+      GetAllQuestionRequested event, Emitter<HomeState> emit) async {
+    emit(ActivityQuestionLoading());
+    try {
+      final response =
+      await homeRepository.getAllQuestion(event.activityId);
+      emit(GetAllQuestionSuccess(resAllQuestion: response));
+    } catch (error) {
+      emit(GetAllQuestionFailure(message: error.toString()));
     }
   }
 }
