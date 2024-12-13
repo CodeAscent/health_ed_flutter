@@ -5,8 +5,11 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/features/home/views/screens/activity_video_understanding_screen.dart';
+import 'package:html/parser.dart';
+import '../../../../core/tts/text_to_speech.dart';
 import '../../../../core/utils/custom_loader.dart';
 import '../../../../core/utils/custom_widgets.dart';
+import '../../../../core/utils/helper.dart';
 import '../../bloc/home_bloc.dart';
 import '../../bloc/home_event.dart';
 import '../../bloc/home_state.dart';
@@ -21,15 +24,40 @@ class ActivityInstructionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => HomeBloc(HomeRepository())..add(GetActivityInstructionRequested(activityId: activityId)),
-      child: ActivityInstructionContent(activityId: activityId),
+      child: ActivityVideoUnderstandingScreenContent(activityId: activityId,),
     );
   }
 }
 
-class ActivityInstructionContent extends StatelessWidget {
+
+class ActivityVideoUnderstandingScreenContent extends StatefulWidget {
   final String activityId;
 
-  const ActivityInstructionContent({Key? key, required this.activityId}) : super(key: key);
+  const ActivityVideoUnderstandingScreenContent({Key? key, required this.activityId}) : super(key: key);
+
+  @override
+  ActivityInstructionContent createState() => ActivityInstructionContent();
+}
+
+
+
+
+class ActivityInstructionContent
+    extends State<ActivityVideoUnderstandingScreenContent> {
+  String languageCode = "en-US";
+  String selectedLanguage = 'English';
+  final TextToSpeech _tts = TextToSpeech();
+  @override
+  void dispose() {
+    _tts.stop();  // Stop TTS when the screen is closed
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _tts.stop();  // Stop TTS when the screen is paused
+    super.deactivate();
+  }
   @override
   Widget build(BuildContext context) {
     return
@@ -51,46 +79,58 @@ class ActivityInstructionContent extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            AppBackButton(),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Instructions',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            _buildLanguageDropdown(context),
-                            SizedBox(width: 8),
-                            GestureDetector(
-                              onTap: () {
-                                // Add sound play functionality
-                              },
-                              child: Image.asset(
-                                'assets/icons/volume_up1.png',
-                                width: 40,
-                              ),
-                            ),
-                          ],
-                        ),
                         SizedBox(height: 10),
                         Expanded(
-                          child: BlocBuilder<HomeBloc, HomeState>(
+                          child:
+                          BlocBuilder<HomeBloc, HomeState>(
                             builder: (context, state) {
                               if (state is ActivityInstructionLoading) {
                                 return Center(child: CircularProgressIndicator());
                               } else if (state is GetActivityInstructionSuccess) {
+                                String instructionHtml;
+                                switch (getLanguageCode(selectedLanguage,languageCode)) {
+                                  case 'hi':
+                                    instructionHtml = state.resActivityInstructions.data!.instructions!.hi ?? "Instructions not available";
+                                    break;
+                                  case 'or':
+                                    instructionHtml = state.resActivityInstructions.data!.instructions!.or ?? "Instructions not available";
+                                    break;
+                                  default:
+                                    instructionHtml = state.resActivityInstructions.data!.instructions!.en ?? "Instructions not available";
+                                }
                                 return SingleChildScrollView(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
+                                      Row(
+                                        children: [
+                                          AppBackButton(),
+                                          SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              'Instructions',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                          _buildLanguageDropdown(context),
+                                          SizedBox(width: 8),
+                                          GestureDetector(
+                                            onTap: () {
+                                              _tts.speak(parse(instructionHtml).documentElement!.text, languageCode: languageCode);
+                                            },
+                                            child: Image.asset(
+                                              'assets/icons/volume_up1.png',
+                                              width: 40,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                       HtmlWidget(
-                                        state.resActivityInstructions.data!.instructions!.hi!,
+                                        instructionHtml,
                                         textStyle: TextStyle(fontSize: 14, color: ColorPallete.greyColor),
                                       ),
                                     ],
@@ -106,7 +146,8 @@ class ActivityInstructionContent extends StatelessWidget {
                         CustomGradientButton(
                           label: 'Done',
                           onTap: () {
-                            Get.to(() => ActivityVideoUnderstandingScreen(activityId:activityId,));
+                            _tts.stop();
+                            Get.to(() => ActivityVideoUnderstandingScreen(activityId: widget.activityId));
                           },
                         ),
                       ],
@@ -141,7 +182,7 @@ class ActivityInstructionContent extends StatelessWidget {
         child: Row(
           children: [
             Text(
-              "selectedLanguage",
+              selectedLanguage,
               style: TextStyle(fontSize: 12, color: Colors.black),
             ),
             Icon(
@@ -179,11 +220,13 @@ class ActivityInstructionContent extends StatelessWidget {
     return CupertinoActionSheetAction(
       child: Text(language),
       onPressed: () {
-        // setState(() {
-        //   selectedLanguage = language;
-        // });
-        // Navigator.pop(context);
+        setState(() {
+          selectedLanguage = language;
+        });
+        Navigator.pop(context); // Close the dropdown
       },
     );
   }
+
+
 }

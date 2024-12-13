@@ -44,7 +44,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
     return SubmitQuestionRequest(answers: answers);
   }
 
-
+@override
+  void dispose() {
+  _tts.stop();
+    super.dispose();
+  }
 
   @override
   void initState() {

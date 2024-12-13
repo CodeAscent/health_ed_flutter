@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 
+import '../../../../core/tts/text_to_speech.dart';
 import '../../../../core/utils/custom_loader.dart';
 import '../../../../core/utils/custom_widgets.dart';
+import '../../../../core/utils/helper.dart';
 import '../../../activity/views/DragDropScreen.dart';
+import '../../../activity/widgets/MediaSlider.dart';
 import '../../bloc/VideoScreenBloc.dart';
 import '../../bloc/VideoScreenEvent.dart';
 import '../../bloc/home_bloc.dart';
@@ -39,7 +42,9 @@ class ActivityVideoUnderstandingScreenContent extends StatefulWidget {
 
 class _ActivityVideoUnderstandingScreenContentState
     extends State<ActivityVideoUnderstandingScreenContent> {
+  String languageCode = "en-US";
   String selectedLanguage = 'English';
+  final TextToSpeech _tts = TextToSpeech();
   bool isDragging = false;
   // Track the matched shapes
   Map<String, bool> matchedShapes = {
@@ -107,56 +112,67 @@ class _ActivityVideoUnderstandingScreenContentState
                         ],
                       ),
                       SizedBox(height: 10),
-                      // Second Row: Speaker Icon and "Tiger" text
                       Expanded(
                         child: BlocBuilder<HomeBloc, HomeState>(
                           builder: (context, state) {
                             if (state is ActivityQuestionLoading) {
                               return Center(child: CircularProgressIndicator());
                             } else if (state is GetAllQuestionSuccess) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          // Add sound play functionality here
-                                        },
-                                        child: Image.asset(
-                                          'assets/icons/volume_up1.png',
-                                          width: 40,
-                                        ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          'Tiger',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.black,
+                              if(state.resAllQuestion.data!.understanding!.length>0) {
+                                String instructionText;
+                                switch (getLanguageCode(
+                                    selectedLanguage, languageCode)) {
+                                  case 'hi':
+                                    instructionText = state.resAllQuestion.data!
+                                        .understanding!.first.title!.hi! ??
+                                        "Instructions not available";
+                                    break;
+                                  case 'or':
+                                    instructionText = state.resAllQuestion.data!
+                                        .understanding!.first.title!.or! ??
+                                        "Instructions not available";
+                                    break;
+                                  default:
+                                    instructionText = state.resAllQuestion.data!
+                                        .understanding!.first.title!.en! ??
+                                        "Instructions not available";
+                                }
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            _tts.speak(instructionText,
+                                                languageCode: languageCode);
+                                          },
+                                          child: Image.asset(
+                                            'assets/icons/volume_up1.png',
+                                            width: 40,
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 20),
-                                  _buildDraggable("Triangle"),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      // Drag Targets
-                                      _buildDragTarget("Circle"),
-                                      _buildDragTarget("Star"),
-                                      _buildDragTarget("Triangle"),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  SizedBox(height: 5),
-                                  _buildAcknowledgementButton(context),
-                                ],
-                              );
+                                        SizedBox(width: 20),
+                                        Expanded(
+                                          child: Text(
+                                            instructionText,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10,),
+                                    MediaSlider(
+                                      mediaList: state.resAllQuestion.data!
+                                          .understanding!.first.media!,),
+                                    SizedBox(height: 20,),
+                                    _buildAcknowledgementButton(context),
+                                  ],
+                                );
+                              }
                             } else if (state is GetAllQuestionFailure) {
                               return Center(child: Text(state.message));
                             }
@@ -164,6 +180,9 @@ class _ActivityVideoUnderstandingScreenContentState
                           },
                         ),
                       ),
+                      // Second Row: Speaker Icon and "Tiger" text
+                      // MediaSlider()
+                      // _buildSlider()
                     ],
                   ),
                 ),
@@ -219,44 +238,40 @@ class _ActivityVideoUnderstandingScreenContentState
     );
   }
 
-  Widget _buildSlider() {
-    int currentIndex = 0;
+  Widget _buildDragDrop(){
     return Expanded(
-        child: Column(
-      children: [
-        PageView.builder(
-          onPageChanged: (index) {
-            context.read<ScreenBloc>().add(ChangeSlideEvent(index));
-          },
-          itemCount: 3, // Number of slides
-          itemBuilder: (context, index) {
-            return Image.asset('assets/bg/videoactivity.png');},
-        ),
-        SizedBox(height: 5),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) {
-            return AnimatedContainer(
-              duration: Duration(milliseconds: 200),
-              margin: EdgeInsets.symmetric(horizontal: 4.0),
-              width: currentIndex == index
-                  ? 12.0
-                  : 8.0, // Increase size for current index
-              height: currentIndex == index
-                  ? 12.0
-                  : 8.0, // Increase size for current index
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: currentIndex == index
-                    ? ColorPallete.secondary
-                    : Colors.grey,
-              ),
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          if (state is ActivityQuestionLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is GetAllQuestionSuccess) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20),
+                _buildDraggable("Triangle"),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Drag Targets
+                    _buildDragTarget("Circle"),
+                    _buildDragTarget("Star"),
+                    _buildDragTarget("Triangle"),
+                  ],
+                ),
+                Spacer(),
+              ],
             );
-          }),
-        )
-      ],
-    ));
+          } else if (state is GetAllQuestionFailure) {
+            return Center(child: Text(state.message));
+          }
+          return CustomLoader();
+        },
+      ),
+    );
   }
+
 
   Widget _buildAcknowledgementButton(BuildContext context) {
     return Padding(
