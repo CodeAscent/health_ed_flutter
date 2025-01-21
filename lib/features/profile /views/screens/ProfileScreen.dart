@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/language_screen.dart';
+import 'package:health_ed_flutter/features/auth/views/screens/login_screen.dart';
 
+import '../../../../core/local/local_storage.dart';
 import '../../../../core/utils/custom_widgets.dart';
 import '../../bloc/profile_cubit.dart';
 
@@ -9,7 +14,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>ProfileCubit()..loadUserData(),
+      create: (_) => ProfileCubit()..loadUserData(),
       child: SafeArea(
         child: BlocBuilder<ProfileCubit, ProfileState>(builder: (context, state) {
           return Scaffold(
@@ -29,17 +34,38 @@ class ProfileScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Profile',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Text(
+      'Profile',
+      style: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    TextButton(
+      onPressed: () async {
+        await LocalStorage.removeUserData();
+        Get.offAll(() => LanguageScreen());
+      },
+      style: TextButton.styleFrom(
+        backgroundColor: Colors.white,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: Text(
+        'Sign Out',
+        style: TextStyle(
+          color: ColorPallete.primary,
+        ),
+      ),
+    ),
+  ],
+),
+                           SizedBox(height: 20),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Stack(
@@ -143,4 +169,3 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
-

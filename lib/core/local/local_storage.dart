@@ -9,6 +9,9 @@ class LocalStorage {
   static Future initialize() async {
     prefs = await SharedPreferences.getInstance();
   }
+  static Future<void> removeUserData() async {
+    await prefs.remove('userData');
+  }
 
   static Future getString(key) async {
     return await prefs.getString(key);

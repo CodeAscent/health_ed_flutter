@@ -10,6 +10,13 @@ import '../../../../core/tts/text_to_speech.dart';
 import '../../../../core/utils/custom_loader.dart';
 import '../../../../core/utils/custom_widgets.dart';
 import '../../../../core/utils/helper.dart';
+import '../../../activity/views/DragDropScreen.dart';
+import '../../../activity/views/LearingVideoDescriptionScreen.dart';
+import '../../../activity/views/MatchScreen.dart';
+import '../../../activity/views/PictureDescriptionScreen.dart';
+import '../../../activity/views/PictureSequencings.dart';
+import '../../../activity/views/RevealPictureDescriptionScreen.dart';
+import '../../../activity/views/VideoDescriptionScreen.dart';
 import '../../bloc/home_bloc.dart';
 import '../../bloc/home_event.dart';
 import '../../bloc/home_state.dart';
@@ -23,8 +30,9 @@ class ActivityInstructionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HomeBloc(HomeRepository())..add(GetActivityInstructionRequested(activityId: activityId)),
-      child: ActivityVideoUnderstandingScreenContent(activityId: activityId,),
+    create: (_) => HomeBloc(HomeRepository())
+      ..add(GetAllQuestionRequested(activityId: activityId)),
+    child: ActivityVideoUnderstandingScreenContent(activityId: activityId,),
     );
   }
 }
@@ -55,7 +63,7 @@ class ActivityInstructionContent
 
   @override
   void deactivate() {
-    _tts.stop();  // Stop TTS when the screen is paused
+    _tts.stop();
     super.deactivate();
   }
   @override
@@ -81,23 +89,23 @@ class ActivityInstructionContent
                       children: [
                         SizedBox(height: 10),
                         Expanded(
-                          child:
-                          BlocBuilder<HomeBloc, HomeState>(
+                          child: BlocBuilder<HomeBloc, HomeState>(
                             builder: (context, state) {
-                              if (state is ActivityInstructionLoading) {
+                              if (state is ActivityQuestionLoading) {
                                 return Center(child: CircularProgressIndicator());
-                              } else if (state is GetActivityInstructionSuccess) {
+                              } else if (state is GetAllQuestionSuccess) {
                                 String instructionHtml;
-                                switch (getLanguageCode(selectedLanguage,languageCode)) {
+                                switch (getLanguageCode(selectedLanguage, languageCode)) {
                                   case 'hi':
-                                    instructionHtml = state.resActivityInstructions.data!.instructions!.hi ?? "Instructions not available";
+                                    instructionHtml = state.resAllQuestion.data!.activity!.activityInstructions!.hi ?? "Instructions not available";
                                     break;
                                   case 'or':
-                                    instructionHtml = state.resActivityInstructions.data!.instructions!.or ?? "Instructions not available";
+                                    instructionHtml = state.resAllQuestion.data!.activity!.activityInstructions!.or ?? "Instructions not available";
                                     break;
                                   default:
-                                    instructionHtml = state.resActivityInstructions.data!.instructions!.en ?? "Instructions not available";
+                                    instructionHtml = state.resAllQuestion.data!.activity!.activityInstructions!.en ?? "Instructions not available";
                                 }
+
                                 return SingleChildScrollView(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,31 +137,59 @@ class ActivityInstructionContent
                                           ),
                                         ],
                                       ),
-                                      HtmlWidget(
-                                        instructionHtml,
-                                        textStyle: TextStyle(fontSize: 14, color: ColorPallete.greyColor),
+                                      // Make the HTML content scrollable
+                                      SingleChildScrollView(
+                                        child: HtmlWidget(
+                                          instructionHtml,
+                                          textStyle: TextStyle(fontSize: 14, color: ColorPallete.greyColor),
+                                        ),
                                       ),
+                                      SizedBox(height: 20), // Space before the button
                                     ],
                                   ),
                                 );
-                              } else if (state is GetActivityInstructionFailure) {
+                              } else if (state is GetAllQuestionFailure) {
                                 return Center(child: Text(state.message));
                               }
                               return CustomLoader();
                             },
                           ),
                         ),
-                        CustomGradientButton(
-                          label: 'Done',
-                          onTap: () {
-                            _tts.stop();
-                            Get.to(() => ActivityVideoUnderstandingScreen(activityId: widget.activityId));
+                        // Spacer to push the button to the bottom
+                        Spacer(),
+                        BlocBuilder<HomeBloc, HomeState>(
+                          builder: (context, state) {
+                            if (state is GetAllQuestionSuccess) {
+
+                              return CustomGradientButton(
+                                label: 'Done',
+                                onTap: () {
+                                  _tts.stop();
+                                  if(state.resAllQuestion!.data!.activity!.understandings!.learnings!.length>0)
+                                    {
+                                      Get.to(() => ActivityVideoUnderstandingScreen(resAllQuestion: state.resAllQuestion));
+                                    }else if(state.resAllQuestion.data!.activity!.matchings!.learnings!.length>0){
+                                    Get.to(() => MatchScreen(resAllQuestion: state.resAllQuestion,));
+                                  }else if(state.resAllQuestion.data!.activity!.pictureSequencings!.learnings!.length>0){
+                                    Get.to(() => PictureSequencingsScreen(resAllQuestion: state.resAllQuestion,));
+                                  }else if(state.resAllQuestion.data!.activity!.pictureUnderstandings!.learnings!.length>0){
+                                    Get.to(() => PictureDescriptionScreen(resAllQuestion: state.resAllQuestion));
+                                  }else if(state.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                                    Get.to(() => LearingVideoDescriptionScreen(resAllQuestion: state.resAllQuestion,));
+                                  }else if(state.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                                    Get.to(() => VideoDescriptionScreen(resAllQuestion: state.resAllQuestion,));
+                                  }else if(state.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                                    Get.to(() => DragDropScreen(resAllQuestion: state.resAllQuestion,));
+                                  }
+                                },
+                              );
+                            }
+                            return SizedBox();
                           },
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
                 ],
               ),
             ),
@@ -223,7 +259,7 @@ class ActivityInstructionContent
         setState(() {
           selectedLanguage = language;
         });
-        Navigator.pop(context); // Close the dropdown
+        Navigator.pop(context);
       },
     );
   }

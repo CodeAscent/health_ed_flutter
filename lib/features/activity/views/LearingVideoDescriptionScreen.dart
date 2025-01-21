@@ -1,26 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/tts/text_to_speech.dart';
 import 'package:health_ed_flutter/core/utils/helper.dart';
-import 'package:health_ed_flutter/features/activity/views/DragDropScreen.dart';
+import 'package:health_ed_flutter/features/activity/views/VideoDescriptionScreen.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
-import 'package:health_ed_flutter/features/shared_widget/activity_congrats_popup.dart';
 
 import '../../../core/utils/custom_widgets.dart';
+import 'DragDropScreen.dart';
 
-class VideoDescriptionScreen extends StatefulWidget {
+class LearingVideoDescriptionScreen extends StatefulWidget {
       final ResAllQuestion resAllQuestion;
-const VideoDescriptionScreen({Key? key, required this.resAllQuestion}) : super(key: key);
+const LearingVideoDescriptionScreen({Key? key, required this.resAllQuestion}) : super(key: key);
   @override
   _VideoDescriptionScreenState createState() =>
       _VideoDescriptionScreenState();
 }
 
 
-class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
+class _VideoDescriptionScreenState extends State<LearingVideoDescriptionScreen> {
     String selectedLanguage = 'English';
   bool isDragging = false;
    String languageCode = "en-US";
@@ -38,7 +39,6 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
     super.dispose();
   }
 
-  // Track selected card
   List<bool> selectedCards = [];
 
   @override
@@ -55,6 +55,7 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
       default:
         titleData = instruction2.title!.en ?? "Instructions not available";
     }
+
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -164,36 +165,20 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
                   ),
                 ),
                 SizedBox(height: 30),
-                
-                SizedBox(
-                  height: 200,
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 2.5,
-                    children: [
-              ...(instruction2.options?.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final option = entry.value;
-                        String optionTitle;
-                        switch (getLanguageCode(selectedLanguage, languageCode)) {
-                          case 'hi':
-                            optionTitle = option.option?.hi ?? "NAN";
-                            break;
-                          case 'or':
-                            optionTitle = option.option?.or ?? "NAN";
-                            break;
-                          default:
-                            optionTitle = option.option?.en ?? "NAN";
-                        }
-                        selectedCards.add(false);
-                        return _buildOptionCard(optionTitle, option.correct!, index);
-                      }).toList() ?? []),
-
-                    ],
-                  ),
-                ),
+                 Spacer(),
+                   Container(
+                     margin: EdgeInsets.symmetric(horizontal: 20),
+                     child: CustomGradientButton(
+                       label: 'Done Watching?',
+                       onTap: () {
+                        if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                           Get.to(() => VideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
+                         }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                           Get.to(() => DragDropScreen(resAllQuestion: widget.resAllQuestion,));
+                         }
+                       },
+                     ),
+                   ),
                 Spacer(),
                 _buildAcknowledgementButton(context),
               ],
@@ -327,10 +312,7 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
                   child: GestureDetector(
                     onTap: () {
                       {
-                        Get.dialog(
-                            ActivityCongratsPopup(level:""),
-                            barrierDismissible: false,
-                        );
+                       Get.to(() => LearingVideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
                       }
                     },
                     child: Container(

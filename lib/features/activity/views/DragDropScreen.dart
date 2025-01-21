@@ -2,10 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
 
 import '../../../core/utils/custom_widgets.dart';
 
 class DragDropScreen extends StatefulWidget {
+   final ResAllQuestion resAllQuestion; 
+const DragDropScreen({Key? key, required this.resAllQuestion})
+      : super(key: key);
   @override
   _DragDropScreenState createState() => _DragDropScreenState();
 }
@@ -159,7 +163,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
     return isMatched
         ? Opacity(
       opacity: 0.5, // Reduced opacity after match
-      child:  ShapeOption(
+      child:  ShapeOption1(
         shape: shape,
         isHighlighted: false,
         backgroundColor: Colors.white,
@@ -171,7 +175,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
       data: shape,
       feedback: Opacity(
         opacity: 0.8,
-        child:ShapeOption(
+        child:ShapeOption1(
           shape: shape,
           isHighlighted: false,
           backgroundColor: Colors.white,
@@ -181,7 +185,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
       ),
       childWhenDragging: Opacity(
         opacity: 0.5, // Reduce opacity when dragging
-        child: ShapeOption(
+        child: ShapeOption1(
           shape: shape,
           isHighlighted: false,
           backgroundColor: Colors.white,
@@ -189,7 +193,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
           originalImageOpacity:1.0,
         ),
       ),
-      child: ShapeOption(
+      child: ShapeOption1(
         shape: shape,
         isHighlighted: false,
         backgroundColor: Colors.white,
@@ -218,7 +222,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
   Widget _buildDragTarget(String shape) {
     return DragTarget<String>(
       builder: (context, candidateData, rejectedData) {
-        return ShapeOption(
+        return ShapeOption1(
           shape: shape,
           isHighlighted: candidateData.isNotEmpty,
           backgroundColor: matchedShapes[shape]! ? ColorPallete.greenColor : Colors.white,
@@ -280,14 +284,14 @@ class _DragDropScreenState extends State<DragDropScreen> {
   }
 }
 
-class ShapeOption extends StatelessWidget {
+class ShapeOption1 extends StatelessWidget {
   final String shape;
   final bool isHighlighted;
   final Color backgroundColor;
   final bool showCheck;
   final double originalImageOpacity;
 
-  const ShapeOption({
+  const ShapeOption1({
     required this.shape,
     this.isHighlighted = false,
     this.backgroundColor = Colors.white,

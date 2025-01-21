@@ -329,7 +329,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                         fullName: _fullname.text,
                                         familyType: _familyType.text,
                                         email: _email.text,
-                                        dateOfBirth: _dob.text,
+                                        dateOfBirth: _unformattedDob.text,
                                         fatherOccupation:
                                             _fatherOccupation.text,
                                         motherOccupation:

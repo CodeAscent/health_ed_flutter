@@ -50,7 +50,7 @@ class Activities {
   ActivityName? activityDescription;
   ActivityName? activityInstructions;
   String? sId;
-  String? progress;
+  int? progress;
   String? status;
 
   Activities(

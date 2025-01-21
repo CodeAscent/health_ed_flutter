@@ -1,59 +1,93 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/features/activity/views/MatchScreen.dart';
+import 'package:logger/logger.dart';
 
 import '../../../../core/tts/text_to_speech.dart';
 import '../../../../core/utils/custom_loader.dart';
 import '../../../../core/utils/custom_widgets.dart';
 import '../../../../core/utils/helper.dart';
 import '../../../activity/views/DragDropScreen.dart';
+import '../../../activity/views/LearingVideoDescriptionScreen.dart';
+import '../../../activity/views/PictureDescriptionScreen.dart';
+import '../../../activity/views/PictureSequencings.dart';
+import '../../../activity/views/RevealPictureDescriptionScreen.dart';
+import '../../../activity/views/VideoDescriptionScreen.dart';
 import '../../../activity/widgets/MediaSlider.dart';
 import '../../bloc/VideoScreenBloc.dart';
 import '../../bloc/VideoScreenEvent.dart';
 import '../../bloc/home_bloc.dart';
 import '../../bloc/home_event.dart';
 import '../../bloc/home_state.dart';
+import '../../model/response/ResAllQuestion.dart';
 import '../../repository/home_repository.dart';
 
 class ActivityVideoUnderstandingScreen extends StatelessWidget {
-  final String activityId;
+  final ResAllQuestion resAllQuestion;
 
-  const ActivityVideoUnderstandingScreen({Key? key, required this.activityId})
+  const ActivityVideoUnderstandingScreen({Key? key, required this.resAllQuestion})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => HomeBloc(HomeRepository())
-        ..add(GetAllQuestionRequested(activityId: activityId)),
-      child: ActivityVideoUnderstandingScreenContent(),
-    );
+    return ActivityVideoUnderstandingScreenContent(resAllQuestion: resAllQuestion);
   }
 }
 
 class ActivityVideoUnderstandingScreenContent extends StatefulWidget {
-  const ActivityVideoUnderstandingScreenContent({Key? key}) : super(key: key);
+  final ResAllQuestion resAllQuestion;
+  const ActivityVideoUnderstandingScreenContent({Key? key, required this.resAllQuestion})
+      : super(key: key);
 
   @override
   _ActivityVideoUnderstandingScreenContentState createState() =>
       _ActivityVideoUnderstandingScreenContentState();
 }
 
-class _ActivityVideoUnderstandingScreenContentState
-    extends State<ActivityVideoUnderstandingScreenContent> {
+class _ActivityVideoUnderstandingScreenContentState extends State<ActivityVideoUnderstandingScreenContent> {
   String languageCode = "en-US";
   String selectedLanguage = 'English';
+  int currentIndex = 0;
   final TextToSpeech _tts = TextToSpeech();
+  late Learnings learnings;
   bool isDragging = false;
-  // Track the matched shapes
   Map<String, bool> matchedShapes = {
     "Circle": false,
     "Star": false,
     "Triangle": false,
   };
+
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = 0;
+    learnings = widget.resAllQuestion!.data!.activity!.understandings!.learnings![currentIndex];
+  }
+
+  @override
+  void dispose() {
+    _tts.stop();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    String titleData;
+
+    switch (getLanguageCode(selectedLanguage, languageCode)) {
+      case 'hi':
+        titleData = learnings.title!.hi ?? "Instructions not available";
+        break;
+      case 'or':
+        titleData = learnings.title!.or ?? "Instructions not available";
+        break;
+      default:
+        titleData = learnings.title!.en ?? "Instructions not available";
+    }
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -69,10 +103,10 @@ class _ActivityVideoUnderstandingScreenContentState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomTransparentContainer(
-                  child: Column(
+                  child:
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // First Row: Back button and Language Dropdown
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -113,38 +147,14 @@ class _ActivityVideoUnderstandingScreenContentState
                       ),
                       SizedBox(height: 10),
                       Expanded(
-                        child: BlocBuilder<HomeBloc, HomeState>(
-                          builder: (context, state) {
-                            if (state is ActivityQuestionLoading) {
-                              return Center(child: CircularProgressIndicator());
-                            } else if (state is GetAllQuestionSuccess) {
-                              if(state.resAllQuestion.data!.understanding!.length>0) {
-                                String instructionText;
-                                switch (getLanguageCode(
-                                    selectedLanguage, languageCode)) {
-                                  case 'hi':
-                                    instructionText = state.resAllQuestion.data!
-                                        .understanding!.first.title!.hi! ??
-                                        "Instructions not available";
-                                    break;
-                                  case 'or':
-                                    instructionText = state.resAllQuestion.data!
-                                        .understanding!.first.title!.or! ??
-                                        "Instructions not available";
-                                    break;
-                                  default:
-                                    instructionText = state.resAllQuestion.data!
-                                        .understanding!.first.title!.en! ??
-                                        "Instructions not available";
-                                }
-                                return Column(
+                        child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            _tts.speak(instructionText,
+                                            _tts.speak(titleData,
                                                 languageCode: languageCode);
                                           },
                                           child: Image.asset(
@@ -155,30 +165,24 @@ class _ActivityVideoUnderstandingScreenContentState
                                         SizedBox(width: 20),
                                         Expanded(
                                           child: Text(
-                                            instructionText,
+                                            titleData,
                                             style: TextStyle(
                                               fontSize: 16,
                                               color: Colors.black,
                                             ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(height: 10,),
                                     MediaSlider(
-                                      mediaList: state.resAllQuestion.data!
-                                          .understanding!.first.media!,),
-                                    SizedBox(height: 20,),
+                                      mediaList: learnings.media!,),
+                                    SizedBox(height: 20),
                                     _buildAcknowledgementButton(context),
                                   ],
-                                );
-                              }
-                            } else if (state is GetAllQuestionFailure) {
-                              return Center(child: Text(state.message));
-                            }
-                            return CustomLoader();
-                          },
-                        ),
+                                )
                       ),
                       // Second Row: Speaker Icon and "Tiger" text
                       // MediaSlider()
@@ -272,7 +276,6 @@ class _ActivityVideoUnderstandingScreenContentState
     );
   }
 
-
   Widget _buildAcknowledgementButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 30.0),
@@ -306,13 +309,55 @@ class _ActivityVideoUnderstandingScreenContentState
                   bottom: 0,
                   top: 0,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      {
+                        if(widget.resAllQuestion!.data!.activity!.understandings!.learnings!.length==currentIndex+1) {
+                          if (widget.resAllQuestion.data!.activity!.matchings!
+                              .learnings!.length > 0) {
+                            Get.to(() =>
+                                MatchScreen(
+                                  resAllQuestion: widget.resAllQuestion,));
+                          } else if (widget.resAllQuestion.data!.activity!
+                              .pictureSequencings!.learnings!.length > 0) {
+                            Get.to(() =>
+                                PictureSequencingsScreen(
+                                  resAllQuestion: widget.resAllQuestion,));
+                          } else if (widget.resAllQuestion.data!.activity!
+                              .pictureUnderstandings!.learnings!.length > 0) {
+                            Get.to(() =>
+                                PictureDescriptionScreen(
+                                    resAllQuestion: widget.resAllQuestion));
+                          } else if (widget.resAllQuestion.data!.activity!
+                              .pictureExpressions!.learnings!.length > 0) {
+                            Get.to(() =>
+                                LearingVideoDescriptionScreen(
+                                  resAllQuestion: widget.resAllQuestion,));
+                          } else if (widget.resAllQuestion.data!.activity!
+                              .pictureExpressions!.learnings!.length > 0) {
+                            Get.to(() =>
+                                VideoDescriptionScreen(
+                                  resAllQuestion: widget.resAllQuestion,));
+                          } else if (widget.resAllQuestion.data!.activity!
+                              .pictureExpressions!.learnings!.length > 0) {
+                            Get.to(() =>
+                                DragDropScreen(
+                                  resAllQuestion: widget.resAllQuestion,));
+                          }
+                        }else{
+                          setState(() {
+                            currentIndex +=1;
+                            learnings= widget.resAllQuestion.data!.activity!.understandings!.learnings![currentIndex];
+
+                          });
+                        }
+                      }
+                    },
                     child: Container(
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
                         color: ColorPallete
-                            .secondary, // Change to your desired color
+                            .secondary,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -331,7 +376,7 @@ class _ActivityVideoUnderstandingScreenContentState
   Widget _buildDragTarget(String shape) {
     return DragTarget<String>(
       builder: (context, candidateData, rejectedData) {
-        return ShapeOption(
+        return ShapeOption1(
           shape: shape,
           isHighlighted: candidateData.isNotEmpty,
           backgroundColor: matchedShapes[shape]! ? Colors.green : Colors.white,

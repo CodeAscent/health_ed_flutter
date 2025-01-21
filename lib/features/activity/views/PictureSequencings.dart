@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/features/activity/views/PictureDescriptionScreen.dart';
-import 'package:health_ed_flutter/features/activity/views/PictureSequencings.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -15,22 +14,23 @@ import 'LearingVideoDescriptionScreen.dart';
 import 'RevealPictureDescriptionScreen.dart';
 import 'VideoDescriptionScreen.dart';
 
-class MatchScreen extends StatefulWidget {
+class PictureSequencingsScreen extends StatefulWidget {
   final ResAllQuestion resAllQuestion;
 
-  const MatchScreen({Key? key, required this.resAllQuestion}) : super(key: key);
+  const PictureSequencingsScreen({Key? key, required this.resAllQuestion})
+      : super(key: key);
 
   @override
-  _MatchScreenState createState() => _MatchScreenState();
+  _PictureSequencingState createState() => _PictureSequencingState();
 }
 
-class _MatchScreenState extends State<MatchScreen>
+class _PictureSequencingState extends State<PictureSequencingsScreen>
     with SingleTickerProviderStateMixin {
   String languageCode = "en-US";
   String selectedLanguage = 'English';
   final TextToSpeech _tts = TextToSpeech();
   bool isDragging = false;
-  late Learnings3 learnings3;
+  late Instruction2 instruction2;
   int currentLearningIndex = 0;
   bool showingInstruction = true;
 
@@ -43,15 +43,18 @@ class _MatchScreenState extends State<MatchScreen>
   @override
   void initState() {
     super.initState();
-    if (widget.resAllQuestion.data?.activity?.matchings?.instruction != null) {
-      learnings3 = widget.resAllQuestion.data!.activity!.matchings!.instruction!;
+    if (widget.resAllQuestion.data?.activity?.pictureSequencings?.instruction !=
+        null) {
+      instruction2 = widget
+          .resAllQuestion.data!.activity!.pictureSequencings!.instruction!;
       showingInstruction = true;
     } else {
-      learnings3 = widget.resAllQuestion.data!.activity!.matchings!.learnings!.first;
+      instruction2 = widget
+          .resAllQuestion.data!.activity!.pictureSequencings!.learnings!.first;
       showingInstruction = false;
     }
 
-    for (var answer in learnings3.matchingQuestions!) {
+    for (var answer in instruction2.sequenceAudios!) {
       matchedShapes[answer.correctIndex!] = false;
     }
 
@@ -68,93 +71,82 @@ class _MatchScreenState extends State<MatchScreen>
     super.dispose();
   }
 
-void _autoMatchInstruction() async {
-  if (showingInstruction && !isDragging) {
-    final answers = learnings3.matchingAnswers!;
-    final questions = learnings3.matchingQuestions!;
+  void _autoMatchInstruction() async {
+    if (showingInstruction && !isDragging) {
+      final answers = instruction2.sequenceImages!;
+      final questions = instruction2.sequenceAudios!;
 
-    for (int i = 0; i < answers.length; i++) {
-      final answer = answers[i];
-      final correctIndex = answer.correctIndex!;
-      final question = questions[correctIndex];
+      for (int i = 0; i < answers.length; i++) {
+        final answer = answers[i];
+        final correctIndex = answer.correctIndex!;
+        final question = questions[correctIndex];
 
-      // Calculate positions based on layout direction
-      double startX, startY, endX, endY;
-      if (learnings3.direction == 'vertical') {
-        startX = MediaQuery.of(context).size.width * (0.2 + (i * 0.2)); 
-        startY = MediaQuery.of(context).size.height * 0.3;
-        endX = MediaQuery.of(context).size.width * (0.2 + (correctIndex * 0.2));
-        endY = MediaQuery.of(context).size.height * 0.6;
-      } else {
+        double startX, startY, endX, endY;
+
         startX = MediaQuery.of(context).size.width * 0.2;
-        startY = MediaQuery.of(context).size.height * (0.3 + (i * 0.1));
+        startY = MediaQuery.of(context).size.height * (0.2 + (i * 0.15));
         endX = MediaQuery.of(context).size.width * 0.6;
-        endY = MediaQuery.of(context).size.height * (0.3 + (correctIndex * 0.1));
+        endY =
+            MediaQuery.of(context).size.height * (0.2 + (correctIndex * 0.15));
+
+        setState(() {
+          showHand = true;
+          handX = startX;
+          handY = startY;
+        });
+
+        await Future.delayed(Duration(milliseconds: 500));
+
+        for (double t = 0; t <= 1; t += 0.05) {
+          if (!showingInstruction) break;
+
+          await Future.delayed(Duration(milliseconds: 50));
+
+          setState(() {
+            handX = startX + (endX - startX) * t;
+            handY = startY + (endY - startY) * t;
+          });
+        }
+
+        if (showingInstruction) {
+          setState(() {
+            matchedShapes[correctIndex] = true;
+            showHand = false;
+          });
+        }
+
+        await Future.delayed(Duration(milliseconds: 800));
       }
 
-      // Show hand at starting position with image
       setState(() {
-        showHand = true;
-        handX = startX;
-        handY = startY;
+        matchedShapes.clear();
+        for (var question in questions) {
+          matchedShapes[question.correctIndex!] = false;
+        }
+        showHand = false;
       });
-
-      await Future.delayed(Duration(milliseconds: 500));
-
-      // Animate hand movement with image
-      for (double t = 0; t <= 1; t += 0.05) {
-        if (!showingInstruction) break; // Stop if instruction mode ends
-
-        // Debugging: log the hand positions
-        print("t: $t, startX: $startX, startY: $startY, endX: $endX, endY: $endY");
-
-        await Future.delayed(Duration(milliseconds: 50));
-
-        // Update hand position smoothly
-        setState(() {
-          handX = startX + (endX - startX) * t;
-          handY = startY + (endY - startY) * t;
-        });
-      }
-
-      // Mark as matched and hide hand
-      if (showingInstruction) {
-        setState(() {
-          matchedShapes[correctIndex] = true;
-          showHand = false;
-        });
-      }
-
-      await Future.delayed(Duration(milliseconds: 800));
     }
-
-    // Reset matches after instruction
-    setState(() {
-      matchedShapes.clear();
-      for (var question in questions) {
-        matchedShapes[question.correctIndex!] = false;
-      }
-      showHand = false;
-    });
   }
-}
-
 
   void _updateLearningData() {
     setState(() {
       if (showingInstruction) {
         showingInstruction = false;
         currentLearningIndex = 0;
-        learnings3 = widget.resAllQuestion.data!.activity!.matchings!.learnings![currentLearningIndex];
+        instruction2 = widget.resAllQuestion.data!.activity!.pictureSequencings!
+            .learnings![currentLearningIndex];
       } else {
-        if (currentLearningIndex < widget.resAllQuestion.data!.activity!.matchings!.learnings!.length - 1) {
+        if (currentLearningIndex <
+            widget.resAllQuestion.data!.activity!.matchings!.learnings!.length -
+                1) {
           currentLearningIndex++;
-          learnings3 = widget.resAllQuestion.data!.activity!.matchings!.learnings![currentLearningIndex];
+          instruction2 = widget.resAllQuestion.data!.activity!
+              .pictureSequencings!.learnings![currentLearningIndex];
         }
       }
 
       matchedShapes.clear();
-      for (var answer in learnings3.matchingQuestions!) {
+      for (var answer in instruction2.sequenceAudios!) {
         matchedShapes[answer.correctIndex!] = false;
       }
     });
@@ -166,13 +158,13 @@ void _autoMatchInstruction() async {
 
     switch (getLanguageCode(selectedLanguage, languageCode)) {
       case 'hi':
-        titleData = learnings3.title!.hi ?? "Instructions not available";
+        titleData = instruction2.title!.hi ?? "Instructions not available";
         break;
       case 'or':
-        titleData = learnings3.title!.or ?? "Instructions not available";
+        titleData = instruction2.title!.or ?? "Instructions not available";
         break;
       default:
-        titleData = learnings3.title!.en ?? "Instructions not available";
+        titleData = instruction2.title!.en ?? "Instructions not available";
     }
 
     return SafeArea(
@@ -221,7 +213,8 @@ void _autoMatchInstruction() async {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  _tts.speak(titleData, languageCode: languageCode);
+                                  _tts.speak(titleData,
+                                      languageCode: languageCode);
                                 },
                                 child: Image.asset(
                                   'assets/icons/volume_up1.png',
@@ -267,7 +260,6 @@ void _autoMatchInstruction() async {
     );
   }
 
-  // Method to build draggable for each shape
   Widget _buildDraggable(String imageUrl, int currentIndex) {
     bool isMatched = matchedShapes[currentIndex]!;
     return isMatched
@@ -323,14 +315,15 @@ void _autoMatchInstruction() async {
   Widget _buildDragTarget(String imageUrl, int correctIndex) {
     return DragTarget<String>(
       builder: (context, candidateData, rejectedData) {
-        return ShapeOption(
-          shape: imageUrl,
+        return AudioOption(
+          audio: imageUrl,
           isHighlighted: candidateData.isNotEmpty,
           showCheck: matchedShapes[correctIndex]!,
           originalImageOpacity: matchedShapes[correctIndex]! ? 1.0 : 0.5,
         );
       },
-      onWillAccept: (data) => !matchedShapes[correctIndex]! && data == correctIndex.toString(),
+      onWillAccept: (data) =>
+          !matchedShapes[correctIndex]! && data == correctIndex.toString(),
       onAccept: (data) {
         setState(() {
           matchedShapes[correctIndex] = true; // Mark as matched
@@ -387,9 +380,7 @@ void _autoMatchInstruction() async {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 30.0),
       child: ElevatedButton(
-        onPressed: () {
-
-        },
+        onPressed: () {},
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -417,32 +408,42 @@ void _autoMatchInstruction() async {
                   top: 0,
                   child: GestureDetector(
                     onTap: () {
-                      {
-                        if(widget.resAllQuestion.data!.activity!.matchings!.learnings!.length==currentLearningIndex+1)
-                          {
-                            if(widget.resAllQuestion.data!.activity!.pictureSequencings!.learnings!.length>0){
-                              Get.to(() => PictureSequencingsScreen(resAllQuestion: widget.resAllQuestion,));
-                            }else if(widget.resAllQuestion.data!.activity!.pictureUnderstandings!.learnings!.length>0){
-                              Get.to(() => PictureDescriptionScreen(resAllQuestion: widget.resAllQuestion));
-                            }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                              Get.to(() => LearingVideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
-                            }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                              Get.to(() => VideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
-                            }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                              Get.to(() => DragDropScreen(resAllQuestion: widget.resAllQuestion,));
-                            }
-                          }else {
-                          _updateLearningData();
+                      if (widget.resAllQuestion.data!.activity!
+                              .pictureSequencings!.learnings!.length ==
+                          currentLearningIndex + 1) {
+                        if (widget.resAllQuestion.data!.activity!
+                                .pictureUnderstandings!.learnings!.length >
+                            0) {
+                          Get.to(() => PictureDescriptionScreen(
+                              resAllQuestion: widget.resAllQuestion));
+                        }  else if (widget.resAllQuestion.data!.activity!
+                                .pictureExpressions!.learnings!.length >
+                            0) {
+                          Get.to(() => LearingVideoDescriptionScreen(
+                                resAllQuestion: widget.resAllQuestion,
+                              ));
+                        } else if (widget.resAllQuestion.data!.activity!
+                                .pictureExpressions!.learnings!.length >
+                            0) {
+                          Get.to(() => VideoDescriptionScreen(
+                                resAllQuestion: widget.resAllQuestion,
+                              ));
+                        } else if (widget.resAllQuestion.data!.activity!
+                                .pictureExpressions!.learnings!.length >
+                            0) {
+                          Get.to(() => DragDropScreen(
+                                resAllQuestion: widget.resAllQuestion,
+                              ));
                         }
-
+                      } else {
+                        _updateLearningData();
                       }
                     },
                     child: Container(
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
-                        color: ColorPallete
-                            .secondary,
+                        color: ColorPallete.secondary,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -458,64 +459,44 @@ void _autoMatchInstruction() async {
     );
   }
 
-
- Widget _buildMatchingContent() {
-    if (learnings3.direction == 'vertical') {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          // Top row for answers in horizontal layout
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: learnings3.matchingAnswers!.map((question) {
-              return _buildDraggable(
-                question.image!,
-                question.correctIndex!,
-              );
-            }).toList(),
-          ),
-          SizedBox(height: 40),
-          // Bottom row for questions in horizontal layout  
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: learnings3.matchingQuestions!.map((answer) {
-              return _buildDragTarget(
-                answer.image!,
-                answer.correctIndex!,
-              );
-            }).toList(),
-          ),
-        ],
-      );
-    } else {
-      // Vertical layout
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          // Left column for answers in vertical layout
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: learnings3.matchingAnswers!.map((question) {
-              return _buildDraggable(
-                question.image!,
-                question.correctIndex!,
-              );
-            }).toList(),
-          ),
-          SizedBox(width: 40),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
-            children: learnings3.matchingQuestions!.map((answer) {
-              return _buildDragTarget(
-                answer.image!,
-                answer.correctIndex!,
-              );
-            }).toList(),
-          ),
-        ],
-      );
-    }
+  Widget _buildMatchingContent() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children:
+                  instruction2.sequenceImages!.asMap().entries.map((entry) {
+                final question = entry.value;
+                final answer = instruction2.sequenceAudios![entry.key];
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        _buildDraggable(
+                          question.image!,
+                          question.correctIndex!,
+                        ),
+                        SizedBox(width: 10),
+                        Image.asset("assets/icons/blackArrow.png"),
+                        SizedBox(width: 10),
+                        _buildDragTarget(
+                          answer.audio!,
+                          answer.correctIndex!,
+                        )
+                      ],
+                    ),
+                    SizedBox(width: 20),
+                  ],
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+        SizedBox(height: 20),
+      ],
+    );
   }
-
 }
-

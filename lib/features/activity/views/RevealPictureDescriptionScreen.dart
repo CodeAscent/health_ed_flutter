@@ -1,49 +1,49 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/tts/text_to_speech.dart';
 import 'package:health_ed_flutter/core/utils/helper.dart';
-import 'package:health_ed_flutter/features/activity/views/DragDropScreen.dart';
+import 'package:health_ed_flutter/features/activity/views/LearingVideoDescriptionScreen.dart';
+import 'package:health_ed_flutter/features/activity/views/VideoDescriptionScreen.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
-import 'package:health_ed_flutter/features/shared_widget/activity_congrats_popup.dart';
 
 import '../../../core/utils/custom_widgets.dart';
+import 'DragDropScreen.dart';
 
-class VideoDescriptionScreen extends StatefulWidget {
-      final ResAllQuestion resAllQuestion;
-const VideoDescriptionScreen({Key? key, required this.resAllQuestion}) : super(key: key);
+class RevealPictureDescriptionScreen extends StatefulWidget {
+    final ResAllQuestion resAllQuestion;
+const RevealPictureDescriptionScreen({Key? key, required this.resAllQuestion}) : super(key: key);
   @override
-  _VideoDescriptionScreenState createState() =>
-      _VideoDescriptionScreenState();
+  _PictureDescriptionScreenState createState() =>
+      _PictureDescriptionScreenState();
 }
 
-
-class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
-    String selectedLanguage = 'English';
+class _PictureDescriptionScreenState extends State<RevealPictureDescriptionScreen> {
+  String selectedLanguage = 'English';
   bool isDragging = false;
-   String languageCode = "en-US";
+  String languageCode = "en-US";
   late Learnings1 instruction2;
   final TextToSpeech _tts = TextToSpeech();
 
   @override
   void initState() {
     super.initState();
-      instruction2 = widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.first;
+      instruction2 = widget.resAllQuestion.data!.activity!.pictureUnderstandings!.learnings![1];
     }
-  @override
+
+@override
   void dispose() {
     _tts.stop();
     super.dispose();
   }
 
-  // Track selected card
-  List<bool> selectedCards = [];
-
   @override
   Widget build(BuildContext context) {
-       String titleData;
+
+     String titleData;
 
     switch (getLanguageCode(selectedLanguage, languageCode)) {
       case 'hi':
@@ -61,7 +61,7 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
           decoration: BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
-              image: AssetImage('assets/bg/videobg.png'),
+              image: AssetImage('assets/bg/videobgimage.png'),
             ),
           ),
           child: Padding(
@@ -126,9 +126,8 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
                       child: Text(
                         titleData,
                         style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600
+                          fontSize: 20,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -136,8 +135,7 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
                 ),
                 SizedBox(height: 20),
 
-                // Image with full width and fixed height
-                  Container(
+                Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   width: MediaQuery.of(context).size.width,
                   height: 227,
@@ -163,19 +161,9 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
                     },
                   ),
                 ),
-                SizedBox(height: 30),
-                
-                SizedBox(
-                  height: 200,
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 2.5,
-                    children: [
-              ...(instruction2.options?.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final option = entry.value;
+            
+                SizedBox(height: 5),
+                     Column( children : instruction2.options?.map((option) {
                         String optionTitle;
                         switch (getLanguageCode(selectedLanguage, languageCode)) {
                           case 'hi':
@@ -187,15 +175,79 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
                           default:
                             optionTitle = option.option?.en ?? "NAN";
                         }
-                        selectedCards.add(false);
-                        return _buildOptionCard(optionTitle, option.correct!, index);
-                      }).toList() ?? []),
-
-                    ],
-                  ),
+                    return 
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            instruction2.options?.forEach((o) => o.correct = false);
+                            option.correct = true;
+                          });
+                        },
+                        child:
+                         Card(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: GestureDetector(
+                                onTap: () {
+                                    if (!isDragging) {
+                                      setState(() {
+                                        isDragging = true;
+                                      });
+                                    }
+                                  },
+                              child: isDragging ? 
+                              Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    _tts.speak(optionTitle, languageCode: languageCode);
+                                  },
+                                  child: Image.asset(
+                                    'assets/icons/volume_up1.png',
+                                    width: 40,
+                                  ),
+                                ),
+                                SizedBox(width: 20),
+                                Expanded(
+                                  child: Text(
+                                    optionTitle,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: ColorPallete.primary,
+                                      fontWeight: FontWeight.w600
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ): Center(
+                                child: Text(
+                                  'Click to reveal answer',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                          )
+                           ),
+                        ),
+                      ),
+                    );
+                  }
+                  ).toList() ?? [],
                 ),
-                Spacer(),
-                _buildAcknowledgementButton(context),
+              
+               Spacer(),
+               _buildAcknowledgementButton(context),
+             
               ],
             ),
           ),
@@ -203,50 +255,6 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
       ),
     );
   }
-
-  Widget _buildOptionCard(String text, bool isCorrect, int index) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedCards[index] = true;
-        });
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        // Only show red/green when clicked
-        color: selectedCards[index] 
-            ? (isCorrect ? Colors.green : Colors.red)
-            : Colors.white.withOpacity(0.9),
-        child: Stack(
-          children: [
-            Center(
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: selectedCards[index] ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            if (selectedCards[index])
-              Positioned(
-                right: 4,
-                top: 3,
-                child: Icon(
-                  isCorrect ? Icons.check_circle : Icons.cancel,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
 
   void _showCupertinoDropdown(BuildContext context) {
     showCupertinoModalPopup(
@@ -327,10 +335,13 @@ class _VideoDescriptionScreenState extends State<VideoDescriptionScreen> {
                   child: GestureDetector(
                     onTap: () {
                       {
-                        Get.dialog(
-                            ActivityCongratsPopup(level:""),
-                            barrierDismissible: false,
-                        );
+                        if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                          Get.to(() => LearingVideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
+                        }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                          Get.to(() => VideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
+                        }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                          Get.to(() => DragDropScreen(resAllQuestion: widget.resAllQuestion,));
+                        }
                       }
                     },
                     child: Container(

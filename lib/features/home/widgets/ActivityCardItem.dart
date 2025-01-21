@@ -11,22 +11,34 @@ class ActivityCardItem extends StatelessWidget {
 
   Color getStatusColor() {
     switch (activity.status) {
-      case 'completed':
+      case 'COMPLETED':
         return Colors.green;
-      case 'Started':
+      case 'IN-PROGRESS':
         return Colors.red;
-      case 'Pending':
+      case 'NOT_STARTED':
       default:
         return Colors.white;
     }
   }
+
+ String getTextStatus() {
+   switch (activity.status) {
+     case 'COMPLETED':
+       return 'COMPLETED';
+     case 'IN-PROGRESS':
+       return 'IN-PROGRESS';
+     case 'NOT_STARTED':
+     default:
+       return 'NOT_STARTED';
+   }
+ }
   String getStatusEmoji() {
     switch (activity.status) {
-      case 'completed':
+      case 'COMPLETED':
         return '😇';
-      case 'Started':
+      case 'IN-PROGRESS':
         return '😕';
-      case 'Pending':
+      case 'NOT_STARTED':
       default:
         return 'Start 👉🏼';
     }
@@ -39,7 +51,7 @@ class ActivityCardItem extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical:activity.status == 'Pending' ? 25:1,horizontal: 20), // Adds padding for more spacing
+        padding: EdgeInsets.symmetric(vertical:getTextStatus() == 'NOT_STARTED' ? 25:1,horizontal: 20), // Adds padding for more spacing
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,8 +59,8 @@ class ActivityCardItem extends StatelessWidget {
             Text(
               activity.activityName!.hi!,
               style: TextStyle(
-                color: activity.status == 'Pending' ? Colors.black : Colors.white,
-                fontSize: 16, // Adjust font size as needed
+                color: getTextStatus() == 'NOT_STARTED'? Colors.black : Colors.white,
+                fontSize: 16,
               ),
             ),
             Align(
@@ -56,8 +68,8 @@ class ActivityCardItem extends StatelessWidget {
               child: Text(
                 getStatusEmoji(),
                 style: TextStyle(
-                  fontSize: activity.status == 'Pending' ? 16 : 50, // Smaller size if 'Start' is shown
-                  color: activity.status == 'Pending' ? Colors.green : null,
+                  fontSize: activity.status == 'NOT_STARTED' ? 50 : 16,
+                  color:getTextStatus() == 'NOT_STARTED'? Colors.green : null,
                 ),
               ),
             ),
