@@ -5,6 +5,9 @@ import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
 
 import '../../../core/utils/custom_widgets.dart';
+import '../../home/bloc/home_bloc.dart';
+import '../../home/bloc/home_event.dart';
+import '../../home/model/request/AcknowledgementRequest.dart';
 
 class DragDropScreen extends StatefulWidget {
    final ResAllQuestion resAllQuestion; 
@@ -14,16 +17,21 @@ const DragDropScreen({Key? key, required this.resAllQuestion})
   _DragDropScreenState createState() => _DragDropScreenState();
 }
 
+
+
 class _DragDropScreenState extends State<DragDropScreen> {
   String selectedLanguage = 'English';
   bool isDragging = false;
-
-  // Track the matched shapes
+  String selectedAcknowledgement = 'Acknowledgement';
   Map<String, bool> matchedShapes = {
     "Circle": false,
     "Star": false,
     "Triangle": false,
   };
+
+  void submittedAcknowledge(){
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,12 +165,12 @@ class _DragDropScreenState extends State<DragDropScreen> {
     );
   }
 
-  // Method to build draggable for each shape
+
   Widget _buildDraggable(String shape) {
     bool isMatched = matchedShapes[shape]!;
     return isMatched
         ? Opacity(
-      opacity: 0.5, // Reduced opacity after match
+      opacity: 0.5,
       child:  ShapeOption1(
         shape: shape,
         isHighlighted: false,
@@ -218,7 +226,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
     );
   }
 
-  // Method to build drag targets for each shape
+
   Widget _buildDragTarget(String shape) {
     return DragTarget<String>(
       builder: (context, candidateData, rejectedData) {
@@ -238,7 +246,67 @@ class _DragDropScreenState extends State<DragDropScreen> {
       },
     );
   }
-
+  void _showAcknowledgeDropdown(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: Text('Acknowledge Child’s Understanding'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: Text('Not Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Not Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Partially Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Partially Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Well Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Well Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Fully Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Fully Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: Text('Cancel'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
   void _showCupertinoDropdown(BuildContext context) {
     showCupertinoModalPopup(
       context: context,
@@ -278,6 +346,64 @@ class _DragDropScreenState extends State<DragDropScreen> {
           onPressed: () {
             Navigator.pop(context);
           },
+        ),
+      ),
+    );
+  }
+  Widget _buildAcknowledgementButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30.0),
+      child: ElevatedButton(
+        onPressed: () {
+          _showAcknowledgeDropdown(context);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 13.0, horizontal: 16.0),
+          child: Stack(
+            children: [
+              Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      selectedAcknowledgement,
+                      style: TextStyle(fontSize: 18, color: Colors.black),
+                    ),
+                    Icon(Icons.keyboard_arrow_down_outlined,
+                        color: ColorPallete.secondary),
+                  ],
+                ),
+              ),
+              Positioned(
+                  right: 0,
+                  bottom: 0,
+                  top: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      {
+
+                      }
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: ColorPallete
+                            .secondary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )),
+            ],
+          ),
         ),
       ),
     );

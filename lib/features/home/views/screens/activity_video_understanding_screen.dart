@@ -4,10 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/features/activity/views/MatchScreen.dart';
+import 'package:health_ed_flutter/features/home/model/request/AcknowledgementRequest.dart';
+import 'package:health_ed_flutter/features/home/model/response/ResUserAcknowledgement.dart';
 import 'package:logger/logger.dart';
 
 import '../../../../core/tts/text_to_speech.dart';
 import '../../../../core/utils/custom_loader.dart';
+import '../../../../core/utils/custom_snackbar.dart';
 import '../../../../core/utils/custom_widgets.dart';
 import '../../../../core/utils/helper.dart';
 import '../../../activity/views/DragDropScreen.dart';
@@ -17,6 +20,7 @@ import '../../../activity/views/PictureSequencings.dart';
 import '../../../activity/views/RevealPictureDescriptionScreen.dart';
 import '../../../activity/views/VideoDescriptionScreen.dart';
 import '../../../activity/widgets/MediaSlider.dart';
+import '../../../auth/bloc/auth_bloc.dart';
 import '../../bloc/VideoScreenBloc.dart';
 import '../../bloc/VideoScreenEvent.dart';
 import '../../bloc/home_bloc.dart';
@@ -25,31 +29,21 @@ import '../../bloc/home_state.dart';
 import '../../model/response/ResAllQuestion.dart';
 import '../../repository/home_repository.dart';
 
-class ActivityVideoUnderstandingScreen extends StatelessWidget {
+class ActivityVideoUnderstandingScreen extends StatefulWidget {
   final ResAllQuestion resAllQuestion;
 
-  const ActivityVideoUnderstandingScreen({Key? key, required this.resAllQuestion})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ActivityVideoUnderstandingScreenContent(resAllQuestion: resAllQuestion);
-  }
-}
-
-class ActivityVideoUnderstandingScreenContent extends StatefulWidget {
-  final ResAllQuestion resAllQuestion;
-  const ActivityVideoUnderstandingScreenContent({Key? key, required this.resAllQuestion})
-      : super(key: key);
+  ActivityVideoUnderstandingScreen({required this.resAllQuestion});
 
   @override
   _ActivityVideoUnderstandingScreenContentState createState() =>
       _ActivityVideoUnderstandingScreenContentState();
 }
 
-class _ActivityVideoUnderstandingScreenContentState extends State<ActivityVideoUnderstandingScreenContent> {
+
+class _ActivityVideoUnderstandingScreenContentState extends State<ActivityVideoUnderstandingScreen> {
   String languageCode = "en-US";
   String selectedLanguage = 'English';
+  String selectedAcknowledgement = 'Acknowledgement';
   int currentIndex = 0;
   final TextToSpeech _tts = TextToSpeech();
   late Learnings learnings;
@@ -73,129 +67,177 @@ class _ActivityVideoUnderstandingScreenContentState extends State<ActivityVideoU
     super.dispose();
   }
 
+  void submittedAcknowledge(){
+    if (widget.resAllQuestion.data!.activity!.matchings!
+        .learnings!.length > 0) {
+      Get.to(() =>
+          MatchScreen(
+            resAllQuestion: widget.resAllQuestion,));
+    } else if (widget.resAllQuestion.data!.activity!
+        .pictureSequencings!.learnings!.length > 0) {
+      Get.off(() =>
+          PictureSequencingsScreen(
+            resAllQuestion: widget.resAllQuestion,));
+    } else if (widget.resAllQuestion.data!.activity!
+        .pictureUnderstandings!.learnings!.length > 0) {
+      Get.off(() =>
+          PictureDescriptionScreen(
+              resAllQuestion: widget.resAllQuestion));
+    } else if (widget.resAllQuestion.data!.activity!
+        .pictureExpressions!.learnings!.length > 0) {
+      Get.off(() =>
+          LearingVideoDescriptionScreen(
+            resAllQuestion: widget.resAllQuestion,));
+    } else if (widget.resAllQuestion.data!.activity!
+        .pictureExpressions!.learnings!.length > 0) {
+      Get.off(() =>
+          VideoDescriptionScreen(
+            resAllQuestion: widget.resAllQuestion,));
+    } else if (widget.resAllQuestion.data!.activity!
+        .pictureExpressions!.learnings!.length > 0) {
+      Get.off(() =>
+          DragDropScreen(
+            resAllQuestion: widget.resAllQuestion,));
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-    String titleData;
 
-    switch (getLanguageCode(selectedLanguage, languageCode)) {
-      case 'hi':
-        titleData = learnings.title!.hi ?? "Instructions not available";
-        break;
-      case 'or':
-        titleData = learnings.title!.or ?? "Instructions not available";
-        break;
-      default:
-        titleData = learnings.title!.en ?? "Instructions not available";
-    }
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/bg/videobgimage.png'),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomTransparentContainer(
-                  child:
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocConsumer<HomeBloc, HomeState>(
+      listener: (context, state) {
+        if (state is GetSubmitAcknowledgeResponseFailure) {
+          customSnackbar(state.message, ContentType.failure);
+        }
+        else if (state is GetSubmitAcknowledgeResponse) {
+          submittedAcknowledge();
+        }
+      },
+      builder: (context, state) {
+        String titleData;
+        switch (getLanguageCode(selectedLanguage, languageCode)) {
+          case 'hi':
+            titleData = learnings.title!.hi ?? "Instructions not available";
+            break;
+          case 'or':
+            titleData = learnings.title!.or ?? "Instructions not available";
+            break;
+          default:
+            titleData = learnings.title!.en ?? "Instructions not available";
+        }
+        return SafeArea(
+          child: Scaffold(
+            body: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/bg/videobgimage.png'),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTransparentContainer(
+                      child:
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          AppBackButton(),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  spreadRadius: 1,
-                                  blurRadius: 1,
-                                  offset: Offset(0, 2),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              AppBackButton(),
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      spreadRadius: 1,
+                                      blurRadius: 1,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: GestureDetector(
-                              onTap: () => _showCupertinoDropdown(context),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    selectedLanguage,
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.black),
+                                child: GestureDetector(
+                                  onTap: () => _showCupertinoDropdown(context),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        selectedLanguage,
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.black),
+                                      ),
+                                      Icon(
+                                        CupertinoIcons.chevron_down,
+                                        color: Colors.black,
+                                        size: 14,
+                                      ),
+                                    ],
                                   ),
-                                  Icon(
-                                    CupertinoIcons.chevron_down,
-                                    color: Colors.black,
-                                    size: 14,
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
+                          SizedBox(height: 10),
+                          Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          _tts.speak(titleData,
+                                              languageCode: languageCode);
+                                        },
+                                        child: Image.asset(
+                                          'assets/icons/volume_up1.png',
+                                          width: 40,
+                                        ),
+                                      ),
+                                      SizedBox(width: 20),
+                                      Expanded(
+                                        child: Text(
+                                          titleData,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10,),
+                                  MediaSlider(
+                                    mediaList: learnings.media!,),
+                                  SizedBox(height: 20),
+                                  _buildAcknowledgementButton(context),
+                                ],
+                              )
+                          ),
+                          // Second Row: Speaker Icon and "Tiger" text
+                          // MediaSlider()
+                          // _buildSlider()
                         ],
                       ),
-                      SizedBox(height: 10),
-                      Expanded(
-                        child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            _tts.speak(titleData,
-                                                languageCode: languageCode);
-                                          },
-                                          child: Image.asset(
-                                            'assets/icons/volume_up1.png',
-                                            width: 40,
-                                          ),
-                                        ),
-                                        SizedBox(width: 20),
-                                        Expanded(
-                                          child: Text(
-                                            titleData,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                            ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 10,),
-                                    MediaSlider(
-                                      mediaList: learnings.media!,),
-                                    SizedBox(height: 20),
-                                    _buildAcknowledgementButton(context),
-                                  ],
-                                )
-                      ),
-                      // Second Row: Speaker Icon and "Tiger" text
-                      // MediaSlider()
-                      // _buildSlider()
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
+
   }
 
   void _showCupertinoDropdown(BuildContext context) {
@@ -242,6 +284,69 @@ class _ActivityVideoUnderstandingScreenContentState extends State<ActivityVideoU
     );
   }
 
+  void _showAcknowledgeDropdown(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: Text('Acknowledge Child’s Understanding'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: Text('Not Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Not Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Partially Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Partially Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Well Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Well Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Fully Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Fully Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: Text('Cancel'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
+
+
   Widget _buildDragDrop(){
     return Expanded(
       child: BlocBuilder<HomeBloc, HomeState>(
@@ -281,7 +386,7 @@ class _ActivityVideoUnderstandingScreenContentState extends State<ActivityVideoU
       padding: const EdgeInsets.symmetric(vertical: 30.0),
       child: ElevatedButton(
         onPressed: () {
-          _showCupertinoDropdown(context);
+          _showAcknowledgeDropdown(context);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -296,7 +401,7 @@ class _ActivityVideoUnderstandingScreenContentState extends State<ActivityVideoU
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Acknowledgement",
+                      selectedAcknowledgement,
                       style: TextStyle(fontSize: 18, color: Colors.black),
                     ),
                     Icon(Icons.keyboard_arrow_down_outlined,
@@ -312,39 +417,9 @@ class _ActivityVideoUnderstandingScreenContentState extends State<ActivityVideoU
                     onTap: () {
                       {
                         if(widget.resAllQuestion!.data!.activity!.understandings!.learnings!.length==currentIndex+1) {
-                          if (widget.resAllQuestion.data!.activity!.matchings!
-                              .learnings!.length > 0) {
-                            Get.to(() =>
-                                MatchScreen(
-                                  resAllQuestion: widget.resAllQuestion,));
-                          } else if (widget.resAllQuestion.data!.activity!
-                              .pictureSequencings!.learnings!.length > 0) {
-                            Get.to(() =>
-                                PictureSequencingsScreen(
-                                  resAllQuestion: widget.resAllQuestion,));
-                          } else if (widget.resAllQuestion.data!.activity!
-                              .pictureUnderstandings!.learnings!.length > 0) {
-                            Get.to(() =>
-                                PictureDescriptionScreen(
-                                    resAllQuestion: widget.resAllQuestion));
-                          } else if (widget.resAllQuestion.data!.activity!
-                              .pictureExpressions!.learnings!.length > 0) {
-                            Get.to(() =>
-                                LearingVideoDescriptionScreen(
-                                  resAllQuestion: widget.resAllQuestion,));
-                          } else if (widget.resAllQuestion.data!.activity!
-                              .pictureExpressions!.learnings!.length > 0) {
-                            Get.to(() =>
-                                VideoDescriptionScreen(
-                                  resAllQuestion: widget.resAllQuestion,));
-                          } else if (widget.resAllQuestion.data!.activity!
-                              .pictureExpressions!.learnings!.length > 0) {
-                            Get.to(() =>
-                                DragDropScreen(
-                                  resAllQuestion: widget.resAllQuestion,));
-                          }
+                          context.read<HomeBloc>().add(SubmitAcknowledgementRequest(acknowledgementRequest: AcknowledgementRequest(activity:widget.resAllQuestion.data!.activity!.sId!,acknowledgement:"Understanding",learning: learnings.sId!,score: 1 )));
                         }else{
-                          setState(() {
+                        setState(() {
                             currentIndex +=1;
                             learnings= widget.resAllQuestion.data!.activity!.understandings!.learnings![currentIndex];
 

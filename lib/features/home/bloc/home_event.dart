@@ -1,5 +1,7 @@
 import 'package:meta/meta.dart';
 
+import '../model/request/AcknowledgementRequest.dart';
+
 @immutable
 abstract class HomeEvent {}
 
@@ -18,4 +20,9 @@ class GetAllActivityRequested extends HomeEvent {
 class GetAllQuestionRequested extends HomeEvent {
   final String activityId;
   GetAllQuestionRequested({required this.activityId});
+}
+
+class SubmitAcknowledgementRequest extends HomeEvent {
+  final AcknowledgementRequest acknowledgementRequest;
+  SubmitAcknowledgementRequest({required this.acknowledgementRequest});
 }

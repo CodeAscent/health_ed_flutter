@@ -45,6 +45,8 @@ void main() async {
     providers: [
       BlocProvider(
         create: (context) => AuthBloc(AuthRepository()),
+      ), BlocProvider(
+        create: (context) => HomeBloc(HomeRepository()),
       ),
       BlocProvider<DashboardBloc>(
         create: (context) => DashboardBloc()..add(LoadDashboardData()),

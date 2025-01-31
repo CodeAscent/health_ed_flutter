@@ -72,10 +72,10 @@ class _BlogListScreenState extends State<BlogListScreen> {
                             width: 104,
                             height: 77,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+                              borderRadius: BorderRadius.circular(20),
                               image: DecorationImage(
-                                image: AssetImage('assets/bg/imageActivity.png'), // Replace with your image
-                                fit: BoxFit.cover, // Optional: fit the image inside the rounded container
+                                image: AssetImage('assets/bg/imageActivity.png'),
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
@@ -135,47 +135,5 @@ class _BlogListScreenState extends State<BlogListScreen> {
     );
   }
 
-  void _showCupertinoDropdown(BuildContext context) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: Text('Select Language'),
-        actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: Text('Hindi'),
-            onPressed: () {
-              setState(() {
-                selectedLanguage = 'Hindi';
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('English'),
-            onPressed: () {
-              setState(() {
-                selectedLanguage = 'English';
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Odia'),
-            onPressed: () {
-              setState(() {
-                selectedLanguage = 'Odia';
-              });
-              Navigator.pop(context);
-            },
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          child: Text('Cancel'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
+
 }

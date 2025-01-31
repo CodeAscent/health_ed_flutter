@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +11,12 @@ import 'package:health_ed_flutter/core/utils/helper.dart';
 import 'package:health_ed_flutter/features/activity/views/VideoDescriptionScreen.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
 
+import '../../../core/utils/custom_snackbar.dart';
 import '../../../core/utils/custom_widgets.dart';
+import '../../home/bloc/home_bloc.dart';
+import '../../home/bloc/home_event.dart';
+import '../../home/bloc/home_state.dart';
+import '../../home/model/request/AcknowledgementRequest.dart';
 import 'DragDropScreen.dart';
 
 class LearingVideoDescriptionScreen extends StatefulWidget {
@@ -22,16 +29,17 @@ const LearingVideoDescriptionScreen({Key? key, required this.resAllQuestion}) : 
 
 
 class _VideoDescriptionScreenState extends State<LearingVideoDescriptionScreen> {
-    String selectedLanguage = 'English';
+  String selectedLanguage = 'English';
   bool isDragging = false;
+  String selectedAcknowledgement = 'Acknowledgement';
    String languageCode = "en-US";
-  late Learnings1 instruction2;
+  late Learnings1 learnings1;
   final TextToSpeech _tts = TextToSpeech();
 
   @override
   void initState() {
     super.initState();
-      instruction2 = widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.first;
+    learnings1 = widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.first;
     }
   @override
   void dispose() {
@@ -39,154 +47,173 @@ class _VideoDescriptionScreenState extends State<LearingVideoDescriptionScreen> 
     super.dispose();
   }
 
+    void submittedAcknowledge(){
+      Get.off(() => LearingVideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
+
+    }
+
   List<bool> selectedCards = [];
 
   @override
   Widget build(BuildContext context) {
-       String titleData;
 
-    switch (getLanguageCode(selectedLanguage, languageCode)) {
-      case 'hi':
-        titleData = instruction2.title!.hi ?? "Instructions not available";
-        break;
-      case 'or':
-        titleData = instruction2.title!.or ?? "Instructions not available";
-        break;
-      default:
-        titleData = instruction2.title!.en ?? "Instructions not available";
-    }
+    return BlocConsumer<HomeBloc, HomeState>(
+      listener: (context, state) {
+        if (state is GetSubmitAcknowledgeResponseFailure) {
+          customSnackbar(state.message, ContentType.failure);
+        }
+        else if (state is GetSubmitAcknowledgeResponse) {
+          submittedAcknowledge();
+        }
+      },
+      builder: (context, state) {
+        String titleData;
 
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/bg/videobg.png'),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        switch (getLanguageCode(selectedLanguage, languageCode)) {
+          case 'hi':
+            titleData = learnings1.title!.hi ?? "Instructions not available";
+            break;
+          case 'or':
+            titleData = learnings1.title!.or ?? "Instructions not available";
+            break;
+          default:
+            titleData = learnings1.title!.en ?? "Instructions not available";
+        }
+
+        return SafeArea(
+          child: Scaffold(
+            body: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/bg/videobg.png'),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppBackButton(color: Colors.white),
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 1,
-                            offset: Offset(0, 2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AppBackButton(color: Colors.white),
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(5),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 1,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: GestureDetector(
-                        onTap: () => _showCupertinoDropdown(context),
-                        child: Row(
-                          children: [
-                            Text(
-                              selectedLanguage,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Icon(
-                              CupertinoIcons.chevron_down,
-                              color: Colors.black,
-                              size: 14,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                       GestureDetector(
-                                onTap: () {
-                                  _tts.speak(titleData, languageCode: languageCode);
-                                },
-                                child: Image.asset(
-                                  'assets/icons/volume_up1.png',
-                                  width: 40,
+                          child: GestureDetector(
+                            onTap: () => _showCupertinoDropdown(context),
+                            child: Row(
+                              children: [
+                                Text(
+                                  selectedLanguage,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black,
+                                  ),
                                 ),
-                              ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: Text(
-                        titleData,
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600
+                                Icon(
+                                  CupertinoIcons.chevron_down,
+                                  color: Colors.black,
+                                  size: 14,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _tts.speak(titleData, languageCode: languageCode);
+                          },
+                          child: Image.asset(
+                            'assets/icons/volume_up1.png',
+                            width: 40,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: Text(
+                            titleData,
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+
+                    // Image with full width and fixed height
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      width: MediaQuery.of(context).size.width,
+                      height: 227,
+                      child: Image.network(
+                        learnings1.media?.url ?? '',
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/bg/imageActivity.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
+                    SizedBox(height: 30),
+                    Spacer(),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: CustomGradientButton(
+                        label: 'Done Watching?',
+                        onTap: () {
+                          if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                            Get.to(() => VideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
+                          }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+                            Get.to(() => DragDropScreen(resAllQuestion: widget.resAllQuestion,));
+                          }
+                        },
+                      ),
+                    ),
+                    Spacer(),
+                    _buildAcknowledgementButton(context),
                   ],
                 ),
-                SizedBox(height: 20),
-
-                // Image with full width and fixed height
-                  Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  width: MediaQuery.of(context).size.width,
-                  height: 227,
-                  child: Image.network(
-                    instruction2.media?.url ?? '',
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/bg/imageActivity.png',
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(height: 30),
-                 Spacer(),
-                   Container(
-                     margin: EdgeInsets.symmetric(horizontal: 20),
-                     child: CustomGradientButton(
-                       label: 'Done Watching?',
-                       onTap: () {
-                        if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                           Get.to(() => VideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
-                         }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                           Get.to(() => DragDropScreen(resAllQuestion: widget.resAllQuestion,));
-                         }
-                       },
-                     ),
-                   ),
-                Spacer(),
-                _buildAcknowledgementButton(context),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
+
   }
 
   Widget _buildOptionCard(String text, bool isCorrect, int index) {
@@ -277,12 +304,74 @@ class _VideoDescriptionScreenState extends State<LearingVideoDescriptionScreen> 
     );
   }
 
+    void _showAcknowledgeDropdown(BuildContext context) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (BuildContext context) => CupertinoActionSheet(
+          title: Text('Acknowledge Child’s Understanding'),
+          actions: <Widget>[
+            CupertinoActionSheetAction(
+              child: Text('Not Understood'),
+              onPressed: () {
+                setState(() {
+                  selectedAcknowledgement = 'Not Understood';
+                });
+                Navigator.pop(context);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text('Partially Understood'),
+              onPressed: () {
+                setState(() {
+                  selectedAcknowledgement = 'Partially Understood';
+                });
+                Navigator.pop(context);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text('Understood'),
+              onPressed: () {
+                setState(() {
+                  selectedAcknowledgement = 'Understood';
+                });
+                Navigator.pop(context);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text('Well Understood'),
+              onPressed: () {
+                setState(() {
+                  selectedAcknowledgement = 'Well Understood';
+                });
+                Navigator.pop(context);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text('Fully Understood'),
+              onPressed: () {
+                setState(() {
+                  selectedAcknowledgement = 'Fully Understood';
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      );
+    }
+
     Widget _buildAcknowledgementButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: ElevatedButton(
         onPressed: () {
-          _showCupertinoDropdown(context);
+          _showAcknowledgeDropdown(context);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -297,7 +386,7 @@ class _VideoDescriptionScreenState extends State<LearingVideoDescriptionScreen> 
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Acknowledgement",
+                      selectedAcknowledgement,
                       style: TextStyle(fontSize: 18, color: Colors.black),
                     ),
                     Icon(Icons.keyboard_arrow_down_outlined,
@@ -312,7 +401,7 @@ class _VideoDescriptionScreenState extends State<LearingVideoDescriptionScreen> 
                   child: GestureDetector(
                     onTap: () {
                       {
-                       Get.to(() => LearingVideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
+                        context.read<HomeBloc>().add(SubmitAcknowledgementRequest(acknowledgementRequest: AcknowledgementRequest(activity:widget.resAllQuestion.data!.activity!.sId!,acknowledgement:selectedAcknowledgement,learning:learnings1.sId!,score: 4 )));
                       }
                     },
                     child: Container(

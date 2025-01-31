@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:health_ed_flutter/core/services/api_urls.dart';
 import 'package:health_ed_flutter/core/services/http_wrapper.dart';
+import 'package:health_ed_flutter/features/home/model/request/AcknowledgementRequest.dart';
 import 'package:health_ed_flutter/features/home/model/response/GetAllDaysResponse.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResActivityInstructions.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllActivity.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
+import 'package:health_ed_flutter/features/home/model/response/ResUserAcknowledgement.dart';
 
 class HomeRepository {
   Future<GetAllDaysResponse> getAllDays() async {
@@ -64,6 +66,24 @@ class HomeRepository {
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return ResAllQuestion.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
+  Future<ResUserAcknowledgement> submitAcknowledgement(AcknowledgementRequest  acknowledgementRequest) async {
+    try {
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.user_acknowledgement,
+        acknowledgementRequest.toJson(),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return ResUserAcknowledgement.fromJson(data);
       } else {
         throw data['message'];
       }

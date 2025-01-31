@@ -51,7 +51,7 @@ class ActivityCardItem extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical:getTextStatus() == 'NOT_STARTED' ? 25:1,horizontal: 20), // Adds padding for more spacing
+        padding: EdgeInsets.symmetric(vertical:25,horizontal: 20),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

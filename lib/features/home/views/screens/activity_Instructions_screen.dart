@@ -167,19 +167,19 @@ class ActivityInstructionContent
                                   _tts.stop();
                                   if(state.resAllQuestion!.data!.activity!.understandings!.learnings!.length>0)
                                     {
-                                      Get.to(() => ActivityVideoUnderstandingScreen(resAllQuestion: state.resAllQuestion));
+                                      Get.off(() => ActivityVideoUnderstandingScreen(resAllQuestion: state.resAllQuestion));
                                     }else if(state.resAllQuestion.data!.activity!.matchings!.learnings!.length>0){
-                                    Get.to(() => MatchScreen(resAllQuestion: state.resAllQuestion,));
+                                    Get.off(() => MatchScreen(resAllQuestion: state.resAllQuestion,));
                                   }else if(state.resAllQuestion.data!.activity!.pictureSequencings!.learnings!.length>0){
-                                    Get.to(() => PictureSequencingsScreen(resAllQuestion: state.resAllQuestion,));
+                                    Get.off(() => PictureSequencingsScreen(resAllQuestion: state.resAllQuestion,));
                                   }else if(state.resAllQuestion.data!.activity!.pictureUnderstandings!.learnings!.length>0){
-                                    Get.to(() => PictureDescriptionScreen(resAllQuestion: state.resAllQuestion));
+                                    Get.off(() => PictureDescriptionScreen(resAllQuestion: state.resAllQuestion));
                                   }else if(state.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                                    Get.to(() => LearingVideoDescriptionScreen(resAllQuestion: state.resAllQuestion,));
+                                    Get.off(() => LearingVideoDescriptionScreen(resAllQuestion: state.resAllQuestion,));
                                   }else if(state.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                                    Get.to(() => VideoDescriptionScreen(resAllQuestion: state.resAllQuestion,));
+                                    Get.off(() => VideoDescriptionScreen(resAllQuestion: state.resAllQuestion,));
                                   }else if(state.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                                    Get.to(() => DragDropScreen(resAllQuestion: state.resAllQuestion,));
+                                    Get.off(() => DragDropScreen(resAllQuestion: state.resAllQuestion,));
                                   }
                                 },
                               );

@@ -9,7 +9,12 @@ import 'package:health_ed_flutter/core/utils/helper.dart';
 import 'package:health_ed_flutter/features/activity/views/RevealPictureDescriptionScreen.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
 
+import '../../../core/utils/custom_snackbar.dart';
 import '../../../core/utils/custom_widgets.dart';
+import '../../home/bloc/home_bloc.dart';
+import '../../home/bloc/home_event.dart';
+import '../../home/bloc/home_state.dart';
+import '../../home/model/request/AcknowledgementRequest.dart';
 import 'DragDropScreen.dart';
 import 'LearingVideoDescriptionScreen.dart';
 import 'VideoDescriptionScreen.dart';
@@ -18,13 +23,13 @@ class PictureDescriptionScreen extends StatefulWidget {
     final ResAllQuestion resAllQuestion;
 const PictureDescriptionScreen({Key? key, required this.resAllQuestion}) : super(key: key);
   @override
-  _PictureDescriptionScreenState createState() =>
-      _PictureDescriptionScreenState();
+  _PictureDescriptionScreenState createState() => _PictureDescriptionScreenState();
 }
 
 class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
   String selectedLanguage = 'English';
   bool isDragging = false;
+  String selectedAcknowledgement = 'Acknowledgement';
    String languageCode = "en-US";
   late Learnings1 instruction2;
   int currentLearningIndex = 0;
@@ -41,6 +46,15 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
   void dispose() {
     _tts.stop();
     super.dispose();
+  }
+  void submittedAcknowledge(){
+    if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+      Get.off(() => LearingVideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
+    }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+      Get.off(() => VideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
+    }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
+      Get.off(() => DragDropScreen(resAllQuestion: widget.resAllQuestion,));
+    }
   }
 
   void _updateLearningData() {
@@ -63,151 +77,161 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
   @override
   Widget build(BuildContext context) {
 
-     String titleData;
+    return BlocConsumer<HomeBloc, HomeState>(
+      listener: (context, state) {
+        if (state is GetSubmitAcknowledgeResponseFailure) {
+          customSnackbar(state.message, ContentType.failure);
+        }
+        else if (state is GetSubmitAcknowledgeResponse) {
+          submittedAcknowledge();
+        }
+      },
+      builder: (context, state) {
+        String titleData;
 
-    switch (getLanguageCode(selectedLanguage, languageCode)) {
-      case 'hi':
-        titleData = instruction2.title!.hi ?? "Instructions not available";
-        break;
-      case 'or':
-        titleData = instruction2.title!.or ?? "Instructions not available";
-        break;
-      default:
-        titleData = instruction2.title!.en ?? "Instructions not available";
-    }
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/bg/videobgimage.png'),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        switch (getLanguageCode(selectedLanguage, languageCode)) {
+          case 'hi':
+            titleData = instruction2.title!.hi ?? "Instructions not available";
+            break;
+          case 'or':
+            titleData = instruction2.title!.or ?? "Instructions not available";
+            break;
+          default:
+            titleData = instruction2.title!.en ?? "Instructions not available";
+        }
+        return SafeArea(
+          child: Scaffold(
+            body: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/bg/videobgimage.png'),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppBackButton(color: Colors.white),
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 1,
-                            offset: Offset(0, 2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AppBackButton(color: Colors.white),
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(5),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 1,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: GestureDetector(
-                        onTap: () => _showCupertinoDropdown(context),
-                        child: Row(
-                          children: [
-                            Text(
-                              selectedLanguage,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Icon(
-                              CupertinoIcons.chevron_down,
-                              color: Colors.black,
-                              size: 14,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                       GestureDetector(
-                                onTap: () {
-                                  _tts.speak(titleData, languageCode: languageCode);
-                                },
-                                child: Image.asset(
-                                  'assets/icons/volume_up1.png',
-                                  width: 40,
+                          child: GestureDetector(
+                            onTap: () => _showCupertinoDropdown(context),
+                            child: Row(
+                              children: [
+                                Text(
+                                  selectedLanguage,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black,
+                                  ),
                                 ),
-                              ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: Text(
-                        titleData,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
+                                Icon(
+                                  CupertinoIcons.chevron_down,
+                                  color: Colors.black,
+                                  size: 14,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _tts.speak(titleData, languageCode: languageCode);
+                          },
+                          child: Image.asset(
+                            'assets/icons/volume_up1.png',
+                            width: 40,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: Text(
+                            titleData,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      width: MediaQuery.of(context).size.width,
+                      height: 227,
+                      child: Image.network(
+                        instruction2.media?.url ?? '',
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/bg/imageActivity.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: 20),
 
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  width: MediaQuery.of(context).size.width,
-                  height: 227,
-                  child: Image.network(
-                    instruction2.media?.url ?? '',
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/bg/imageActivity.png',
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  ),
-                ),
-
-                SizedBox(height: 5),
-                // Row(
-                //   children: [
-                //     GestureDetector(
-                //       onTap: () {
-                //         // Add sound play functionality here
-                //       },
-                //       child: Image.asset(
-                //         'assets/icons/volume_up.png',
-                //         width: 40,
-                //       ),
-                //     ),
-                //     SizedBox(width: 20),
-                //     Expanded(
-                //       child: Text(
-                //         'How many children are their in the picture?',
-                //         style: TextStyle(
-                //             fontSize: 20,
-                //             color: Colors.white,
-                //             fontWeight: FontWeight.w600),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                Column(
-                  children: instruction2.options?.map((option) {
+                    SizedBox(height: 5),
+                    // Row(
+                    //   children: [
+                    //     GestureDetector(
+                    //       onTap: () {
+                    //         // Add sound play functionality here
+                    //       },
+                    //       child: Image.asset(
+                    //         'assets/icons/volume_up.png',
+                    //         width: 40,
+                    //       ),
+                    //     ),
+                    //     SizedBox(width: 20),
+                    //     Expanded(
+                    //       child: Text(
+                    //         'How many children are their in the picture?',
+                    //         style: TextStyle(
+                    //             fontSize: 20,
+                    //             color: Colors.white,
+                    //             fontWeight: FontWeight.w600),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    Column(
+                      children: instruction2.options?.map((option) {
                         String optionTitle;
                         switch (getLanguageCode(selectedLanguage, languageCode)) {
                           case 'hi':
@@ -219,66 +243,24 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
                           default:
                             optionTitle = option.option?.en ?? "NAN";
                         }
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            instruction2.options?.forEach((o) => o.correct = false);
-                            option.correct = true;
-                          });
-                        },
-                        child:instruction2.subType=="withOptions"?
-                        Card(
-                          color: option.correct == true ? ColorPallete.primary : Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    _tts.speak(optionTitle, languageCode: languageCode);
-                                  },
-                                  child: Image.asset(
-                                    'assets/icons/volume_up1.png',
-                                    width: 40,
-                                  ),
-                                ),
-                                SizedBox(width: 20),
-                                Expanded(
-                                  child: Text(
-                                    optionTitle,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: option.correct == true ? Colors.white : Colors.black,
-                                      fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ): Card(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (!isDragging) {
-                                    setState(() {
-                                      isDragging = true;
-                                    });
-                                  }
-                                },
-                                child: isDragging ?
-                                Row(
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                instruction2.options?.forEach((o) => o.correct = false);
+                                option.correct = true;
+                              });
+                            },
+                            child:instruction2.subType=="withOptions"?
+                            Card(
+                              color: option.correct == true ? ColorPallete.primary : Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     GestureDetector(
@@ -296,37 +278,83 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
                                         optionTitle,
                                         style: TextStyle(
                                             fontSize: 16,
-                                            color: ColorPallete.primary,
+                                            color: option.correct == true ? Colors.white : Colors.black,
                                             fontWeight: FontWeight.w600
                                         ),
                                       ),
                                     ),
                                   ],
-                                ): Center(
-                                  child: Text(
-                                    'Click to reveal answer',
-                                    style: TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
                                 ),
-                              )
+                              ),
+                            ): Card(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      if (!isDragging) {
+                                        setState(() {
+                                          isDragging = true;
+                                        });
+                                      }
+                                    },
+                                    child: isDragging ?
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            _tts.speak(optionTitle, languageCode: languageCode);
+                                          },
+                                          child: Image.asset(
+                                            'assets/icons/volume_up1.png',
+                                            width: 40,
+                                          ),
+                                        ),
+                                        SizedBox(width: 20),
+                                        Expanded(
+                                          child: Text(
+                                            optionTitle,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: ColorPallete.primary,
+                                                fontWeight: FontWeight.w600
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ): Center(
+                                      child: Text(
+                                        'Click to reveal answer',
+                                        style: TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  }).toList() ?? [],
+                        );
+                      }).toList() ?? [],
+                    ),
+                    Spacer(),
+                    _buildAcknowledgementButton(context),
+                  ],
                 ),
-                Spacer(),
-               _buildAcknowledgementButton(context),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
+
+
   }
 
   void _showCupertinoDropdown(BuildContext context) {
@@ -372,13 +400,75 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
       ),
     );
   }
+  void _showAcknowledgeDropdown(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: Text('Acknowledge Child’s Understanding'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: Text('Not Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Not Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Partially Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Partially Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Well Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Well Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Fully Understood'),
+            onPressed: () {
+              setState(() {
+                selectedAcknowledgement = 'Fully Understood';
+              });
+              Navigator.pop(context);
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: Text('Cancel'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
 
-    Widget _buildAcknowledgementButton(BuildContext context) {
+
+  Widget _buildAcknowledgementButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: ElevatedButton(
         onPressed: () {
-          _showCupertinoDropdown(context);
+          _showAcknowledgeDropdown(context);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -393,7 +483,7 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Acknowledgement",
+                      selectedAcknowledgement,
                       style: TextStyle(fontSize: 18, color: Colors.black),
                     ),
                     Icon(Icons.keyboard_arrow_down_outlined,
@@ -410,13 +500,7 @@ class _PictureDescriptionScreenState extends State<PictureDescriptionScreen> {
                       {
                         if(widget.resAllQuestion.data!.activity!.pictureUnderstandings!.learnings!.length==currentLearningIndex+1)
                           {
-                            if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                              Get.to(() => LearingVideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
-                            }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                              Get.to(() => VideoDescriptionScreen(resAllQuestion: widget.resAllQuestion,));
-                            }else if(widget.resAllQuestion.data!.activity!.pictureExpressions!.learnings!.length>0){
-                              Get.to(() => DragDropScreen(resAllQuestion: widget.resAllQuestion,));
-                            }
+                            context.read<HomeBloc>().add(SubmitAcknowledgementRequest(acknowledgementRequest: AcknowledgementRequest(activity:widget.resAllQuestion.data!.activity!.sId!,acknowledgement:selectedAcknowledgement,learningInstruction:instruction2.sId!,score: 4 )));
                           }else{
                           _updateLearningData();
                         }

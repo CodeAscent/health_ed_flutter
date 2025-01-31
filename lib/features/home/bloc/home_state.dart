@@ -3,6 +3,9 @@ import 'package:health_ed_flutter/features/home/model/response/GetAllDaysRespons
 import 'package:health_ed_flutter/features/home/model/response/ResAllActivity.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResActivityInstructions.dart';
 import 'package:health_ed_flutter/features/home/model/response/ResAllQuestion.dart';
+import 'package:health_ed_flutter/features/home/model/response/ResUserAcknowledgement.dart';
+
+import '../model/request/AcknowledgementRequest.dart';
 
 @immutable
 abstract class HomeState {}
@@ -19,6 +22,8 @@ class AllActivityLoading extends HomeState {}
 class ActivityInstructionLoading extends HomeState {}
 
 class ActivityQuestionLoading extends HomeState {}
+class SubmitAcknowledgeLoading extends HomeState {}
+
 
 class GetAllDayFailure extends HomeState {
   final String message;
@@ -58,4 +63,16 @@ class GetAllQuestionFailure extends HomeState {
 class GetAllQuestionSuccess extends HomeState {
   final ResAllQuestion resAllQuestion;
   GetAllQuestionSuccess({required this.resAllQuestion});
+
+}
+
+
+class GetSubmitAcknowledgeResponse extends HomeState {
+  final ResUserAcknowledgement resUserAcknowledgement;
+  GetSubmitAcknowledgeResponse({required this.resUserAcknowledgement});
+}
+
+class GetSubmitAcknowledgeResponseFailure extends HomeState {
+  final String message;
+  GetSubmitAcknowledgeResponseFailure({required this.message});
 }

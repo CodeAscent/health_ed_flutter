@@ -9,4 +9,5 @@ class ApiUrls {
   static String activity_instruction = 'days/activity-instructions';
   static String all_activity = 'days/all-activities-by-user';
   static String all_question = 'days/get-activity';
+  static String user_acknowledgement = 'user-acknowledgement/add';
 }

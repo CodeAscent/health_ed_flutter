@@ -11,6 +11,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<GetActivityInstructionRequested>(_getActivityInstruction);
     on<GetAllActivityRequested>(_getAllActivity);
     on<GetAllQuestionRequested>(_getAllQuestion);
+    on<SubmitAcknowledgementRequest>(_sendAcknowledgementRequest);
   }
 
   Future<void> _getAllDays(
@@ -48,8 +49,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Future<void> _getAllQuestion(
-      GetAllQuestionRequested event, Emitter<HomeState> emit) async {
+  Future<void> _getAllQuestion(GetAllQuestionRequested event, Emitter<HomeState> emit) async {
     emit(ActivityQuestionLoading());
     try {
       final response =
@@ -57,6 +57,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(GetAllQuestionSuccess(resAllQuestion: response));
     } catch (error) {
       emit(GetAllQuestionFailure(message: error.toString()));
+    }
+  }
+
+  Future<void> _sendAcknowledgementRequest(SubmitAcknowledgementRequest event, Emitter<HomeState> emit) async {
+    emit(SubmitAcknowledgeLoading());
+    try {
+      final response =
+      await homeRepository.submitAcknowledgement(event.acknowledgementRequest);
+      emit(GetSubmitAcknowledgeResponse(resUserAcknowledgement: response));
+    } catch (error) {
+      emit(GetSubmitAcknowledgeResponseFailure(message: error.toString()));
     }
   }
 }

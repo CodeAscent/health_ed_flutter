@@ -33,6 +33,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
     return questionData.every((question) => question.selectedOption != null);
   }
 
+
   SubmitQuestionRequest createSubmitRequest() {
     List<Answers> answers = questionData.map((question) {
       return Answers(
@@ -40,7 +41,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
         selectedOptionIndex: question.selectedOption,
       );
     }).toList();
-
     return SubmitQuestionRequest(answers: answers);
   }
 
