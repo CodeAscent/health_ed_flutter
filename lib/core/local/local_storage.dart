@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:health_ed_flutter/features/auth/models/response/OtpVerifyResponse.dart';
+import 'package:health_ed_flutter/modules/auth/models/response/OtpVerifyResponse.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {

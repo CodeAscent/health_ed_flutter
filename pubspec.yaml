@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+2
+version: 1.0.3+3
 
 environment:
   sdk: ^3.5.3
@@ -52,12 +52,13 @@ dependencies:
   html: ^0.15.5
   change_app_package_name: ^1.4.0
   just_audio: ^0.9.42
+  path_provider: ^2.1.5
+  open_file: ^3.5.10
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.2
-
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -84,15 +85,14 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   fonts:
-      - family: Gilroy
-        fonts:
-          - asset: assets/fonts/Gilroy-Regular.ttf
-            weight: 400      # Regular weight
-          - asset: assets/fonts/Gilroy-SemiBold.ttf
-            weight: 600      # SemiBold weight
-          - asset: assets/fonts/Gilroy-Bold.ttf
-            weight: 700      # Bold weight
-
+    - family: Gilroy
+      fonts:
+        - asset: assets/fonts/Gilroy-Regular.ttf
+          weight: 400 # Regular weight
+        - asset: assets/fonts/Gilroy-SemiBold.ttf
+          weight: 600 # SemiBold weight
+        - asset: assets/fonts/Gilroy-Bold.ttf
+          weight: 700 # Bold weight
 
     # To add assets to your application, add an assets section, like this:
   assets:

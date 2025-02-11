@@ -9,6 +9,7 @@ class HttpWrapper {
 
   static Future<Map<String, String>> headers() async {
     String? token = await LocalStorage.getToken();
+    Logger().f(token);
     return {
       'content-type': "application/json",
       if (token != null) "Authorization": "Bearer $token",
@@ -38,7 +39,7 @@ class HttpWrapper {
 
   /// POST request
   static Future<http.Response> postRequest(
-      String endpoint, dynamic payload) async {
+      String endpoint, dynamic payload,) async {
     try {
       final url = AppConfig.base_url + endpoint;
       final requestHeaders = await headers();
@@ -48,7 +49,8 @@ class HttpWrapper {
       _logger.i("POST Request Headers: $requestHeaders");
       _logger.i("POST Request Body: $body");
 
-      final res = await http.post(Uri.parse(url), body: body, headers: requestHeaders);
+      final res =
+          await http.post(Uri.parse(url), body: body, headers: requestHeaders);
 
       _logger.i("POST Response Status: ${res.statusCode}");
       _logger.i("POST Response Body: ${res.body}");

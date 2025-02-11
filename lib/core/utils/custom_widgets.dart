@@ -12,6 +12,7 @@ class CustomTextFieldWithLabel extends StatelessWidget {
   final Widget? sufix;
   final bool? readOnly;
   final bool? isPassword;
+  final VoidCallback? onTap;
   const CustomTextFieldWithLabel(
       {super.key,
       required this.label,
@@ -19,7 +20,8 @@ class CustomTextFieldWithLabel extends StatelessWidget {
       required this.hintText,
       this.sufix,
       this.readOnly = false,
-      this.isPassword = false});
+      this.isPassword = false,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class CustomTextFieldWithLabel extends StatelessWidget {
           },
           obscureText: isPassword!,
           readOnly: readOnly!,
+          onTap: onTap,
           decoration: InputDecoration(
               hintText: hintText,
               suffixIcon: sufix,
@@ -165,14 +168,16 @@ class CustomTransparentContainer extends StatelessWidget {
 
 class AppBackButton extends StatelessWidget {
   final Color? color;
-  const AppBackButton({super.key, this.color});
+  final void Function()? onTap;
+  const AppBackButton({super.key, this.color, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          Get.back();
-        },
+        onPressed: onTap ??
+            () {
+              Get.back();
+            },
         icon: CircleAvatar(
           backgroundColor: color != null ? color : ColorPallete.grayBlue,
           child: Icon(
@@ -230,9 +235,22 @@ class CustomGradientButton extends StatelessWidget {
           ),
         )),
         decoration: BoxDecoration(
-            gradient: isDisabled! ? null : ColorPallete.gradient,
+            gradient: isDisabled!
+                ? LinearGradient(colors: [Colors.grey[300]!, Colors.grey[400]!])
+                : ColorPallete.gradient,
             borderRadius: BorderRadius.circular(20)),
       ),
     );
+  }
+}
+
+class CustomDialog extends StatelessWidget {
+  final String title;
+  final String message;
+  const CustomDialog({super.key, required this.title, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(title: Text(title), content: Text(message));
   }
 }

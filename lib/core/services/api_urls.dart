@@ -8,6 +8,12 @@ class ApiUrls {
   static String all_days = 'days/all-days-by-user';
   static String activity_instruction = 'days/activity-instructions';
   static String all_activity = 'days/all-activities-by-user';
-  static String all_question = 'days/get-activity';
+  static String all_question = 'days/get-activity-for-user';
   static String user_acknowledgement = 'user-acknowledgement/add';
+  static String get_all_states = 'location/all-states';
+  static String get_all_cities = 'location/cities';
+  static String blog_category_all = 'blog/category/all';
+  static String blog_all = 'blog/all/user';
+  static String blog_appreciation = 'blog/appreciate';
+  static String completed_activity = 'completed-activity';
 }
