@@ -196,7 +196,9 @@ class AppGreyBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () {},
+        onPressed: () {
+                Get.back(); 
+        },
         icon: CircleAvatar(
           backgroundColor: ColorPallete.grayBlue,
           child: Icon(

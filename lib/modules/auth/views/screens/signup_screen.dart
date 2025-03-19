@@ -12,9 +12,7 @@ import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/modules/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/assessment_screen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/question_screen.dart';
-import 'package:logger/logger.dart';
-
+import 'package:health_ed_flutter/modules/auth/views/screens/planScreen.dart';
 import '../../models/request/RegistrationRequest.dart';
 import '../../repository/auth_repository.dart';
 import '../../models/response/StateResponse.dart';
@@ -136,7 +134,7 @@ class _SignupScreenState extends State<SignupScreen> {
           }
           if (state is AuthRegisterSuccess) {
             customSnackbar(state.message, ContentType.success);
-            Get.to(() => AssessmentScreen());
+            Get.to(() => PlanScreen());
           }
         },
         builder: (context, state) {

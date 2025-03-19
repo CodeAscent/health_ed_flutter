@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/modules/auth/repository/auth_repository.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/PlanScreen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/language_screen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
@@ -30,9 +31,9 @@ class _SplashScreenState extends State<SplashScreen> {
     String? token = await LocalStorage.getString('userData');
     if (token != null) {
       await AuthRepository().fetchUser();
-      Get.off(() => MainScreen());
+      Get.off(() => PlanScreen());
     } else {
-      Get.off(() => LanguageScreen());
+      Get.off(() => PlanScreen());
     }
   }
 
