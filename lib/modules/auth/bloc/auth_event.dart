@@ -26,7 +26,26 @@ class SubmitQuestionRequested extends AuthEvent {
   SubmitQuestionRequested({required this.submitQuestionRequest});
 }
 
+class CreatePaymentRequested extends AuthEvent {
+  final CreatePayOrderReq createPayOrderReq;
+  CreatePaymentRequested({required this.createPayOrderReq});
+}
+class CreateAssessPaymentRequested extends AuthEvent {
+  CreateAssessPaymentRequested();
+}
+
+class VerifyPaymentRequested extends AuthEvent {
+  final VerifyPayOrderReq verifyPayOrderReq;
+  VerifyPaymentRequested({required this.verifyPayOrderReq});
+}
+
+class VerifyAssessPaymentRequested extends AuthEvent {
+  final VerifyPayOrderReq verifyPayOrderReq;
+  VerifyAssessPaymentRequested({required this.verifyPayOrderReq});
+}
+
 
 
 
 class AuthAssessmentQuestionDataRequested extends AuthEvent {}
+class PlanDataRequested extends AuthEvent {}

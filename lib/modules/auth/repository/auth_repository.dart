@@ -3,11 +3,17 @@ import 'dart:convert';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/core/services/api_urls.dart';
 import 'package:health_ed_flutter/core/services/http_wrapper.dart';
+import 'package:health_ed_flutter/modules/auth/models/request/CreatePayOrderReq.dart';
+import 'package:health_ed_flutter/modules/auth/models/response/ResAssesmentCreateOrder.dart';
+import 'package:health_ed_flutter/modules/auth/models/request/VerifyPayOrderReq.dart';
 import 'package:health_ed_flutter/modules/auth/models/request/LoginRequest.dart';
 import 'package:health_ed_flutter/modules/auth/models/request/OtpVerifyRequest.dart';
 import 'package:health_ed_flutter/modules/auth/models/request/SubmitQuestionRequest.dart';
+import 'package:health_ed_flutter/modules/auth/models/response/AllPlanResponse.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/AssessmentQuestionResponse.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/OtpVerifyResponse.dart';
+import 'package:health_ed_flutter/modules/auth/models/response/ResCreateOrder.dart';
+import 'package:health_ed_flutter/modules/auth/models/response/ResVerifyOrder.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/SubmitQuestionResponse.dart';
 import 'package:logger/logger.dart';
 
@@ -58,6 +64,20 @@ class AuthRepository {
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return AssessmentQuestionResponse.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+    Future<AllPlanResponse> getAllPlan() async {
+    try {
+      final res = await HttpWrapper.getRequest(ApiUrls.subscription_plans);
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return AllPlanResponse.fromJson(data);
       } else {
         throw data['message'];
       }
@@ -140,6 +160,73 @@ class AuthRepository {
       final data = jsonDecode(response.body);
       if (response.statusCode == 200) {
         return CityResponse.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+   Future<ResCreateOrder> createPayment(CreatePayOrderReq createPayment) async {
+    try {
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.create_subscription_plans,
+        createPayment.toJson(),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return ResCreateOrder.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ResAssesmentCreateOrder> createAssessPayOrder() async {
+    try {
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.assessment_payment_create_order,null
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return ResAssesmentCreateOrder.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ResVerifyOrder> verifyPayOrder(VerifyPayOrderReq verifyPayOrderReq) async {
+    try {
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.subscription_payment_verify,
+        verifyPayOrderReq.toJson(),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return ResVerifyOrder.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+    Future<ResVerifyOrder> verifyAssessPayOrder(VerifyPayOrderReq verifyPayOrderReq) async {
+    try {
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.assessment_payment_verify,
+        verifyPayOrderReq.toJson(),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return ResVerifyOrder.fromJson(data);
       } else {
         throw data['message'];
       }

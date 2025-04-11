@@ -37,28 +37,42 @@ class HttpWrapper {
     }
   }
 
-  /// POST request
-  static Future<http.Response> postRequest(
-      String endpoint, dynamic payload,) async {
-    try {
-      final url = AppConfig.base_url + endpoint;
-      final requestHeaders = await headers();
-      final body = jsonEncode(payload);
+ /// POST request
+static Future<http.Response> postRequest(
+    String endpoint, dynamic payload,) async {
+  try {
+    final url = AppConfig.base_url + endpoint;
+    final requestHeaders = await headers();
 
-      _logger.i("POST Request URL: $url");
-      _logger.i("POST Request Headers: $requestHeaders");
+    _logger.i("POST Request URL: $url");
+    _logger.i("POST Request Headers: $requestHeaders");
+
+    http.Response res;
+
+    if (payload != null) {
+      final body = jsonEncode(payload);
       _logger.i("POST Request Body: $body");
 
-      final res =
-          await http.post(Uri.parse(url), body: body, headers: requestHeaders);
-
-      _logger.i("POST Response Status: ${res.statusCode}");
-      _logger.i("POST Response Body: ${res.body}");
-
-      return res;
-    } catch (e) {
-      _logger.e("POST Request Error: $e");
-      rethrow;
+      res = await http.post(
+        Uri.parse(url),
+        body: body,
+        headers: requestHeaders,
+      );
+    } else {
+      res = await http.post(
+        Uri.parse(url),
+        headers: requestHeaders,
+      );
     }
+
+    _logger.i("POST Response Status: ${res.statusCode}");
+    _logger.i("POST Response Body: ${res.body}");
+
+    return res;
+  } catch (e) {
+    _logger.e("POST Request Error: $e");
+    rethrow;
   }
+}
+
 }

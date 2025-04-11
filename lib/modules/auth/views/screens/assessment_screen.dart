@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/AssessmentPaymentPage.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/question_screen.dart';
 
 import '../../../../core/utils/custom_widgets.dart';
@@ -131,7 +132,9 @@ class AssessmentScreen extends StatelessWidget {
                       SizedBox(height: 15,),
                       CustomGradientButton(
                         label: 'Pay & Start!',
-                        onTap: (){ Get.off(() => QuestionScreen());},
+                        onTap: (){ 
+                           Get.to(Assessmentpaymentpage());
+                          },
                       ),
                     ],
                   ),

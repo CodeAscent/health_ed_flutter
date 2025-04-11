@@ -16,4 +16,9 @@ class ApiUrls {
   static String blog_all = 'blog/all/user';
   static String blog_appreciation = 'blog/appreciate';
   static String completed_activity = 'completed-activity';
+  static String subscription_plans = 'subscription/plans';
+  static String create_subscription_plans = 'subscription/order/create';
+  static String subscription_payment_verify = 'subscription/payment/verify';
+  static String assessment_payment_create_order = 'assessment-payment/create-order';
+  static String assessment_payment_verify = 'assessment-payment/verify';
 }
