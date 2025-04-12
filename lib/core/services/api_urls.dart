@@ -21,4 +21,5 @@ class ApiUrls {
   static String subscription_payment_verify = 'subscription/payment/verify';
   static String assessment_payment_create_order = 'assessment-payment/create-order';
   static String assessment_payment_verify = 'assessment-payment/verify';
+  static String subscription_status = 'subscription/status';
 }

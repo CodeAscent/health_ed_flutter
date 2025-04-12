@@ -13,6 +13,7 @@ import 'package:health_ed_flutter/modules/auth/models/response/AllPlanResponse.d
 import 'package:health_ed_flutter/modules/auth/models/response/AssessmentQuestionResponse.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/OtpVerifyResponse.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/ResCreateOrder.dart';
+import 'package:health_ed_flutter/modules/auth/models/response/ResUserPlanData.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/ResVerifyOrder.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/SubmitQuestionResponse.dart';
 import 'package:logger/logger.dart';
@@ -86,6 +87,20 @@ class AuthRepository {
     }
   }
 
+    Future<ResUserPlanData> getUserPlanData() async {
+    try {
+      final res = await HttpWrapper.getRequest(ApiUrls.subscription_status);
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return ResUserPlanData.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<RegisterResponse> signUp(
       RegistrationRequest registrationRequest) async {
     try {
@@ -127,7 +142,7 @@ class AuthRepository {
       final res = await HttpWrapper.getRequest(ApiUrls.get_user);
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        await LocalStorage.prefs.setString('user', jsonEncode(data['user']));
+        await LocalStorage.prefs.setString('userProfileData', jsonEncode(data['data']));
         return data;
       } else {
         throw data['message'];

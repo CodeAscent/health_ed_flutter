@@ -49,3 +49,4 @@ class VerifyAssessPaymentRequested extends AuthEvent {
 
 class AuthAssessmentQuestionDataRequested extends AuthEvent {}
 class PlanDataRequested extends AuthEvent {}
+class UserPlanDataRequested extends AuthEvent {}

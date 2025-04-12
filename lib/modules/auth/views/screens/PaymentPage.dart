@@ -59,7 +59,7 @@ class ActivityInstructionContent
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    final verifyPayOrderReq = VerifyPayOrderReq(orderId:orderId ,paymentId:response.paymentId!,razorpaySignature:response.signature! );
+    final verifyPayOrderReq = VerifyPayOrderReq(orderId:orderId ,paymentId:response.paymentId!,razorpaySignature:response.signature!,subscriptionId: widget.planData.sId! );
     context.read<AuthBloc>().add(VerifyPaymentRequested(verifyPayOrderReq: verifyPayOrderReq));
     // setState(() {
     //   paymentStatus = PaymentResultStatus.success;
@@ -111,7 +111,7 @@ class ActivityInstructionContent
             debugPrint('Error: $e');
           }
         }else if (state is VerifyPaymentOrderSuccess) {
-    
+           AuthRepository().fetchUser();
           try {
                setState(() {
                 paymentStatus =state.resVerifyOrder.success!? PaymentResultStatus.success:PaymentResultStatus.failure;

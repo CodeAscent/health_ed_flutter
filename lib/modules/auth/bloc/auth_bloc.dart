@@ -12,6 +12,7 @@ import 'package:health_ed_flutter/modules/auth/models/response/AllPlanResponse.d
 import 'package:health_ed_flutter/modules/auth/models/response/AssessmentQuestionResponse.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/OtpVerifyResponse.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/ResCreateOrder.dart';
+import 'package:health_ed_flutter/modules/auth/models/response/ResUserPlanData.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/ResVerifyOrder.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/SubmitQuestionResponse.dart';
 import 'package:health_ed_flutter/modules/auth/models/user.dart';
@@ -37,6 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VerifyPaymentRequested>(verifyPayOrder);
     on<VerifyAssessPaymentRequested>(verifyAssessPayOrder);
     on<CreateAssessPaymentRequested>(createAssessPayOrder);
+    on<UserPlanDataRequested>(getUserPlanData);
   }
   Future<void> authRegister(
       AuthRegistrationRequested event, Emitter<AuthState> emit) async {
@@ -94,6 +96,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthPlanSuccess(allPlanResponse: res));
     } catch (e) {
       emit(AuthPlanFailure(message: e.toString()));
+    }
+  }
+
+    Future<void> getUserPlanData(
+      UserPlanDataRequested event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final res = await authRepository.getUserPlanData();
+      emit(UserPlanDataSuccess(resUserPlanData: res));
+    } catch (e) {
+      emit(UserPlanDataFailure(message: e.toString()));
     }
   }
 

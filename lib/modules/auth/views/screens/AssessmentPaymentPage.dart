@@ -6,6 +6,7 @@ import 'package:health_ed_flutter/modules/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/modules/auth/models/request/CreatePayOrderReq.dart';
 import 'package:health_ed_flutter/modules/auth/models/request/VerifyPayOrderReq.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/AllPlanResponse.dart';
+import 'package:health_ed_flutter/modules/auth/repository/auth_repository.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../../../core/utils/custom_snackbar.dart';
@@ -107,7 +108,7 @@ class ActivityInstructionContent
             debugPrint('Error: $e');
           }
         }else if (state is VerifyPaymentOrderSuccess) {
-    
+           AuthRepository().fetchUser();
           try {
                setState(() {
                 paymentStatus =state.resVerifyOrder.success!? PaymentResultStatus.success:PaymentResultStatus.failure;

@@ -52,6 +52,17 @@ final class AuthPlanFailure extends AuthState {
   AuthPlanFailure({required this.message});
 }
 
+
+final class UserPlanDataSuccess extends AuthState {
+  final ResUserPlanData resUserPlanData;
+  UserPlanDataSuccess({required this.resUserPlanData});
+}
+
+final class UserPlanDataFailure extends AuthState {
+  final String message;
+  UserPlanDataFailure({required this.message});
+}
+
 final class AuthOtpVerifyFailure extends AuthState {
   final String message;
   AuthOtpVerifyFailure({required this.message});
