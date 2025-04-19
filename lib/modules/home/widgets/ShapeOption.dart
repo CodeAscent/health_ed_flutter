@@ -22,27 +22,30 @@ class ShapeOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 110,
+      height: 90,
       width: 90,
+       margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
+        color: Colors.white, // Background color
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isHighlighted
               ? ColorPallete.primary
               : isMatched
-              ? Colors.green
-              : Colors.transparent,
+                  ? Colors.green
+                  : Colors.transparent,
           width: 1,
         ),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Stack(
-          children: [
-            Positioned.fill(
+      child: Stack(
+        children: [
+          // Image as background
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
               child: Image.network(
                 shape,
-                fit: BoxFit.contain,
+                fit: BoxFit.cover, // Fill the full container
                 opacity: AlwaysStoppedAnimation(originalImageOpacity),
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
@@ -50,28 +53,28 @@ class ShapeOption extends StatelessWidget {
                     child: CircularProgressIndicator(
                       value: loadingProgress.expectedTotalBytes != null
                           ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
+                              loadingProgress.expectedTotalBytes!
                           : null,
                     ),
                   );
                 },
                 errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.error);
+                  return Center(child: Icon(Icons.error));
                 },
               ),
             ),
-            if (showCheck)
-              Positioned(
-                top: 2,
-                right: 2,
-                child: Icon(
-                  Icons.check_circle,
-                  color: ColorPallete.primary,
-                  size: 24,
-                ),
+          ),
+          if (showCheck)
+            Positioned(
+              top: 2,
+              right: 2,
+              child: Icon(
+                Icons.check_circle,
+                color: ColorPallete.primary,
+                size: 24,
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
@@ -82,7 +85,7 @@ class ShapeOption extends StatelessWidget {
 class AudioOption extends StatefulWidget {
   final String audio;
   final bool isHighlighted;
-  final bool isMatched; 
+  final bool isMatched;
   final bool showCheck;
   final double originalImageOpacity;
 
@@ -112,7 +115,6 @@ class _AudioOptionState extends State<AudioOption> {
     if (isPlaying) {
       await audioPlayer.pause();
     } else {
-      // Stop any other playing audio first
       await audioPlayer.stop();
       await audioPlayer.setUrl(widget.audio);
       await audioPlayer.play();
@@ -125,48 +127,54 @@ class _AudioOptionState extends State<AudioOption> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 110,
+      height: 90,
       width: 90,
+      margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: widget.isHighlighted
               ? ColorPallete.primary
               : widget.isMatched
-              ? Colors.green
-              : Colors.transparent,
+                  ? Colors.green
+                  : Colors.transparent,
           width: 1,
         ),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Stack(
-          children: [
-            Positioned.fill(
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
               child: GestureDetector(
                 onTap: toggleAudio,
                 child: Container(
                   color: Colors.white,
-                  child: Image.asset(
-                    'assets/icons/audioicon.png',
-                    height: 30,
-                    width: 30,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/icons/audioicon.png',
+                      fit: BoxFit.contain,
+                      width: 40,
+                      height: 40,
+                      opacity: AlwaysStoppedAnimation(widget.originalImageOpacity),
+                    ),
                   ),
                 ),
               ),
             ),
-            if (widget.showCheck)
-              Positioned(
-                top: 2,
-                right: 2,
-                child: Icon(
-                  Icons.check_circle,
-                  color: ColorPallete.primary,
-                  size: 24,
-                ),
+          ),
+          if (widget.showCheck)
+            Positioned(
+              top: 2,
+              right: 2,
+              child: Icon(
+                Icons.check_circle,
+                color: ColorPallete.primary,
+                size: 24,
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }

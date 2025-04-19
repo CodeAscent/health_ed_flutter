@@ -13,7 +13,6 @@ import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
-import 'package:health_ed_flutter/modules/home/repository/home_repository.dart';
 import 'package:health_ed_flutter/modules/activity/views/understanding_screen.dart';
 
 class UnderstandingInstruction extends StatefulWidget {
@@ -142,13 +141,6 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
                                 ),
                               ),
                             ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          HtmlWidget(
-                            titleData,
-                            textStyle: TextStyle(fontSize: 16),
                           ),
                           SizedBox(
                             height: 20,

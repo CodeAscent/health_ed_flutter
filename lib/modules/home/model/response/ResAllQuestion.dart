@@ -707,24 +707,29 @@ class Options {
   ActivityName? option;
   bool? correct;
   String? sId;
+  Media? media;
 
-  Options({this.option, this.correct, this.sId});
+  Options({this.option, this.correct, this.sId, this.media});
 
   Options.fromJson(Map<String, dynamic>? json) {
     option = json?['option'] != null
-        ? new ActivityName.fromJson(json?['option'])
+        ? ActivityName.fromJson(json?['option'])
         : null;
     correct = json?['correct'];
     sId = json?['_id'];
+    media = json?['media'] != null ? Media.fromJson(json?['media']) : null;
   }
 
   Map<String, dynamic>? toJson() {
-    final Map<String, dynamic>? data = new Map<String, dynamic>();
-    if (this.option != null) {
-      data?['option'] = this.option!.toJson();
+    final Map<String, dynamic> data = {};
+    if (option != null) {
+      data['option'] = option!.toJson();
     }
-    data?['correct'] = this.correct;
-    data?['_id'] = this.sId;
+    if (media != null) {
+      data['media'] = media!.toJson();
+    }
+    data['correct'] = correct;
+    data['_id'] = sId;
     return data;
   }
 }

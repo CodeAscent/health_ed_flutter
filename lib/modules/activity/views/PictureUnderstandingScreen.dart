@@ -2,12 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/tts/text_to_speech.dart';
 import 'package:health_ed_flutter/core/utils/helper.dart';
-import 'package:health_ed_flutter/modules/activity/views/RevealPictureDescriptionScreen.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
 
 import '../../../core/utils/custom_snackbar.dart';
@@ -37,7 +35,9 @@ class _PictureUnderstandingScreenState
   bool isDragging = false;
   String selectedAcknowledgement = 'Acknowledgement';
   String languageCode = "en-US";
+  String activeImageUrl = "";
   late Learnings1 learning;
+  late Instruction instruction;
   int currentLearningIndex = 0;
   final TextToSpeech _tts = TextToSpeech();
   bool showingInstruction = true;
@@ -46,14 +46,7 @@ class _PictureUnderstandingScreenState
   void initState() {
     super.initState();
     navigateIfNotAvailable();
-    showingInstruction = widget.showInstruction;
-    if (showingInstruction) {
-      learning = widget.resAllQuestion.data!.activity!.pictureUnderstandings!
-          .learnings!.first;
-    } else {
-      learning = widget.resAllQuestion.data!.activity!.pictureUnderstandings!
-          .learnings!.first;
-    }
+     
   }
 
   void navigateIfNotAvailable() {
@@ -67,6 +60,24 @@ class _PictureUnderstandingScreenState
             resAllQuestion: widget.resAllQuestion,
           ));
       });
+    }else{
+ learning = widget.resAllQuestion.data!.activity!.pictureUnderstandings!
+          .learnings![currentLearningIndex];
+              activeImageUrl = learning.media?.url??'';
+ WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Preload initial image
+    if (learning.media?.url != null && learning.media!.url!.isNotEmpty) {
+      precacheImage(NetworkImage(learning.media!.url!), context);
+    }
+
+    // Preload all option images
+    learning.options?.forEach((option) {
+      final imageUrl = option.media?.url;
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        precacheImage(NetworkImage(imageUrl), context);
+      }
+    });
+  });
     }
   }
 
@@ -108,12 +119,24 @@ class _PictureUnderstandingScreenState
         currentLearningIndex++;
         learning = widget.resAllQuestion.data!.activity!.pictureUnderstandings!
             .learnings![currentLearningIndex];
+                activeImageUrl = learning.media?.url??'';
+
+  precacheImage(NetworkImage(learning.media?.url ?? ""), context);
+  learning.options?.forEach((option) {
+    final imageUrl = option.media?.url;
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      precacheImage(NetworkImage(imageUrl), context);
+    }
+  });
+
+                
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+
     return BlocConsumer<HomeBloc, HomeState>(
       listener: (context, state) {
         if (state is GetSubmitAcknowledgeResponseFailure) {
@@ -133,286 +156,270 @@ class _PictureUnderstandingScreenState
           default:
             titleData = learning.title!.en ?? "Instructions not available";
         }
-        return SafeArea(
-          child: Scaffold(
-            body: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/bg/videobgimage.png'),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        AppBackButton(color: Colors.white),
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(5),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                spreadRadius: 1,
-                                blurRadius: 1,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: GestureDetector(
-                            onTap: () => _showCupertinoDropdown(context),
-                            child: Row(
-                              children: [
-                                Text(
-                                  selectedLanguage,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Icon(
-                                  CupertinoIcons.chevron_down,
-                                  color: Colors.black,
-                                  size: 14,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            _tts.speak(titleData, languageCode: languageCode);
-                          },
-                          child: Image.asset(
-                            'assets/icons/volume_up1.png',
-                            width: 40,
-                          ),
-                        ),
-                        SizedBox(width: 20),
-                        Expanded(
-                          child: Text(
-                            titleData,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      width: MediaQuery.of(context).size.width,
-                      height: 227,
-                      child: Image.network(
-                        learning.media?.url ?? '',
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/bg/imageActivity.png',
-                            fit: BoxFit.cover,
-                          );
-                        },
+        return
+          SafeArea(
+  child: Scaffold(
+    body: Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage('assets/bg/videobgimage.png'),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            // 🔹 Header (Language + Back button)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AppBackButton(color: Colors.white),
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 1,
+                        offset: Offset(0, 2),
                       ),
+                    ],
+                  ),
+                  child: GestureDetector(
+                    onTap: () => _showCupertinoDropdown(context),
+                    child: Row(
+                      children: [
+                        Text(
+                          selectedLanguage,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Icon(
+                          CupertinoIcons.chevron_down,
+                          color: Colors.black,
+                          size: 14,
+                        ),
+                      ],
                     ),
-
-                    SizedBox(height: 5),
-                    // Row(
-                    //   children: [
-                    //     GestureDetector(
-                    //       onTap: () {
-                    //         // Add sound play functionality here
-                    //       },
-                    //       child: Image.asset(
-                    //         'assets/icons/volume_up.png',
-                    //         width: 40,
-                    //       ),
-                    //     ),
-                    //     SizedBox(width: 20),
-                    //     Expanded(
-                    //       child: Text(
-                    //         'How many children are their in the picture?',
-                    //         style: TextStyle(
-                    //             fontSize: 20,
-                    //             color: Colors.white,
-                    //             fontWeight: FontWeight.w600),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    Column(
-                      children: learning.options?.map((option) {
-                            String optionTitle;
-                            switch (getLanguageCode(
-                                selectedLanguage, languageCode)) {
-                              case 'hi':
-                                optionTitle = option.option?.hi ?? "NAN";
-                                break;
-                              case 'or':
-                                optionTitle = option.option?.or ?? "NAN";
-                                break;
-                              default:
-                                optionTitle = option.option?.en ?? "NAN";
-                            }
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 16.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    learning.options
-                                        ?.forEach((o) => o.correct = false);
-                                    option.correct = true;
-                                  });
-                                },
-                                child: learning.subType == "withOptions"
-                                    ? Card(
-                                        color: option.correct == true
-                                            ? ColorPallete.primary
-                                            : Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  _tts.speak(optionTitle,
-                                                      languageCode:
-                                                          languageCode);
-                                                },
-                                                child: Image.asset(
-                                                  'assets/icons/volume_up1.png',
-                                                  width: 40,
-                                                ),
-                                              ),
-                                              SizedBox(width: 20),
-                                              Expanded(
-                                                child: Text(
-                                                  optionTitle,
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color:
-                                                          option.correct == true
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : Card(
-                                        color: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                        child: Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                if (!isDragging) {
-                                                  setState(() {
-                                                    isDragging = true;
-                                                  });
-                                                }
-                                              },
-                                              child: isDragging
-                                                  ? Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            _tts.speak(
-                                                                optionTitle,
-                                                                languageCode:
-                                                                    languageCode);
-                                                          },
-                                                          child: Image.asset(
-                                                            'assets/icons/volume_up1.png',
-                                                            width: 40,
-                                                          ),
-                                                        ),
-                                                        SizedBox(width: 20),
-                                                        Expanded(
-                                                          child: Text(
-                                                            optionTitle,
-                                                            style: TextStyle(
-                                                                fontSize: 16,
-                                                                color:
-                                                                    ColorPallete
-                                                                        .primary,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  : Center(
-                                                      child: Text(
-                                                        'Click to reveal answer',
-                                                        style: TextStyle(
-                                                          color: Colors.green,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                    ),
-                                            )),
-                                      ),
-                              ),
-                            );
-                          }).toList() ??
-                          [],
-                    ),
-                    Spacer(),
-                    _buildAcknowledgementButton(context),
-                  ],
+                  ),
                 ),
+              ],
+            ),
+            SizedBox(height: 10),
+
+            // 🔹 Title & TTS
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    _tts.speak(titleData, languageCode: languageCode);
+                  },
+                  child: Image.asset(
+                    'assets/icons/volume_up1.png',
+                    width: 40,
+                  ),
+                ),
+                SizedBox(width: 20),
+                Expanded(
+                  child: Text(
+                    titleData,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+
+            // 🔹 Main Image
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              width: MediaQuery.of(context).size.width,
+              height: 227,
+              child: Image.network(
+                activeImageUrl,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    'assets/bg/imageActivity.png',
+                    fit: BoxFit.cover,
+                  );
+                },
               ),
             ),
-          ),
-        );
+            SizedBox(height: 10),
+
+            // 🔹 Scrollable Options Section
+            Flexible(
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                itemCount: learning.options?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final option = learning.options![index];
+
+                  String optionTitle;
+                  switch (getLanguageCode(selectedLanguage, languageCode)) {
+                    case 'hi':
+                      optionTitle = option.option?.hi ?? "NAN";
+                      break;
+                    case 'or':
+                      optionTitle = option.option?.or ?? "NAN";
+                      break;
+                    default:
+                      optionTitle = option.option?.en ?? "NAN";
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 1.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          learning.options?.forEach((o) => o.correct = false);
+                          option.correct = true;
+                          if (learning.subType == "withOptions" &&
+                              option.media?.url != null) {
+                            activeImageUrl = option.media!.url!;
+                          }
+                        });
+                      },
+                      child: learning.subType == "withOptions"
+                          ? Card(
+                              color: option.correct == true
+                                  ? ColorPallete.primary
+                                  : Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        _tts.speak(optionTitle,
+                                            languageCode: languageCode);
+                                      },
+                                      child: Image.asset(
+                                        'assets/icons/volume_up1.png',
+                                        width: 40,
+                                      ),
+                                    ),
+                                    SizedBox(width: 20),
+                                    Expanded(
+                                      child: Text(
+                                        optionTitle,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: option.correct == true
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Card(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (!isDragging) {
+                                      setState(() {
+                                        isDragging = true;
+                                      });
+                                    }
+                                  },
+                                  child: isDragging
+                                      ? Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                _tts.speak(optionTitle,
+                                                    languageCode:
+                                                        languageCode);
+                                              },
+                                              child: Image.asset(
+                                                'assets/icons/volume_up1.png',
+                                                width: 40,
+                                              ),
+                                            ),
+                                            SizedBox(width: 20),
+                                            Expanded(
+                                              child: Text(
+                                                optionTitle,
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: ColorPallete.primary,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : Center(
+                                          child: Text(
+                                            'Click to reveal answer',
+                                            style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            // 🔹 Acknowledgement Button at the Bottom
+            SizedBox(height: 2),
+            _buildAcknowledgementButton(context),
+            SizedBox(height: 10),
+          ],
+        ),
+      ),
+    ),
+  ),
+);
+
       },
     );
   }
 
+ 
+ 
   void _showCupertinoDropdown(BuildContext context) {
     showCupertinoModalPopup(
       context: context,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/modules/activity/views/picture_understanding_Instructions_screen.dart';
 import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
 import 'package:html/parser.dart';
 import '../../../core/tts/text_to_speech.dart';
@@ -204,7 +205,7 @@ class ActivityInstructionContent
                                             .pictureUnderstandings!
                                             .instruction !=
                                         null) {
-                                  Get.off(() => PictureUnderstandingScreen(
+                                  Get.off(() => PictureUnderstandingInstructionsScreen(
                                         resAllQuestion: state.resAllQuestion,
                                         showInstruction: true,
                                       ));

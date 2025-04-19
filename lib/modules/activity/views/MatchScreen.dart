@@ -1,25 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
 import 'package:health_ed_flutter/modules/activity/views/PictureUnderstandingScreen.dart';
-import 'package:health_ed_flutter/modules/activity/views/PictureSequencings.dart';
+import 'package:health_ed_flutter/modules/activity/views/picture_understanding_Instructions_screen.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
-import 'package:logger/logger.dart';
-
 import '../../../core/theme/app_colors.dart';
 import '../../../core/tts/text_to_speech.dart';
 import '../../../core/utils/custom_widgets.dart';
 import '../../../core/utils/helper.dart';
 import '../../home/widgets/ShapeOption.dart';
-import 'DragDropScreen.dart';
-import 'picture_expression_instruction.dart';
-import 'RevealPictureDescriptionScreen.dart';
-import 'pictureExpression.dart';
 
 class MatchScreen extends StatefulWidget {
   final bool showInstruction;
@@ -77,7 +73,7 @@ class _MatchScreenState extends State<MatchScreen>
           &&
         widget.resAllQuestion.data!.activity!.matchings!.instruction == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Get.to(() => PictureUnderstandingScreen(
+        Get.to(() => PictureUnderstandingInstructionsScreen(
               resAllQuestion: widget.resAllQuestion,
               showInstruction: true,
             ));
@@ -91,82 +87,119 @@ class _MatchScreenState extends State<MatchScreen>
     super.dispose();
   }
 
-  void _autoMatchInstruction() async {
-    if (showingInstruction && !isDragging) {
-      final answers = learnings3.matchingAnswers!;
-      final questions = learnings3.matchingQuestions!;
+void _autoMatchInstruction() async {
+  if (showingInstruction && !isDragging) {
+    final answers = learnings3.matchingAnswers!;
+    final questions = learnings3.matchingQuestions!;
 
-      for (int i = 0; i < answers.length; i++) {
-        final answer = answers[i];
-        final correctIndex = answer.correctIndex!;
-        final question = questions[correctIndex];
+    // Create a single animation controller that we'll reuse
+    final controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
 
-        // Calculate positions based on layout direction
-        double startX, startY, endX, endY;
-        if (learnings3.direction == 'vertical') {
-          // For vertical layout:
-          // Start from top row (answers) to bottom row (questions)
-          startX = MediaQuery.of(context).size.width * (0.25 + (i * 0.25));
-          startY = MediaQuery.of(context).size.height * 0.35;
-          endX = MediaQuery.of(context).size.width *
-              (0.25 + (correctIndex * 0.25));
-          endY = MediaQuery.of(context).size.height * 0.5;
-        } else {
-          // For horizontal layout:
-          // Start from left column (answers) to right column (questions)
-          startX = MediaQuery.of(context).size.width * 0.25;
-          startY = MediaQuery.of(context).size.height * (0.35 + (i * 0.15));
-          endX = MediaQuery.of(context).size.width * 0.65;
-          endY = MediaQuery.of(context).size.height *
-              (0.35 + (correctIndex * 0.15));
-        }
+    for (int i = 0; i < answers.length; i++) {
+      final answer = answers[i];
+      final correctIndex = answer.correctIndex!;
+      final question = questions[correctIndex];
 
-        // Show hand at starting position
-        setState(() {
-          showHand = true;
-          handX = startX - 25; // Offset to center hand on the image
-          handY = startY - 25;
-        });
+      // Calculate positions
+      double startX, startY, endX, endY;
+      final itemWidth = 90.0;
+      final itemHeight = 90.0;
+      final handSize = 50.0;
 
-        await Future.delayed(Duration(milliseconds: 500));
-
-        // Animate hand movement
-        for (double t = 0; t <= 1; t += 0.05) {
-          if (!showingInstruction) break;
-
-          await Future.delayed(Duration(milliseconds: 50));
-
-          setState(() {
-            // Use cubic easing for smoother animation
-            double cubicT = t * t * (3 - 2 * t);
-            handX = startX + (endX - startX) * cubicT - 25;
-            handY = startY + (endY - startY) * cubicT - 25;
-          });
-        }
-
-        // Mark as matched and hide hand
-        if (showingInstruction) {
-          setState(() {
-            matchedShapes[correctIndex] = true;
-            showHand = false;
-          });
-        }
-
-        await Future.delayed(Duration(milliseconds: 800));
+      if (learnings3.direction == 'vertical') {
+        // Vertical layout calculations
+        startX = (MediaQuery.of(context).size.width * (0.25 + (i * 0.25))) + (itemWidth / 2);
+        startY = (MediaQuery.of(context).size.height * 0.35) + (itemHeight / 2);
+        endX = (MediaQuery.of(context).size.width * (0.25 + (correctIndex * 0.25))) + (itemWidth / 2);
+        endY = (MediaQuery.of(context).size.height * 0.5) + (itemHeight / 2);
+      } else {
+        // Horizontal layout calculations
+        startX = (MediaQuery.of(context).size.width * 0.25) + (itemWidth / 2);
+        startY = (MediaQuery.of(context).size.height * (0.35 + (i * 0.15)) + (itemHeight / 2));
+        endX = (MediaQuery.of(context).size.width * 0.65) + (itemWidth / 2);
+        endY = (MediaQuery.of(context).size.height * (0.35 + (correctIndex * 0.15))) + (itemHeight / 2);
       }
 
-      // Reset matches after instruction
+      // Show hand at starting position
+      setState(() {
+        showHand = true;
+        handX = startX - (handSize / 2);
+        handY = startY - (handSize / 2);
+      });
+
+      await Future.delayed(Duration(milliseconds: 500));
+
+      // Reset controller for reuse
+      controller.reset();
+      
+      final animation = Tween<Offset>(
+        begin: Offset(startX, startY),
+        end: Offset(endX, endY),
+      ).animate(CurvedAnimation(
+        parent: controller,
+        curve: Curves.easeInOut,
+      ));
+
+      // Create a completer to wait for animation completion
+      final completer = Completer<void>();
+
+      animation.addListener(() {
+        setState(() {
+          handX = animation.value.dx - (handSize / 2);
+          handY = animation.value.dy - (handSize / 2);
+        });
+      });
+
+      controller.addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          if (!completer.isCompleted) {
+            completer.complete();
+          }
+        }
+      });
+
+      // Start the animation
+      controller.forward();
+      await completer.future;
+
+      // Mark as matched
       if (showingInstruction) {
         setState(() {
-          matchedShapes.clear();
-          for (var question in questions) {
-            matchedShapes[question.correctIndex!] = false;
-          }
-          showHand = false;
+          matchedShapes[correctIndex] = true;
         });
       }
+
+      await Future.delayed(Duration(milliseconds: 800));
+
+      // Reset for next iteration
+      if (showingInstruction) {
+        setState(() {
+          matchedShapes[correctIndex] = false;
+        });
+      }
+
+      // Remove status listener to prevent memory leaks
+      controller.removeStatusListener((status) {});
+    }
+
+    // Clean up after all animations
+    controller.dispose();
+
+    // Final reset after all animations
+    if (showingInstruction) {
+      setState(() {
+        matchedShapes.clear();
+        for (var question in questions) {
+          matchedShapes[question.correctIndex!] = false;
+        }
+        showHand = false;
+      });
     }
   }
+}
 
   void _updateLearningData() {
     setState(() {
@@ -295,78 +328,81 @@ class _MatchScreenState extends State<MatchScreen>
   }
 
   // Method to build draggable for each shape
-  Widget _buildDraggable(String imageUrl, int currentIndex) {
-    bool isMatched = matchedShapes[currentIndex]!;
-    return isMatched
-        ? Opacity(
-            opacity: 0.5, // Reduced opacity after match
-            child: Image.network(
-              imageUrl,
-              height: 110,
-              width: 90,
-            ),
-          )
-        : Draggable<String>(
-            data: currentIndex.toString(),
-            feedback: Opacity(
-              opacity: 0.8,
-              child: Image.network(
-                imageUrl,
-                height: 110,
-                width: 90,
-              ),
-            ),
-            childWhenDragging: Opacity(
-              opacity: 0.5, // Reduce opacity when dragging
-              child: Image.network(
-                imageUrl,
-                height: 110,
-                width: 90,
-              ),
-            ),
-            child: Image.network(
-              imageUrl,
-              height: 110,
-              width: 90,
-            ),
-            onDragStarted: () {
-              setState(() {
-                isDragging = true;
-              });
-            },
-            onDraggableCanceled: (_, __) {
-              setState(() {
-                isDragging = false;
-              });
-            },
-            onDragEnd: (details) {
-              setState(() {
-                isDragging = false;
-              });
-            },
-          );
-  }
+Widget _buildDraggable(String imageUrl, int currentIndex) {
+  bool isMatched = matchedShapes[currentIndex] ?? false;
+  final key = GlobalKey(); // Add this line
 
-  Widget _buildDragTarget(String imageUrl, int correctIndex) {
-    return DragTarget<String>(
-      builder: (context, candidateData, rejectedData) {
-        return ShapeOption(
-          shape: imageUrl,
-          isHighlighted: candidateData.isNotEmpty,
-          showCheck: matchedShapes[correctIndex]!,
-          originalImageOpacity: matchedShapes[correctIndex]! ? 1.0 : 0.5,
-        );
-      },
-      onWillAccept: (data) =>
-          !matchedShapes[correctIndex]! && data == correctIndex.toString(),
-      onAccept: (data) {
-        setState(() {
-          matchedShapes[correctIndex] = true; // Mark as matched
-        });
-      },
+  Widget styledImage({required double opacity}) {
+    return Container(
+      key: key, // Add this line
+      height: 90,
+      width: 90,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Opacity(
+          opacity: opacity,
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
+          ),
+        ),
+      ),
     );
   }
 
+  return isMatched
+      ? styledImage(opacity: 0.5)
+      : Draggable<String>(
+          data: currentIndex.toString(),
+          feedback: styledImage(opacity: 0.8),
+          childWhenDragging: styledImage(opacity: 0.5),
+          child: styledImage(opacity: 1.0),
+          onDragStarted: () {
+            setState(() {
+              isDragging = true;
+            });
+          },
+          onDraggableCanceled: (_, __) {
+            setState(() {
+              isDragging = false;
+            });
+          },
+          onDragEnd: (details) {
+            setState(() {
+              isDragging = false;
+            });
+          },
+        );
+}
+
+Widget _buildDragTarget(String imageUrl, int correctIndex) {
+  final key = GlobalKey(); // Add this line
+  return DragTarget<String>(
+    builder: (context, candidateData, rejectedData) {
+      return Container(
+        key: key, // Add this line
+        child: ShapeOption(
+          shape: imageUrl,
+          isHighlighted: candidateData.isNotEmpty,
+          showCheck: matchedShapes[correctIndex] ?? false,
+          originalImageOpacity: matchedShapes[correctIndex] ?? false ? 1.0 : 0.5,
+        ),
+      );
+    },
+    onWillAccept: (data) =>
+        !(matchedShapes[correctIndex] ?? false) && data == correctIndex.toString(),
+    onAccept: (data) {
+      setState(() {
+        matchedShapes[correctIndex] = true;
+      });
+    },
+  );
+}
   void _showCupertinoDropdown(BuildContext context) {
     showCupertinoModalPopup(
       context: context,
@@ -433,7 +469,7 @@ class _MatchScreenState extends State<MatchScreen>
                       )));
         } else {
           if (isCompleted) {
-            Get.to(() => PictureUnderstandingScreen(
+            Get.to(() => PictureUnderstandingInstructionsScreen(
                   resAllQuestion: widget.resAllQuestion,
                   showInstruction: true,
                 ));

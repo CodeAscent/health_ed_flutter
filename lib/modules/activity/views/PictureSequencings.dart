@@ -278,57 +278,71 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
     );
   }
 
-  Widget _buildDraggable(String imageUrl, int currentIndex) {
-    bool isMatched = matchedShapes[currentIndex]!;
-    return isMatched
-        ? Opacity(
-            opacity: 0.5, // Reduced opacity after match
-            child: Image.network(
-              imageUrl,
-              height: 110,
-              width: 90,
-            ),
-          )
-        : Draggable<String>(
-            data: currentIndex.toString(),
-            feedback: Opacity(
-              opacity: 0.8,
-              child: Image.network(
-                imageUrl,
-                height: 110,
-                width: 90,
+Widget _buildDraggable(String imageUrl, int currentIndex) {
+  bool isMatched = matchedShapes[currentIndex]!;
+
+  Widget imageContainer({required double opacity}) {
+    return Container(
+      height: 90,
+      width: 90,
+      margin: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isMatched ? Colors.green : Colors.transparent,
+          width: 1,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          opacity: AlwaysStoppedAnimation(opacity),
+          errorBuilder: (context, error, stackTrace) =>
+              const Center(child: Icon(Icons.error)),
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
               ),
-            ),
-            childWhenDragging: Opacity(
-              opacity: 0.5, // Reduce opacity when dragging
-              child: Image.network(
-                imageUrl,
-                height: 110,
-                width: 90,
-              ),
-            ),
-            child: Image.network(
-              imageUrl,
-              height: 110,
-              width: 90,
-            ),
-            onDragStarted: () {
-              setState(() {
-                isDragging = true;
-              });
-            },
-            onDraggableCanceled: (_, __) {
-              setState(() {
-                isDragging = false;
-              });
-            },
-            onDragEnd: (details) {
-              setState(() {
-                isDragging = false;
-              });
-            },
-          );
+            );
+          },
+        ),
+      ),
+    );
   }
+
+  return Draggable<String>(
+    data: currentIndex.toString(),
+    feedback: imageContainer(opacity: 0.8),
+    childWhenDragging:
+        isMatched ? imageContainer(opacity: 0.5) : imageContainer(opacity: 1.0),
+    child: isMatched
+        ? imageContainer(opacity: 0.5)
+        : imageContainer(opacity: 1.0),
+    onDragStarted: () {
+      setState(() {
+        isDragging = true;
+      });
+    },
+    onDraggableCanceled: (_, __) {
+      setState(() {
+        isDragging = false;
+      });
+    },
+    onDragEnd: (_) {
+      setState(() {
+        isDragging = false;
+      });
+    },
+  );
+}
 
   Widget _buildDragTarget(String imageUrl, int correctIndex) {
     return DragTarget<String>(
@@ -344,7 +358,7 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
           !matchedShapes[correctIndex]! && data == correctIndex.toString(),
       onAccept: (data) {
         setState(() {
-          matchedShapes[correctIndex] = true; // Mark as matched
+          matchedShapes[correctIndex] = true;
         });
       },
     );
@@ -479,16 +493,16 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
                           question.image!,
                           question.correctIndex!,
                         ),
-                        SizedBox(width: 10),
+                        SizedBox(width: 4),
                         Image.asset("assets/icons/blackArrow.png"),
-                        SizedBox(width: 10),
+                        SizedBox(width: 4),
                         _buildDragTarget(
                           answer.audio!,
                           answer.correctIndex!,
                         )
                       ],
                     ),
-                    SizedBox(width: 20),
+                    SizedBox(height: 8),
                   ],
                 );
               }).toList(),

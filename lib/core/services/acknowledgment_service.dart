@@ -51,7 +51,7 @@ class AcknowledgmentService {
         selectedAcknowledgement != 'Acknowledgement';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 30.0),
+      padding: const EdgeInsets.only(bottom: 20.0,top: 10,right: 20,left: 20),
       child: ElevatedButton(
         onPressed: () async {
           final result = await showAcknowledgmentDialog(context);
