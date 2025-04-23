@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/modules/auth/models/request/LoginRequest.dart';
 import 'package:health_ed_flutter/modules/auth/repository/auth_repository.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/PlanScreen.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/language_screen.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/question_screen.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/signup_screen.dart';
-import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
-
-import 'onboarding_screen.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -33,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
       await AuthRepository().fetchUser();
       Get.off(() => PlanScreen());
     } else {
-      Get.off(() => PlanScreen());
+      Get.off(() => LoginScreen());
     }
   }
 

@@ -6,9 +6,7 @@ import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/AllPlanScreen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/FaqScreen.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/UserSubscription.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/assessment_screen.dart';
-import 'package:health_ed_flutter/modules/home/views/screens/home_screen.dart';
 import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -21,10 +19,18 @@ class _PlanScreenState extends State<PlanScreen> {
 
 
   final List<String> carouselImages = [
-    'https://loremflickr.com/400/200?random=1',
-    'https://loremflickr.com/400/200?random=2',
-    'https://loremflickr.com/400/200?random=3',
+    'assets/images/banner1.png',
+    'assets/images/banner2.png',
+    'assets/images/banner3.png',
   ];
+
+  final List<String> carouselMessages = [
+  "The Dhwani application cures delayed speech through extensive and rigorous practices.  The journey enables the child to catch up the lost time and excel further.  The learning cycle includes a proprietary algorithm which caters to different children with different stages of delayed speech and language. Whatever be the reason for delayed speech & language i.e whether it is because of Autism, ADD, ADHD etc. we got you covered.",
+  "Does your child (Age between 1-5) speak normally, but still need to ACCELERATE the speaking power?\n\nYes, you are at the right place. Our Accelerated Speech program helps to accelerate the speaking power among children.  The curriculum helps to boost the speaking power and helps the child communicate further.",
+  "Dear Parents,\n\nIn this journey we will walk hand in hand in improving the speaking power of the child. A long journey that will bear fruits which will give immense satisfaction to everyone. The Dhwani application is a tool which will act as a force multiplier in the life of a child. Regular practice, consistent effort and a disciplined approach will bring wonders to the child.\n\nThanks,\nThe Dhwani Team",
+  // Add more messages corresponding to each image
+];
+
 
   int _currentIndex = 0;
 
@@ -89,30 +95,52 @@ class _PlanScreenState extends State<PlanScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 10),
+            SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Column(
                 children: [
                   CarouselSlider(
-                    options: CarouselOptions(
-                      height: 180,
-                      autoPlay: true,
-                      enlargeCenterPage: true,
-                      viewportFraction: 0.9,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
-                      },
+                      options: CarouselOptions(
+                        height: 100,
+                        autoPlay: true,
+                        enlargeCenterPage: true,
+                        viewportFraction: 0.9,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        },
+                      ),
+                      items: carouselImages.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final image = entry.value;
+
+                        return GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text("Message"),
+                                content: SingleChildScrollView(
+                                  child: Text(carouselMessages[index]),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    child: Text("Close"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.asset(image, fit: BoxFit.fill),
+                          ),
+                        );
+                      }).toList(),
                     ),
-                    items: carouselImages.map((image) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(image, fit: BoxFit.cover),
-                      );
-                    }).toList(),
-                  ),
                   SizedBox(height: 10),
                   AnimatedSmoothIndicator(
                     activeIndex: _currentIndex,

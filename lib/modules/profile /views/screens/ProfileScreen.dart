@@ -47,7 +47,7 @@ Row(
     TextButton(
       onPressed: () async {
         await LocalStorage.removeUserData();
-        Get.offAll(() => LanguageScreen());
+        Get.offAll(() => LoginScreen());
       },
       style: TextButton.styleFrom(
         backgroundColor: Colors.white,

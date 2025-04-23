@@ -145,7 +145,6 @@ class _PictureUnderstandingScreenState
       },
       builder: (context, state) {
         String titleData;
-
         switch (getLanguageCode(selectedLanguage, languageCode)) {
           case 'hi':
             titleData = learning.title!.hi ?? "Instructions not available";
@@ -241,31 +240,35 @@ class _PictureUnderstandingScreenState
 
             // 🔹 Main Image
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              width: MediaQuery.of(context).size.width,
-              height: 227,
-              child: Image.network(
-                activeImageUrl,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    'assets/bg/imageActivity.png',
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                width: MediaQuery.of(context).size.width,
+                height: 227,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5.0),
+                  child: Image.network(
+                    activeImageUrl,
                     fit: BoxFit.cover,
-                  );
-                },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/bg/imageActivity.png',
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
+
             SizedBox(height: 10),
 
             // 🔹 Scrollable Options Section
