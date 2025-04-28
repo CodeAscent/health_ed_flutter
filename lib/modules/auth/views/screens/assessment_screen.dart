@@ -77,7 +77,7 @@ class AssessmentScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 15,),
-                      CustomGradientButton(
+                      CustomGradientButton1(
                         label: 'Start now! (Rs 500 Free)',
                         onTap: (){ Get.off(() => QuestionScreen());},
                       ),

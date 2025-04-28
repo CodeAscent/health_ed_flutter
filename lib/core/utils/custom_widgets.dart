@@ -246,6 +246,63 @@ class CustomGradientButton extends StatelessWidget {
   }
 }
 
+
+class CustomGradientButton1 extends StatelessWidget {
+  final String label;
+  final bool? isDisabled;
+  final void Function()? onTap;
+
+  const CustomGradientButton1({
+    super.key,
+    required this.label,
+    this.onTap,
+    this.isDisabled = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Split label for applying strikethrough effect to Rs 500
+    String normalText = 'Start now! (';
+    String strikeThroughText = 'Rs 500';
+    String afterText = ' Free)';
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 47,
+        child: Center(
+          child: RichText(
+            text: TextSpan(
+              style: TextStyle(
+                color: isDisabled! ? Colors.black : Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+              ),
+              children: [
+                TextSpan(text: normalText), // Normal text before Rs 500
+                TextSpan(
+                  text: strikeThroughText,
+                  style: TextStyle(
+                    decoration: TextDecoration.lineThrough,
+                     decorationThickness: 3.0,  // strikethrough applied here
+                  ),
+                ),
+                TextSpan(text: afterText), // Normal text after Rs 500
+              ],
+            ),
+          ),
+        ),
+        decoration: BoxDecoration(
+          gradient: isDisabled!
+              ? LinearGradient(colors: [Colors.grey[300]!, Colors.grey[400]!])
+              : ColorPallete.gradient,
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+    );
+  }
+}
+
 class CustomDialog extends StatelessWidget {
   final String title;
   final String message;

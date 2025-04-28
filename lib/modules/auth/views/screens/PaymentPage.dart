@@ -164,6 +164,7 @@ class ActivityInstructionContent
                               color: Colors.green,
                               title: "Payment Successful",
                               message: paymentMessage,
+                              isSuccess:true
                             );
                           case PaymentResultStatus.failure:
                             return _buildResultCard(
@@ -171,6 +172,7 @@ class ActivityInstructionContent
                               color: Colors.red,
                               title: "Payment Failed",
                               message: paymentMessage,
+                              isSuccess:false
                             );
                           case PaymentResultStatus.loading:
                             return CustomLoader();
@@ -195,6 +197,7 @@ class ActivityInstructionContent
     required Color color,
     required String title,
     required String message,
+    required bool isSuccess,
   }) {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 20),
@@ -205,6 +208,11 @@ class ActivityInstructionContent
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            isSuccess?
+            Image.asset(
+                "assets/images/success.gif",
+                fit: BoxFit.fill,
+              ):
             Icon(icon, size: 60, color: color),
             SizedBox(height: 16),
             Text(

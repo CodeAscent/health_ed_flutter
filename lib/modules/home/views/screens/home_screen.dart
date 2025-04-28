@@ -264,7 +264,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12), // Rounded corners
                     child: LinearProgressIndicator(
-                      value: progress / total,
+                      value: (total != 0) ? (progress / total) : 0,
                       color: color,
                       backgroundColor: color.withOpacity(0.2),
                       minHeight: 15, // Adjust the height of the progress bar
@@ -279,7 +279,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                         padding:
                             const EdgeInsets.only(left: 8.0), // Add left margin
                         child: Text(
-                          "${(progress / total * 100).toStringAsFixed(1)}%", // Show percentage
+                          "${((total != 0) ? (progress / total) : 0 * 100).toStringAsFixed(1)}%", // Show percentage
                           style: TextStyle(
                             color: Colors.white, // Color of the percentage text
                             fontWeight: FontWeight.bold,

@@ -13,6 +13,7 @@ import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/modules/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/assessment_screen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/planScreen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/signup_screen.dart';
 import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
 
@@ -113,13 +114,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 Get.off(() => SignupScreen());
               }else if(state.otpVerifyResponse.data!.currentStep==1&&state.otpVerifyResponse.data!.user!.fullName!=null)
               {
-                Get.off(() => AssessmentScreen());
+                Get.off(() => PlanScreen());
               }else if(state.otpVerifyResponse.data!.currentStep==2)
               {
-                Get.off(() => AssessmentScreen());
+                Get.off(() => PlanScreen());
               }else
               {
-                Get.off(() => MainScreen());
+                Get.off(() => PlanScreen());
               }
             // Get.to(() => LoginScreen());
           }

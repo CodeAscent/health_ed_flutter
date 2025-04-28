@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/planScreen.dart';
 import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
 
 import '../../../../core/tts/text_to_speech.dart';
@@ -68,7 +69,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
           Get.dialog(CongratsPopup(level: state.submitQuestionResponse.data!.onboardingScore.toString()));
           Future.delayed(Duration(seconds: 4), () {
             Get.back();
-            Get.to(MainScreen());
+            Get.to(PlanScreen());
           });
         }
       },
