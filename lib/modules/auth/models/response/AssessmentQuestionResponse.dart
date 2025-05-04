@@ -47,6 +47,7 @@ class Data {
 
 class Questions {
   String? sId;
+  String? example;
   QuestionText? questionText;
   List<Options>? options;
   int? selectedOption;
@@ -55,6 +56,7 @@ class Questions {
 
   Questions.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
+    example = json['example'];
     questionText = json['questionText'] != null
         ? new QuestionText.fromJson(json['questionText'])
         : null;
@@ -70,6 +72,7 @@ class Questions {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.sId;
+    data['example'] = this.example;
     if (this.questionText != null) {
       data['questionText'] = this.questionText!.toJson();
     }

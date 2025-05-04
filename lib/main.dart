@@ -41,9 +41,7 @@ void main() async {
       BlocProvider(create: (_) => ActivityInstructionsCubit()),
       BlocProvider(create: (_) => ScreenBloc()),
       BlocProvider(create: (_) => DragBloc()),
-      BlocProvider(
-        create: (context) => QuizBloc()..add(LoadQuizData()),
-      ),
+      BlocProvider(create: (context) => QuizBloc()..add(LoadQuizData())),
     ],
     child: const MyApp(),
   ));

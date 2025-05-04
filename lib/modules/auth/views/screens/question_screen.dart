@@ -2,10 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/modules/auth/repository/auth_repository.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/planScreen.dart';
-import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
 
 import '../../../../core/tts/text_to_speech.dart';
 import '../../../../core/utils/custom_loader.dart';
@@ -39,10 +38,16 @@ class _QuestionScreenState extends State<QuestionScreen> {
     List<Answers> answers = questionData.map((question) {
       return Answers(
         questionId: question.sId,
-        selectedOptionIndex: question.selectedOption,
+        selectedOptionIndex: question.selectedOption!-1,
       );
     }).toList();
     return SubmitQuestionRequest(answers: answers);
+  }
+
+    void _navigateToNextScreen() async {
+    await AuthRepository().fetchUser();
+            Get.back();
+            Get.to(PlanScreen());
   }
 
 @override
@@ -68,8 +73,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
         else if (state is AuthSubmitQuestionSuccess) {
           Get.dialog(CongratsPopup(level: state.submitQuestionResponse.data!.onboardingScore.toString()));
           Future.delayed(Duration(seconds: 4), () {
-            Get.back();
-            Get.to(PlanScreen());
+            _navigateToNextScreen();
           });
         }
       },
@@ -152,40 +156,48 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                   ),
                                 ),
                                 SizedBox(width: 4),
-                                Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.6), // Background color
-                                    borderRadius: BorderRadius.circular(5), // Rounded corners
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1), // Shadow color
-                                        spreadRadius: 1,
-                                        blurRadius: 1,
-                                        offset: Offset(0, 2), // Shadow position
-                                      ),
-                                    ],
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () => _showCupertinoDropdown(context),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          selectedLanguage,
-                                          style: TextStyle(fontSize: 12, color: Colors.black),
-                                        ),
-                                        Icon(
-                                          CupertinoIcons.chevron_down,
-                                          color: Colors.black,
-                                          size: 14,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+
+                                // Container(
+                                //   padding: EdgeInsets.all(8),
+                                //   decoration: BoxDecoration(
+                                //     color: Colors.white.withOpacity(0.6), // Background color
+                                //     borderRadius: BorderRadius.circular(5), // Rounded corners
+                                //     boxShadow: [
+                                //       BoxShadow(
+                                //         color: Colors.black.withOpacity(0.1), // Shadow color
+                                //         spreadRadius: 1,
+                                //         blurRadius: 1,
+                                //         offset: Offset(0, 2), // Shadow position
+                                //       ),
+                                //     ],
+                                //   ),
+                                //   child: GestureDetector(
+                                //     onTap: () => _showCupertinoDropdown(context),
+                                //     child: Row(
+                                //       mainAxisAlignment: MainAxisAlignment.center,
+                                //       children: [
+                                //         Text(
+                                //           selectedLanguage,
+                                //           style: TextStyle(fontSize: 12, color: Colors.black),
+                                //         ),
+                                //         Icon(
+                                //           CupertinoIcons.chevron_down,
+                                //           color: Colors.black,
+                                //           size: 14,
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
+                                // ),
+                             
+                             
                               ],
+                              
                             ),
+                            Text(currentQuestion.example!=''?'Ex: '+currentQuestion.example!:'',
+                                    style: TextStyle(fontSize: 14,
+                                        fontStyle: FontStyle.italic,),
+                                  ),
                             SizedBox(height: 20),
                             Column(
                               children: List.generate(

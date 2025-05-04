@@ -8,7 +8,7 @@ class User {
   String? dateOfBirth;
   String? gender;
   bool? isOnboarding;
-  num? currentLevel;
+  String? currentLevel;
   String? preferredLanguage;
 
   User({
@@ -46,7 +46,7 @@ class User {
       isOnboarding:
           map['isOnboarding'] != null ? map['isOnboarding'] as bool : null,
       currentLevel:
-          map['currentLevel'] != null ? map['currentLevel'] as num : null,
+          map['currentLevel'] != null ? map['currentLevel'] as String : null,
       preferredLanguage: map['preferredLanguage'] != null
           ? map['preferredLanguage'] as String
           : null,

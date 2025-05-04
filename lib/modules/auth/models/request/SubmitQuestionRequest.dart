@@ -1,25 +1,29 @@
 class SubmitQuestionRequest {
   List<Answers>? answers;
+  String? userId;
 
-  SubmitQuestionRequest({this.answers});
+  SubmitQuestionRequest({this.answers, this.userId});
 
   SubmitQuestionRequest.fromJson(Map<String, dynamic> json) {
     if (json['answers'] != null) {
       answers = <Answers>[];
       json['answers'].forEach((v) {
-        answers!.add(new Answers.fromJson(v));
+        answers!.add(Answers.fromJson(v));
       });
     }
+    userId = json['userId']; 
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.answers != null) {
-      data['answers'] = this.answers!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (answers != null) {
+      data['answers'] = answers!.map((v) => v.toJson()).toList();
     }
+    data['userId'] = userId;
     return data;
   }
 }
+
 
 class Answers {
   String? questionId;

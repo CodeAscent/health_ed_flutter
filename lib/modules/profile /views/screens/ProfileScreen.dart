@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/language_screen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
 
 import '../../../../core/local/local_storage.dart';

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:health_ed_flutter/core/config/app_config.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
+import 'package:get/get.dart'; // <-- Required for Get.offAll
+import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
 import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,6 +16,15 @@ class HttpWrapper {
       'content-type': "application/json",
       if (token != null) "Authorization": "Bearer $token",
     };
+  }
+
+  /// Common method to check and handle 401 Unauthorized
+  static void _handleUnauthorized(http.Response res) async {
+    if (res.statusCode == 401) {
+      _logger.w("Unauthorized! Logging out user.");
+      await LocalStorage.removeUserData(); // Clear local storage
+      Get.offAll(() => LoginScreen());     // Navigate to Login screen
+    }
   }
 
   /// GET request
@@ -30,6 +41,8 @@ class HttpWrapper {
       _logger.i("GET Response Status: ${res.statusCode}");
       _logger.i("GET Response Body: ${res.body}");
 
+      _handleUnauthorized(res); // 👈 check for 401
+
       return res;
     } catch (e) {
       _logger.e("GET Request Error: $e");
@@ -37,42 +50,42 @@ class HttpWrapper {
     }
   }
 
- /// POST request
-static Future<http.Response> postRequest(
-    String endpoint, dynamic payload,) async {
-  try {
-    final url = AppConfig.base_url + endpoint;
-    final requestHeaders = await headers();
+  /// POST request
+  static Future<http.Response> postRequest(String endpoint, dynamic payload) async {
+    try {
+      final url = AppConfig.base_url + endpoint;
+      final requestHeaders = await headers();
 
-    _logger.i("POST Request URL: $url");
-    _logger.i("POST Request Headers: $requestHeaders");
+      _logger.i("POST Request URL: $url");
+      _logger.i("POST Request Headers: $requestHeaders");
 
-    http.Response res;
+      http.Response res;
 
-    if (payload != null) {
-      final body = jsonEncode(payload);
-      _logger.i("POST Request Body: $body");
+      if (payload != null) {
+        final body = jsonEncode(payload);
+        _logger.i("POST Request Body: $body");
 
-      res = await http.post(
-        Uri.parse(url),
-        body: body,
-        headers: requestHeaders,
-      );
-    } else {
-      res = await http.post(
-        Uri.parse(url),
-        headers: requestHeaders,
-      );
+        res = await http.post(
+          Uri.parse(url),
+          body: body,
+          headers: requestHeaders,
+        );
+      } else {
+        res = await http.post(
+          Uri.parse(url),
+          headers: requestHeaders,
+        );
+      }
+
+      _logger.i("POST Response Status: ${res.statusCode}");
+      _logger.i("POST Response Body: ${res.body}");
+
+      _handleUnauthorized(res); // 👈 check for 401
+
+      return res;
+    } catch (e) {
+      _logger.e("POST Request Error: $e");
+      rethrow;
     }
-
-    _logger.i("POST Response Status: ${res.statusCode}");
-    _logger.i("POST Response Body: ${res.body}");
-
-    return res;
-  } catch (e) {
-    _logger.e("POST Request Error: $e");
-    rethrow;
   }
-}
-
 }

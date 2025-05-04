@@ -112,8 +112,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> submitAnswer(
       SubmitQuestionRequested event, Emitter<AuthState> emit) async {
+         var userData = LocalStorage.prefs.getString('userProfileData') != null
+      ? jsonDecode(LocalStorage.prefs.getString('userProfileData')!)['user']
+      : '';
     emit(AuthLoading());
     try {
+      event.submitQuestionRequest.userId=userData['_id'];
+      print('event.submitQuestionRequest.userId');
+      print(event.submitQuestionRequest.userId);
       final res = await authRepository.submitAnswer(event.submitQuestionRequest);
       emit(AuthSubmitQuestionSuccess(submitQuestionResponse:res));
     } catch (e) {

@@ -11,6 +11,7 @@ import 'package:health_ed_flutter/core/utils/custom_loader.dart';
 import 'package:health_ed_flutter/core/utils/custom_snackbar.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/modules/auth/bloc/auth_bloc.dart';
+import 'package:health_ed_flutter/modules/auth/repository/auth_repository.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/assessment_screen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/planScreen.dart';
@@ -97,6 +98,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       }
     }
   }
+     void _navigateToNextScreen() async {
+      await AuthRepository().fetchUser();
+            Get.to(() => PlanScreen());
+  }
 
 
   @override
@@ -114,13 +119,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 Get.off(() => SignupScreen());
               }else if(state.otpVerifyResponse.data!.currentStep==1&&state.otpVerifyResponse.data!.user!.fullName!=null)
               {
-                Get.off(() => PlanScreen());
+              _navigateToNextScreen();
               }else if(state.otpVerifyResponse.data!.currentStep==2)
               {
-                Get.off(() => PlanScreen());
+                   _navigateToNextScreen();
               }else
               {
-                Get.off(() => PlanScreen());
+                       _navigateToNextScreen();
               }
             // Get.to(() => LoginScreen());
           }

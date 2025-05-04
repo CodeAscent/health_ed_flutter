@@ -28,7 +28,7 @@ class LocalStorage {
   }
 
   static Future<Data?> getUserData() async {
-    final responseString = prefs.getString('userData');
+    final responseString = prefs.getString('userProfileData');
     if (responseString != null) {
       // Parse JSON string to a Map
       final Map<String, dynamic> jsonData = jsonDecode(responseString);

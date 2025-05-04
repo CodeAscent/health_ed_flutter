@@ -106,8 +106,8 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    String userName = LocalStorage.prefs.getString('userData') != null
-        ? jsonDecode(LocalStorage.prefs.getString('userData')!)['user']
+    String userName = LocalStorage.prefs.getString('userProfileData') != null
+        ? jsonDecode(LocalStorage.prefs.getString('userProfileData')!)['user']
             ['fullName']
         : '';
     return Column(

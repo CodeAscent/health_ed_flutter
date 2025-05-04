@@ -49,7 +49,7 @@ class Data {
 class User {
   String? sId;
   String? mobile;
-  int? currentLevel;
+  String? currentLevel;
   bool? isActive;
   String? preferredLanguage;
   int? step;
