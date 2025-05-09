@@ -380,7 +380,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: questionData[currentQuestionIndex].selectedOption == value ? Colors.white : Colors.transparent,
+          color: questionData[currentQuestionIndex].selectedOption == value ? ColorPallete.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(14),
         ),
         padding: const EdgeInsets.all(10.0),
@@ -389,7 +389,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
           optionText,
           style: TextStyle(
             fontSize: 18,
-            color: questionData[currentQuestionIndex].selectedOption == value ? Colors.black : Colors.black87,
+            fontWeight:questionData[currentQuestionIndex].selectedOption == value ?FontWeight.w900:FontWeight.w400
+            color: questionData[currentQuestionIndex].selectedOption == value ? Colors.white : Colors.black87,
           ),
         ),
       ),
