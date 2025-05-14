@@ -53,8 +53,8 @@ class User {
   bool? isActive;
   String? preferredLanguage;
   int? step;
-  Null? otp;
-  Null? otpExpired;
+  Null otp;
+  Null otpExpired;
   String? createdAt;
   String? updatedAt;
   int? iV;
@@ -76,31 +76,31 @@ class User {
 
   User(
       {this.sId,
-        this.mobile,
-        this.currentLevel,
-        this.isActive,
-        this.preferredLanguage,
-        this.step,
-        this.otp,
-        this.otpExpired,
-        this.createdAt,
-        this.updatedAt,
-        this.iV,
-        this.currentCityDistrict,
-        this.currentState,
-        this.dateOfBirth,
-        this.email,
-        this.familyType,
-        this.fatherOccupation,
-        this.fullName,
-        this.gender,
-        this.isChildTakingSpeechTherapy,
-        this.languageSpokenAtHome,
-        this.languageSpokenByChild,
-        this.medium,
-        this.noOfSiblings,
-        this.userName,
-        this.onboardingScore});
+      this.mobile,
+      this.currentLevel,
+      this.isActive,
+      this.preferredLanguage,
+      this.step,
+      this.otp,
+      this.otpExpired,
+      this.createdAt,
+      this.updatedAt,
+      this.iV,
+      this.currentCityDistrict,
+      this.currentState,
+      this.dateOfBirth,
+      this.email,
+      this.familyType,
+      this.fatherOccupation,
+      this.fullName,
+      this.gender,
+      this.isChildTakingSpeechTherapy,
+      this.languageSpokenAtHome,
+      this.languageSpokenByChild,
+      this.medium,
+      this.noOfSiblings,
+      this.userName,
+      this.onboardingScore});
 
   User.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];

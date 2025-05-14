@@ -33,26 +33,25 @@ class _QuestionScreenState extends State<QuestionScreen> {
     return questionData.every((question) => question.selectedOption != null);
   }
 
-
   SubmitQuestionRequest createSubmitRequest() {
     List<Answers> answers = questionData.map((question) {
       return Answers(
         questionId: question.sId,
-        selectedOptionIndex: question.selectedOption!-1,
+        selectedOptionIndex: question.selectedOption! - 1,
       );
     }).toList();
     return SubmitQuestionRequest(answers: answers);
   }
 
-    void _navigateToNextScreen() async {
+  void _navigateToNextScreen() async {
     await AuthRepository().fetchUser();
-            Get.back();
-            Get.to(PlanScreen());
+    Get.back();
+    Get.to(PlanScreen());
   }
 
-@override
+  @override
   void dispose() {
-  _tts.stop();
+    _tts.stop();
     super.dispose();
   }
 
@@ -69,9 +68,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
       listener: (context, state) {
         if (state is AuthFailure) {
           customSnackbar(state.message, ContentType.failure);
-        }
-        else if (state is AuthSubmitQuestionSuccess) {
-          Get.dialog(CongratsPopup(level: state.submitQuestionResponse.data!.onboardingScore.toString()));
+        } else if (state is AuthSubmitQuestionSuccess) {
+          Get.dialog(CongratsPopup(
+              level: state.submitQuestionResponse.data!.onboardingScore
+                  .toString()));
           Future.delayed(Duration(seconds: 4), () {
             _navigateToNextScreen();
           });
@@ -79,7 +79,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
       },
       builder: (context, state) {
         if (state is AuthAssessmentQuestionSuccess) {
-           questionData = state.assessmentQuestionResponse.data!.questions ?? [];
+          questionData = state.assessmentQuestionResponse.data!.questions ?? [];
 
           if (questionData.isEmpty) {
             return Center(child: Text("No questions available."));
@@ -87,20 +87,21 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
           var currentQuestion = questionData[currentQuestionIndex];
 
-           String? questionText;
-           switch (selectedLanguage) {
-             case "English":
-               questionText = currentQuestion.questionText?.en;
-               break;
-             case "Hindi":
-               questionText = currentQuestion.questionText?.hi;
-               break;
-             case "Odia":
-               questionText = currentQuestion.questionText?.or;
-               break;
-             default:
-               questionText = "No Question Text";
-           }          var options = currentQuestion.options ?? [];
+          String? questionText;
+          switch (selectedLanguage) {
+            case "English":
+              questionText = currentQuestion.questionText?.en;
+              break;
+            case "Hindi":
+              questionText = currentQuestion.questionText?.hi;
+              break;
+            case "Odia":
+              questionText = currentQuestion.questionText?.or;
+              break;
+            default:
+              questionText = "No Question Text";
+          }
+          var options = currentQuestion.options ?? [];
 
           return Scaffold(
             body: SafeArea(
@@ -128,16 +129,20 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                     borderRadius: BorderRadius.circular(8.0),
                                     child: LinearProgressIndicator(
                                       minHeight: 8,
-                                      value: (currentQuestionIndex + 1) / questionData.length,
+                                      value: (currentQuestionIndex + 1) /
+                                          questionData.length,
                                       backgroundColor: Colors.grey[300],
-                                      valueColor: AlwaysStoppedAnimation<Color>(ColorPallete.primary),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          ColorPallete.primary),
                                     ),
                                   ),
                                 ),
                                 SizedBox(width: 10),
                                 Text(
                                   "${currentQuestionIndex + 1}/${questionData.length}",
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -146,8 +151,15 @@ class _QuestionScreenState extends State<QuestionScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 GestureDetector(
-                                  onTap: (){    _tts.speak(questionText!, languageCode: languageCode);},
-                                  child:Image.asset('assets/icons/volume_up.png', width: 24, height: 24),),
+                                  onTap: () {
+                                    _tts.speak(questionText!,
+                                        languageCode: languageCode);
+                                  },
+                                  child: Image.asset(
+                                      'assets/icons/volume_up.png',
+                                      width: 24,
+                                      height: 24),
+                                ),
                                 SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
@@ -189,20 +201,22 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                 //     ),
                                 //   ),
                                 // ),
-                             
-                             
                               ],
-                              
                             ),
-                            Text(currentQuestion.example!=''?'Ex: '+currentQuestion.example!:'',
-                                    style: TextStyle(fontSize: 14,
-                                        fontStyle: FontStyle.italic,),
-                                  ),
+                            Text(
+                              currentQuestion.example != ''
+                                  ? 'Ex: ' + currentQuestion.example!
+                                  : '',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
                             SizedBox(height: 20),
                             Column(
                               children: List.generate(
                                 options.length,
-                                    (index) {
+                                (index) {
                                   // Determine option text based on the selected language
                                   String optionText;
                                   switch (selectedLanguage) {
@@ -229,34 +243,42 @@ class _QuestionScreenState extends State<QuestionScreen> {
                             Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: ElevatedButton(
                                       onPressed: currentQuestionIndex > 0
                                           ? () {
-                                        setState(() {
-                                          currentQuestionIndex--;
-                                          selectedOption = 0; // Reset selection for new question
-                                        });
-                                      }
+                                              setState(() {
+                                                currentQuestionIndex--;
+                                                selectedOption =
+                                                    0; // Reset selection for new question
+                                              });
+                                            }
                                           : null,
                                       style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(vertical: 15),
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 15),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
-                                          side: BorderSide(color: ColorPallete.primary),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          side: BorderSide(
+                                              color: ColorPallete.primary),
                                         ),
                                         backgroundColor: Colors.white,
                                       ),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.arrow_back_ios_new_rounded, color: ColorPallete.primary),
+                                          Icon(Icons.arrow_back_ios_new_rounded,
+                                              color: ColorPallete.primary),
                                           SizedBox(width: 5),
                                           Text(
                                             "Previous",
-                                            style: TextStyle(color: ColorPallete.primary),
+                                            style: TextStyle(
+                                                color: ColorPallete.primary),
                                           ),
                                         ],
                                       ),
@@ -265,43 +287,56 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                   SizedBox(width: 10),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: currentQuestionIndex < questionData.length - 1
+                                      onPressed: currentQuestionIndex <
+                                              questionData.length - 1
                                           ? () {
-                                        setState((){
-                                          currentQuestionIndex++;
-                                          selectedOption = 0; // Reset selection for new question
-                                        });
-                                      }
-                                      : () {
-                                        if (areAllQuestionsAnswered()) {
-                                          SubmitQuestionRequest request = createSubmitRequest();
-                                          context.read<AuthBloc>().add(SubmitQuestionRequested(submitQuestionRequest:request));
-                                          //
-                                          // Get.dialog(CongratsPopup(level: '2'));
-                                          // Future.delayed(Duration(seconds: 3), () {
-                                          //   Get.back();
-                                          //   Get.to(MainScreen());
-                                          // });
-                                        } else {
-                                          customSnackbar("Please answer all questions before proceeding.", ContentType.failure);
-                                        }
-                                      },
+                                              setState(() {
+                                                currentQuestionIndex++;
+                                                selectedOption =
+                                                    0; // Reset selection for new question
+                                              });
+                                            }
+                                          : () {
+                                              if (areAllQuestionsAnswered()) {
+                                                SubmitQuestionRequest request =
+                                                    createSubmitRequest();
+                                                context.read<AuthBloc>().add(
+                                                    SubmitQuestionRequested(
+                                                        submitQuestionRequest:
+                                                            request));
+                                                //
+                                                // Get.dialog(CongratsPopup(level: '2'));
+                                                // Future.delayed(Duration(seconds: 3), () {
+                                                //   Get.back();
+                                                //   Get.to(MainScreen());
+                                                // });
+                                              } else {
+                                                customSnackbar(
+                                                    "Please answer all questions before proceeding.",
+                                                    ContentType.failure);
+                                              }
+                                            },
                                       style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(vertical: 15),
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 15),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                         ),
                                         backgroundColor: ColorPallete.primary,
                                       ),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             "Next",
-                                            style: TextStyle(color: Colors.white),
+                                            style:
+                                                TextStyle(color: Colors.white),
                                           ),
                                           SizedBox(width: 10),
-                                          Icon(Icons.arrow_forward_ios_rounded, color: Colors.white),
+                                          Icon(Icons.arrow_forward_ios_rounded,
+                                              color: Colors.white),
                                         ],
                                       ),
                                     ),
@@ -319,13 +354,13 @@ class _QuestionScreenState extends State<QuestionScreen> {
               ),
             ),
           );
-        }
-        else {
+        } else {
           return CustomLoader();
         }
       },
     );
   }
+
   void _showCupertinoDropdown(BuildContext context) {
     showCupertinoModalPopup(
       context: context,
@@ -380,7 +415,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: questionData[currentQuestionIndex].selectedOption == value ? ColorPallete.primary : Colors.transparent,
+          color: questionData[currentQuestionIndex].selectedOption == value
+              ? ColorPallete.primary
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(14),
         ),
         padding: const EdgeInsets.all(10.0),
@@ -389,12 +426,16 @@ class _QuestionScreenState extends State<QuestionScreen> {
           optionText,
           style: TextStyle(
             fontSize: 18,
-            fontWeight:questionData[currentQuestionIndex].selectedOption == value ?FontWeight.w900:FontWeight.w400
-            color: questionData[currentQuestionIndex].selectedOption == value ? Colors.white : Colors.black87,
+            fontWeight:
+                questionData[currentQuestionIndex].selectedOption == value
+                    ? FontWeight.w500
+                    : FontWeight.w400,
+            color: questionData[currentQuestionIndex].selectedOption == value
+                ? Colors.white
+                : Colors.black87,
           ),
         ),
       ),
     );
   }
 }
-

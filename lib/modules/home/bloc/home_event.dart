@@ -1,3 +1,4 @@
+import 'package:health_ed_flutter/modules/home/model/request/ReportRequest.dart';
 import 'package:meta/meta.dart';
 
 import '../model/request/AcknowledgementRequest.dart';
@@ -31,4 +32,9 @@ class SubmitInstructionAcknowledgementRequest extends HomeEvent {
   final AcknowledgementRequest acknowledgementRequest;
   SubmitInstructionAcknowledgementRequest(
       {required this.acknowledgementRequest});
+}
+
+class GetReportRequested extends HomeEvent {
+  final ReportRequest reportRequest;
+  GetReportRequested({required this.reportRequest});
 }

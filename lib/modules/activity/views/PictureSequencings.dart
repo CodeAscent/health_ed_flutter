@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,10 +18,6 @@ import '../../../core/tts/text_to_speech.dart';
 import '../../../core/utils/custom_widgets.dart';
 import '../../../core/utils/helper.dart';
 import '../../home/widgets/ShapeOption.dart';
-import 'DragDropScreen.dart';
-import 'picture_expression_instruction.dart';
-import 'RevealPictureDescriptionScreen.dart';
-import 'pictureExpression.dart';
 
 class PictureSequencingsScreen extends StatefulWidget {
   final bool showInstruction;
@@ -278,71 +272,72 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
     );
   }
 
-Widget _buildDraggable(String imageUrl, int currentIndex) {
-  bool isMatched = matchedShapes[currentIndex]!;
+  Widget _buildDraggable(String imageUrl, int currentIndex) {
+    bool isMatched = matchedShapes[currentIndex]!;
 
-  Widget imageContainer({required double opacity}) {
-    return Container(
-      height: 90,
-      width: 90,
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isMatched ? Colors.green : Colors.transparent,
-          width: 1,
+    Widget imageContainer({required double opacity}) {
+      return Container(
+        height: 90,
+        width: 90,
+        margin: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isMatched ? Colors.green : Colors.transparent,
+            width: 1,
+          ),
         ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
-          opacity: AlwaysStoppedAnimation(opacity),
-          errorBuilder: (context, error, stackTrace) =>
-              const Center(child: Icon(Icons.error)),
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                    : null,
-              ),
-            );
-          },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+            opacity: AlwaysStoppedAnimation(opacity),
+            errorBuilder: (context, error, stackTrace) =>
+                const Center(child: Icon(Icons.error)),
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
+          ),
         ),
-      ),
+      );
+    }
+
+    return Draggable<String>(
+      data: currentIndex.toString(),
+      feedback: imageContainer(opacity: 0.8),
+      childWhenDragging: isMatched
+          ? imageContainer(opacity: 0.5)
+          : imageContainer(opacity: 1.0),
+      child: isMatched
+          ? imageContainer(opacity: 0.5)
+          : imageContainer(opacity: 1.0),
+      onDragStarted: () {
+        setState(() {
+          isDragging = true;
+        });
+      },
+      onDraggableCanceled: (_, __) {
+        setState(() {
+          isDragging = false;
+        });
+      },
+      onDragEnd: (_) {
+        setState(() {
+          isDragging = false;
+        });
+      },
     );
   }
-
-  return Draggable<String>(
-    data: currentIndex.toString(),
-    feedback: imageContainer(opacity: 0.8),
-    childWhenDragging:
-        isMatched ? imageContainer(opacity: 0.5) : imageContainer(opacity: 1.0),
-    child: isMatched
-        ? imageContainer(opacity: 0.5)
-        : imageContainer(opacity: 1.0),
-    onDragStarted: () {
-      setState(() {
-        isDragging = true;
-      });
-    },
-    onDraggableCanceled: (_, __) {
-      setState(() {
-        isDragging = false;
-      });
-    },
-    onDragEnd: (_) {
-      setState(() {
-        isDragging = false;
-      });
-    },
-  );
-}
 
   Widget _buildDragTarget(String imageUrl, int correctIndex) {
     return DragTarget<String>(
@@ -410,7 +405,7 @@ Widget _buildDraggable(String imageUrl, int currentIndex) {
 
   String selectedAcknowledgement = 'Acknowledgement';
   int score = 0;
- 
+
   Widget _buildAcknowledgementButton(BuildContext context) {
     bool isCompleted = widget.resAllQuestion.data!.activity!.pictureSequencings!
                 .learnings!.length -
@@ -433,8 +428,8 @@ Widget _buildDraggable(String imageUrl, int currentIndex) {
             if (isCompleted) {
               Get.dialog(
                 ActivityCongratsPopup(
-                    activityId: widget.resAllQuestion.data!.activity!.sId!,
-                   ),
+                  activityId: widget.resAllQuestion.data!.activity!.sId!,
+                ),
                 barrierDismissible: false,
               );
             } else {

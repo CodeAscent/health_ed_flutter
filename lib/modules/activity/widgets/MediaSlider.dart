@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:just_audio/just_audio.dart';
@@ -19,7 +17,6 @@ class _MediaSliderState extends State<MediaSlider> {
   final Map<int, VideoPlayerController> _videoControllers = {};
   final Map<int, AudioPlayer> _audioPlayers = {};
 
-
   @override
   void dispose() {
     // Dispose all controllers
@@ -32,8 +29,8 @@ class _MediaSliderState extends State<MediaSlider> {
   void initState() {
     super.initState();
     currentIndex = 0;
-
   }
+
   void _pausePreviousMedia(int index) {
     // Pause previous video
     if (_videoControllers[index]?.value.isPlaying == true) {
@@ -58,7 +55,8 @@ class _MediaSliderState extends State<MediaSlider> {
                 borderRadius: BorderRadius.circular(20), // Apply border radius
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20), // Ensure radius applies to content
+                borderRadius: BorderRadius.circular(
+                    20), // Ensure radius applies to content
                 child: PageView.builder(
                   onPageChanged: (index) {
                     setState(() {
@@ -70,15 +68,18 @@ class _MediaSliderState extends State<MediaSlider> {
                   itemBuilder: (context, index) {
                     final mediaPath = widget.mediaList[index].url;
                     debugPrint("Media List: ${widget.mediaList[index].type}");
-                    if (mediaPath != null && widget.mediaList[index].type == "video") {
+                    if (mediaPath != null &&
+                        widget.mediaList[index].type == "video") {
                       return _buildVideoPlayer(index, mediaPath);
-                    } else if (mediaPath != null && widget.mediaList[index].type == "audio") {
+                    } else if (mediaPath != null &&
+                        widget.mediaList[index].type == "audio") {
                       return _buildAudioPlayer(index, mediaPath);
                     } else {
                       return Image.network(
                         mediaPath ?? '',
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
+                        errorBuilder: (context, error, stackTrace) =>
+                            Icon(Icons.error),
                       );
                     }
                   },
@@ -108,6 +109,7 @@ class _MediaSliderState extends State<MediaSlider> {
       ),
     );
   }
+
   Widget _buildVideoPlayer(int index, String videoPath) {
     VideoPlayerController? controller = _videoControllers[index];
 
@@ -185,7 +187,6 @@ class _MediaSliderState extends State<MediaSlider> {
             child: Image.asset(
               'assets/icons/audioicon1.png',
               width: 200,
-
             ),
           ),
           // if (player.playing)
@@ -200,5 +201,4 @@ class _MediaSliderState extends State<MediaSlider> {
       ),
     );
   }
-
 }

@@ -7,11 +7,9 @@ import 'package:health_ed_flutter/modules/auth/views/screens/AssessmentPaymentPa
 import 'package:health_ed_flutter/modules/auth/views/screens/question_screen.dart';
 
 import '../../../../core/utils/custom_widgets.dart';
-import '../../bloc/assessment/AssessmentEvent.dart';
 
 // Limited Offer
 // Recommended
-
 
 class AssessmentScreen extends StatelessWidget {
   @override
@@ -44,7 +42,8 @@ class AssessmentScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 // Image/Icon placeholder
-                Image.asset('assets/images/assessment.png', height: 150), // Replace with your image
+                Image.asset('assets/images/assessment.png',
+                    height: 150), // Replace with your image
                 SizedBox(height: 30),
                 // Card for buttons with background image
                 Container(
@@ -60,33 +59,44 @@ class AssessmentScreen extends StatelessWidget {
                       ),
                     ],
                     image: DecorationImage(
-                      image: AssetImage('assets/images/assessmentButtonBg.png'), // Replace with your image path
-                      fit: BoxFit.cover, // Adjust the image to cover the entire container
+                      image: AssetImage(
+                          'assets/images/assessmentButtonBg.png'), // Replace with your image path
+                      fit: BoxFit
+                          .cover, // Adjust the image to cover the entire container
                     ),
                   ),
-                  padding: const EdgeInsets.all(14), // You can adjust the padding as needed
+                  padding: const EdgeInsets.all(
+                      14), // You can adjust the padding as needed
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Aligns items in the column
+                    mainAxisAlignment: MainAxisAlignment
+                        .spaceBetween, // Aligns items in the column
                     children: [
                       Text(
                         'Algorithm Based Speech Assessment*', // Replace with your desired text
                         style: TextStyle(
                           fontSize: 16, // You can adjust the font size
-                          fontWeight: FontWeight.bold, // You can adjust the font weight
+                          fontWeight:
+                              FontWeight.bold, // You can adjust the font weight
                           color: Colors.black, // You can adjust the text color
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(
+                        height: 15,
+                      ),
                       CustomGradientButton1(
                         label: 'Start now! (Rs 500 Free)',
-                        onTap: (){ Get.off(() => QuestionScreen());},
+                        onTap: () {
+                          Get.off(() => QuestionScreen());
+                        },
                       ),
-                         SizedBox(height: 5,),
-                        Text(
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
                         '*Based on The Dhwani’s proprietary algorithm', // Replace with your desired text
                         style: TextStyle(
                           fontSize: 12, // You can adjust the font size
-           // You can adjust the font weight
+                          // You can adjust the font weight
                           color: Colors.black, // You can adjust the text color
                         ),
                       ),
@@ -126,42 +136,50 @@ class AssessmentScreen extends StatelessWidget {
                       ),
                     ],
                     image: DecorationImage(
-                      image: AssetImage('assets/images/assessmentButtonBg.png'), // Replace with your image path
-                      fit: BoxFit.cover, // Adjust the image to cover the entire container
+                      image: AssetImage(
+                          'assets/images/assessmentButtonBg.png'), // Replace with your image path
+                      fit: BoxFit
+                          .cover, // Adjust the image to cover the entire container
                     ),
                   ),
-                  padding: const EdgeInsets.all(20), // You can adjust the padding as needed
+                  padding: const EdgeInsets.all(
+                      20), // You can adjust the padding as needed
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Aligns items in the column
+                    mainAxisAlignment: MainAxisAlignment
+                        .spaceBetween, // Aligns items in the column
                     children: [
                       Text(
                         'Comprehensive Speech Assessment by Speech Therapist.', // Replace with your desired text
                         style: TextStyle(
                           fontSize: 16, // You can adjust the font size
-                          fontWeight: FontWeight.bold, // You can adjust the font weight
+                          fontWeight:
+                              FontWeight.bold, // You can adjust the font weight
                           color: Colors.black, // You can adjust the text color
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(
+                        height: 15,
+                      ),
                       CustomGradientButton(
                         label: 'Pay & Start! (Rs 200)',
-                        onTap: (){ 
-                           Get.to(Assessmentpaymentpage());
-                          },
+                        onTap: () {
+                          Get.to(Assessmentpaymentpage());
+                        },
                       ),
-                       SizedBox(height: 5,),
-                        Text(
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
                         '*Online speech assessment will be done within 36 hrs', // Replace with your desired text
                         style: TextStyle(
                           fontSize: 12, // You can adjust the font size
-           // You can adjust the font weight
+                          // You can adjust the font weight
                           color: Colors.black, // You can adjust the text color
                         ),
                       ),
                     ],
                   ),
                 ),
-
               ],
             ),
           ),

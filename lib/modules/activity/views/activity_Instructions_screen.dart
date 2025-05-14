@@ -13,7 +13,6 @@ import '../../../core/utils/custom_widgets.dart';
 import '../../../core/utils/helper.dart';
 import 'picture_expression_instruction.dart';
 import 'MatchScreen.dart';
-import 'PictureUnderstandingScreen.dart';
 import 'PictureSequencings.dart';
 import '../../home/bloc/home_bloc.dart';
 import '../../home/bloc/home_event.dart';
@@ -205,7 +204,8 @@ class ActivityInstructionContent
                                             .pictureUnderstandings!
                                             .instruction !=
                                         null) {
-                                  Get.off(() => PictureUnderstandingInstructionsScreen(
+                                  Get.off(() =>
+                                      PictureUnderstandingInstructionsScreen(
                                         resAllQuestion: state.resAllQuestion,
                                         showInstruction: true,
                                       ));

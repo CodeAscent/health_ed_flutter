@@ -14,7 +14,7 @@ class HttpWrapper {
     Logger().f(token);
     return {
       'content-type': "application/json",
-      if (token != null) "Authorization": "Bearer $token",
+      "Authorization": "Bearer $token",
     };
   }
 
@@ -23,7 +23,7 @@ class HttpWrapper {
     if (res.statusCode == 401) {
       _logger.w("Unauthorized! Logging out user.");
       await LocalStorage.removeUserData(); // Clear local storage
-      Get.offAll(() => LoginScreen());     // Navigate to Login screen
+      Get.offAll(() => LoginScreen()); // Navigate to Login screen
     }
   }
 
@@ -51,7 +51,8 @@ class HttpWrapper {
   }
 
   /// POST request
-  static Future<http.Response> postRequest(String endpoint, dynamic payload) async {
+  static Future<http.Response> postRequest(
+      String endpoint, dynamic payload) async {
     try {
       final url = AppConfig.base_url + endpoint;
       final requestHeaders = await headers();

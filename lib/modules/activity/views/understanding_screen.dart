@@ -12,25 +12,14 @@ import 'package:health_ed_flutter/modules/home/views/screens/all_quizzes_screen.
 import 'package:logger/logger.dart';
 
 import '../../../core/tts/text_to_speech.dart';
-import '../../../core/utils/custom_loader.dart';
 import '../../../core/utils/custom_snackbar.dart';
 import '../../../core/utils/custom_widgets.dart';
 import '../../../core/utils/helper.dart';
-import 'DragDropScreen.dart';
-import 'picture_expression_instruction.dart';
-import 'PictureUnderstandingScreen.dart';
-import 'PictureSequencings.dart';
-import 'RevealPictureDescriptionScreen.dart';
-import 'pictureExpression.dart';
 import '../widgets/MediaSlider.dart';
-import '../../auth/bloc/auth_bloc.dart';
-import '../../home/bloc/VideoScreenBloc.dart';
-import '../../home/bloc/VideoScreenEvent.dart';
 import '../../home/bloc/home_bloc.dart';
 import '../../home/bloc/home_event.dart';
 import '../../home/bloc/home_state.dart';
 import '../../home/model/response/ResAllQuestion.dart';
-import '../../home/repository/home_repository.dart';
 
 class UnderstandingScreen extends StatefulWidget {
   final ResAllQuestion resAllQuestion;
@@ -64,8 +53,6 @@ class _ActivityUnderstandingScreenContentState
     learnings = widget.resAllQuestion.data!.activity!.understandings!
         .learnings![currentIndex];
   }
-
-
 
   @override
   void dispose() {

@@ -12,6 +12,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<GetAllActivityRequested>(_getAllActivity);
     on<GetAllQuestionRequested>(_getAllQuestion);
     on<SubmitAcknowledgementRequest>(_sendAcknowledgementRequest);
+    on<GetReportRequested>(_getReport);
   }
 
   Future<void> _getAllDays(
@@ -30,7 +31,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(ActivityInstructionLoading());
     try {
       final response =
-      await homeRepository.getActivityInstruction(event.activityId);
+          await homeRepository.getActivityInstruction(event.activityId);
       emit(GetActivityInstructionSuccess(resActivityInstructions: response));
     } catch (error) {
       emit(GetActivityInstructionFailure(message: error.toString()));
@@ -41,33 +42,46 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       GetAllActivityRequested event, Emitter<HomeState> emit) async {
     emit(AllActivityLoading());
     try {
-      final response =
-      await homeRepository.getAllActivity(event.activityId);
+      final response = await homeRepository.getAllActivity(event.activityId);
       emit(GetAllActivitySuccess(resAllActivity: response));
     } catch (error) {
       emit(GetAllActivityFailure(message: error.toString()));
     }
   }
 
-  Future<void> _getAllQuestion(GetAllQuestionRequested event, Emitter<HomeState> emit) async {
+  Future<void> _getAllQuestion(
+      GetAllQuestionRequested event, Emitter<HomeState> emit) async {
     emit(ActivityQuestionLoading());
     try {
-      final response =
-      await homeRepository.getAllQuestion(event.activityId);
+      final response = await homeRepository.getAllQuestion(event.activityId);
       emit(GetAllQuestionSuccess(resAllQuestion: response));
     } catch (error) {
       emit(GetAllQuestionFailure(message: error.toString()));
     }
   }
 
-  Future<void> _sendAcknowledgementRequest(SubmitAcknowledgementRequest event, Emitter<HomeState> emit) async {
+  Future<void> _sendAcknowledgementRequest(
+      SubmitAcknowledgementRequest event, Emitter<HomeState> emit) async {
     emit(SubmitAcknowledgeLoading());
     try {
-      final response =
-      await homeRepository.submitAcknowledgement(event.acknowledgementRequest);
+      final response = await homeRepository
+          .submitAcknowledgement(event.acknowledgementRequest);
       emit(GetSubmitAcknowledgeResponse(resUserAcknowledgement: response));
     } catch (error) {
       emit(GetSubmitAcknowledgeResponseFailure(message: error.toString()));
+    }
+  }
+
+  Future<void> _getReport(
+      GetReportRequested event, Emitter<HomeState> emit) async {
+    emit(reportLoading());
+    try {
+      final response = await homeRepository.getReport(event.reportRequest);
+
+      emit(GetReportSuccess(reportResponse: response));
+      print("GetReportSuccess");
+    } catch (error) {
+      emit(GetReportFailure(message: error.toString()));
     }
   }
 }

@@ -5,19 +5,14 @@ import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
 
 import '../../../core/utils/custom_widgets.dart';
-import '../../home/bloc/home_bloc.dart';
-import '../../home/bloc/home_event.dart';
-import '../../home/model/request/AcknowledgementRequest.dart';
 
 class DragDropScreen extends StatefulWidget {
-   final ResAllQuestion resAllQuestion; 
-const DragDropScreen({Key? key, required this.resAllQuestion})
+  final ResAllQuestion resAllQuestion;
+  const DragDropScreen({Key? key, required this.resAllQuestion})
       : super(key: key);
   @override
   _DragDropScreenState createState() => _DragDropScreenState();
 }
-
-
 
 class _DragDropScreenState extends State<DragDropScreen> {
   String selectedLanguage = 'English';
@@ -29,9 +24,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
     "Triangle": false,
   };
 
-  void submittedAcknowledge(){
-
-  }
+  void submittedAcknowledge() {}
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +107,9 @@ class _DragDropScreenState extends State<DragDropScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     // Two columns for drag targets
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -165,67 +160,65 @@ class _DragDropScreenState extends State<DragDropScreen> {
     );
   }
 
-
   Widget _buildDraggable(String shape) {
     bool isMatched = matchedShapes[shape]!;
     return isMatched
         ? Opacity(
-      opacity: 0.5,
-      child:  ShapeOption1(
-        shape: shape,
-        isHighlighted: false,
-        backgroundColor: Colors.white,
-        showCheck: false,
-        originalImageOpacity:1.0,
-      ),
-    )
+            opacity: 0.5,
+            child: ShapeOption1(
+              shape: shape,
+              isHighlighted: false,
+              backgroundColor: Colors.white,
+              showCheck: false,
+              originalImageOpacity: 1.0,
+            ),
+          )
         : Draggable<String>(
-      data: shape,
-      feedback: Opacity(
-        opacity: 0.8,
-        child:ShapeOption1(
-          shape: shape,
-          isHighlighted: false,
-          backgroundColor: Colors.white,
-          showCheck: false,
-          originalImageOpacity:1.0,
-        ),
-      ),
-      childWhenDragging: Opacity(
-        opacity: 0.5, // Reduce opacity when dragging
-        child: ShapeOption1(
-          shape: shape,
-          isHighlighted: false,
-          backgroundColor: Colors.white,
-          showCheck: false,
-          originalImageOpacity:1.0,
-        ),
-      ),
-      child: ShapeOption1(
-        shape: shape,
-        isHighlighted: false,
-        backgroundColor: Colors.white,
-        showCheck: false,
-        originalImageOpacity:1.0,
-      ),
-      onDragStarted: () {
-        setState(() {
-          isDragging = true;
-        });
-      },
-      onDraggableCanceled: (_, __) {
-        setState(() {
-          isDragging = false;
-        });
-      },
-      onDragEnd: (details) {
-        setState(() {
-          isDragging = false;
-        });
-      },
-    );
+            data: shape,
+            feedback: Opacity(
+              opacity: 0.8,
+              child: ShapeOption1(
+                shape: shape,
+                isHighlighted: false,
+                backgroundColor: Colors.white,
+                showCheck: false,
+                originalImageOpacity: 1.0,
+              ),
+            ),
+            childWhenDragging: Opacity(
+              opacity: 0.5, // Reduce opacity when dragging
+              child: ShapeOption1(
+                shape: shape,
+                isHighlighted: false,
+                backgroundColor: Colors.white,
+                showCheck: false,
+                originalImageOpacity: 1.0,
+              ),
+            ),
+            child: ShapeOption1(
+              shape: shape,
+              isHighlighted: false,
+              backgroundColor: Colors.white,
+              showCheck: false,
+              originalImageOpacity: 1.0,
+            ),
+            onDragStarted: () {
+              setState(() {
+                isDragging = true;
+              });
+            },
+            onDraggableCanceled: (_, __) {
+              setState(() {
+                isDragging = false;
+              });
+            },
+            onDragEnd: (details) {
+              setState(() {
+                isDragging = false;
+              });
+            },
+          );
   }
-
 
   Widget _buildDragTarget(String shape) {
     return DragTarget<String>(
@@ -233,7 +226,8 @@ class _DragDropScreenState extends State<DragDropScreen> {
         return ShapeOption1(
           shape: shape,
           isHighlighted: candidateData.isNotEmpty,
-          backgroundColor: matchedShapes[shape]! ? ColorPallete.greenColor : Colors.white,
+          backgroundColor:
+              matchedShapes[shape]! ? ColorPallete.greenColor : Colors.white,
           showCheck: matchedShapes[shape]!,
           originalImageOpacity: matchedShapes[shape]! ? 1.0 : 0.5,
         );
@@ -246,6 +240,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
       },
     );
   }
+
   void _showAcknowledgeDropdown(BuildContext context) {
     showCupertinoModalPopup(
       context: context,
@@ -307,6 +302,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
       ),
     );
   }
+
   void _showCupertinoDropdown(BuildContext context) {
     showCupertinoModalPopup(
       context: context,
@@ -350,6 +346,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
       ),
     );
   }
+
   Widget _buildAcknowledgementButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 30.0),
@@ -384,16 +381,13 @@ class _DragDropScreenState extends State<DragDropScreen> {
                   top: 0,
                   child: GestureDetector(
                     onTap: () {
-                      {
-
-                      }
+                      {}
                     },
                     child: Container(
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
-                        color: ColorPallete
-                            .secondary,
+                        color: ColorPallete.secondary,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -484,7 +478,8 @@ class DottedLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final dashCount = (constraints.constrainWidth() / (dashWidth + dashSpacing)).floor();
+        final dashCount =
+            (constraints.constrainWidth() / (dashWidth + dashSpacing)).floor();
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(dashCount, (_) {

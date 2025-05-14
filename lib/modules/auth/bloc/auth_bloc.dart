@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:bloc/bloc.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
@@ -58,7 +57,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final res = await authRepository.login(event.loginRequest);
       // final user = User.fromMap(res['user']);
       // await LocalStorage.prefs.setString('token', res['token']);
-      emit(AuthLoginSuccess(message: res.message+"\nOtp Is ${res.data.otp.toString()}"));
+      emit(AuthLoginSuccess(
+          message: res.message + "\nOtp Is ${res.data.otp.toString()}"));
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }
@@ -70,15 +70,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final res = await authRepository.verifyOtp(event.otpVerifyRequest);
       // final user = User.fromMap(res['user']);
-      await LocalStorage.prefs.setString('userData', jsonEncode(res.data));;
+      await LocalStorage.prefs.setString('userData', jsonEncode(res.data));
+      ;
       emit(AuthOtpVerifySuccess(otpVerifyResponse: res));
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }
   }
 
-  Future<void> getAssessmentQuestion(
-      AuthAssessmentQuestionDataRequested event, Emitter<AuthState> emit) async {
+  Future<void> getAssessmentQuestion(AuthAssessmentQuestionDataRequested event,
+      Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
       final res = await authRepository.getAssessmentQuestion();
@@ -88,7 +89,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-    Future<void> getAllPlan(
+  Future<void> getAllPlan(
       PlanDataRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
@@ -99,7 +100,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-    Future<void> getUserPlanData(
+  Future<void> getUserPlanData(
       UserPlanDataRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
@@ -112,22 +113,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> submitAnswer(
       SubmitQuestionRequested event, Emitter<AuthState> emit) async {
-         var userData = LocalStorage.prefs.getString('userProfileData') != null
-      ? jsonDecode(LocalStorage.prefs.getString('userProfileData')!)['user']
-      : '';
+    var userData = LocalStorage.prefs.getString('userProfileData') != null
+        ? jsonDecode(LocalStorage.prefs.getString('userProfileData')!)['user']
+        : '';
     emit(AuthLoading());
     try {
-      event.submitQuestionRequest.userId=userData['_id'];
+      event.submitQuestionRequest.userId = userData['_id'];
       print('event.submitQuestionRequest.userId');
       print(event.submitQuestionRequest.userId);
-      final res = await authRepository.submitAnswer(event.submitQuestionRequest);
-      emit(AuthSubmitQuestionSuccess(submitQuestionResponse:res));
+      final res =
+          await authRepository.submitAnswer(event.submitQuestionRequest);
+      emit(AuthSubmitQuestionSuccess(submitQuestionResponse: res));
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }
   }
 
-   Future<void> createPayOrder(
+  Future<void> createPayOrder(
       CreatePaymentRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
@@ -140,7 +142,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-   Future<void> createAssessPayOrder(
+  Future<void> createAssessPayOrder(
       CreateAssessPaymentRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
@@ -166,7 +168,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   //   }
   // }
 
-     Future<void> verifyPayOrder(
+  Future<void> verifyPayOrder(
       VerifyPaymentRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
@@ -179,11 +181,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-      Future<void> verifyAssessPayOrder(
+  Future<void> verifyAssessPayOrder(
       VerifyAssessPaymentRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final res = await authRepository.verifyAssessPayOrder(event.verifyPayOrderReq);
+      final res =
+          await authRepository.verifyAssessPayOrder(event.verifyPayOrderReq);
       // final user = User.fromMap(res['user']);
       // await LocalStorage.prefs.setString('token', res['token']);
       emit(VerifyPaymentOrderSuccess(resVerifyOrder: res));
@@ -191,8 +194,4 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(VerifyOrderFailure(message: e.toString()));
     }
   }
-
-
-
-
 }

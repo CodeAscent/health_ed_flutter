@@ -24,12 +24,8 @@ class _SplashScreenState extends State<SplashScreen> {
   void _navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 3));
     String? token = await LocalStorage.getString('userData');
-    if (token != null) {
-      await AuthRepository().fetchUser();
-      Get.off(() => PlanScreen());
-    } else {
-      Get.off(() => LoginScreen());
-    }
+    await AuthRepository().fetchUser();
+    Get.off(() => PlanScreen());
   }
 
   @override

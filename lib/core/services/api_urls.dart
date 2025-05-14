@@ -19,7 +19,10 @@ class ApiUrls {
   static String subscription_plans = 'subscription/plans';
   static String create_subscription_plans = 'subscription/order/create';
   static String subscription_payment_verify = 'subscription/payment/verify';
-  static String assessment_payment_create_order = 'assessment-payment/create-order';
+  static String assessment_payment_create_order =
+      'assessment-payment/create-order';
   static String assessment_payment_verify = 'assessment-payment/verify';
   static String subscription_status = 'subscription/status';
+  static String user_report = 'onboarding/onboarding-report';
+  static String user_report_html = 'onboarding/onboarding-report-html';
 }

@@ -20,7 +20,7 @@ import 'modules/home/repository/home_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalStorage.initialize(); // Initialize local storage
+  await LocalStorage.initialize();
 
   // Initialize the dashboard refresh event
   Get.put(Rx<DashboardRefreshEvent>(DashboardRefreshEvent()),
