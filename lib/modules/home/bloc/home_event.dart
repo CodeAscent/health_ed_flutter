@@ -38,3 +38,7 @@ class GetReportRequested extends HomeEvent {
   final ReportRequest reportRequest;
   GetReportRequested({required this.reportRequest});
 }
+
+class GetInvoiceRequested extends HomeEvent {
+  GetInvoiceRequested();
+}

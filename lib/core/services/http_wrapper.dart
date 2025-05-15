@@ -9,12 +9,15 @@ import 'package:http/http.dart' as http;
 class HttpWrapper {
   static final _logger = Logger();
 
-  static Future<Map<String, String>> headers() async {
+  static Future<Map<String, String>> headers(
+      {bool isByteResponse = false}) async {
     String? token = await LocalStorage.getToken();
     Logger().f(token);
+
     return {
-      'content-type': "application/json",
-      "Authorization": "Bearer $token",
+      'Content-Type': 'application/json',
+      'Accept': isByteResponse ? 'application/pdf' : 'application/json',
+      'Authorization': 'Bearer $token',
     };
   }
 
@@ -28,10 +31,13 @@ class HttpWrapper {
   }
 
   /// GET request
-  static Future<http.Response> getRequest(String endpoint) async {
+  static Future<http.Response> getRequest(
+    String endpoint, {
+    bool isByteResponse = false,
+  }) async {
     try {
       final url = AppConfig.base_url + endpoint;
-      final requestHeaders = await headers();
+      final requestHeaders = await headers(isByteResponse: isByteResponse);
 
       _logger.i("GET Request URL: $url");
       _logger.i("GET Request Headers: $requestHeaders");
@@ -52,10 +58,13 @@ class HttpWrapper {
 
   /// POST request
   static Future<http.Response> postRequest(
-      String endpoint, dynamic payload) async {
+    String endpoint,
+    dynamic payload, {
+    bool isByteResponse = false,
+  }) async {
     try {
       final url = AppConfig.base_url + endpoint;
-      final requestHeaders = await headers();
+      final requestHeaders = await headers(isByteResponse: isByteResponse);
 
       _logger.i("POST Request URL: $url");
       _logger.i("POST Request Headers: $requestHeaders");
@@ -79,9 +88,10 @@ class HttpWrapper {
       }
 
       _logger.i("POST Response Status: ${res.statusCode}");
-      _logger.i("POST Response Body: ${res.body}");
+      _logger.i(
+          "POST Response ${isByteResponse ? 'Bytes Length' : 'Body'}: ${isByteResponse ? res.bodyBytes.length : res.body}");
 
-      _handleUnauthorized(res); // 👈 check for 401
+      _handleUnauthorized(res);
 
       return res;
     } catch (e) {

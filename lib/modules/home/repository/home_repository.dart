@@ -92,13 +92,32 @@ class HomeRepository {
       final res = await HttpWrapper.postRequest(
         ApiUrls.user_report_html,
         reportRequest.toJson(),
+        isByteResponse: true,
       );
 
       if (res.statusCode == 200) {
-        return ReportResponse.fromRawHtml(res.body);
+        return ReportResponse.fromPdfBytes(res.bodyBytes);
       } else {
-        // Assuming error responses might still be JSON
-        final errorData = jsonDecode(res.body);
+        final errorData = jsonDecode(utf8.decode(res.bodyBytes));
+        throw errorData['message'] ?? 'Unknown error';
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ReportResponse> getInvoice() async {
+    try {
+      final res = await HttpWrapper.getRequest(
+        ApiUrls.user_report_pdf,
+        isByteResponse: true,
+      );
+
+      if (res.statusCode == 200) {
+        return ReportResponse.fromPdfBytes(
+            res.bodyBytes); // note: use bodyBytes
+      } else {
+        final errorData = jsonDecode(utf8.decode(res.bodyBytes));
         throw errorData['message'] ?? 'Unknown error';
       }
     } catch (e) {

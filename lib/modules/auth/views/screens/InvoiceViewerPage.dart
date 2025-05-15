@@ -5,20 +5,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_state.dart';
-import 'package:health_ed_flutter/modules/home/model/request/ReportRequest.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
-class ReportViewerPage extends StatefulWidget {
-  final String userId;
-
-  const ReportViewerPage({Key? key, required this.userId}) : super(key: key);
+class InvoiceViewerPage extends StatefulWidget {
+  const InvoiceViewerPage({Key? key}) : super(key: key);
 
   @override
-  State<ReportViewerPage> createState() => _ReportViewerPageState();
+  State<InvoiceViewerPage> createState() => _InvoiceViewerPageState();
 }
 
-class _ReportViewerPageState extends State<ReportViewerPage> {
+class _InvoiceViewerPageState extends State<InvoiceViewerPage> {
   Uint8List? _pdfBytes;
   bool _isGeneratingPdf = false;
 
@@ -30,9 +27,7 @@ class _ReportViewerPageState extends State<ReportViewerPage> {
 
   void _fetchReportData() {
     context.read<HomeBloc>().add(
-          GetReportRequested(
-            reportRequest: ReportRequest(userId: widget.userId),
-          ),
+          GetInvoiceRequested(),
         );
   }
 
@@ -59,9 +54,9 @@ class _ReportViewerPageState extends State<ReportViewerPage> {
           if (state is GetReportFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text('Failed to load report: ${state.message}')),
+                  content: Text('Failed to load invoice: ${state.message}')),
             );
-          } else if (state is GetReportSuccess) {
+          } else if (state is GetInvoiceSuccess) {
             setState(() {
               _pdfBytes =
                   state.reportResponse.pdfBytes; // ensure your model has this
@@ -69,7 +64,7 @@ class _ReportViewerPageState extends State<ReportViewerPage> {
           }
         },
         builder: (context, state) {
-          if (state is reportLoading || _pdfBytes == null) {
+          if (state is InvoiceLoading || _pdfBytes == null) {
             return const Center(child: CircularProgressIndicator());
           }
 

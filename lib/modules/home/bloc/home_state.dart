@@ -25,14 +25,26 @@ class SubmitAcknowledgeLoading extends HomeState {}
 
 class reportLoading extends HomeState {}
 
+class InvoiceLoading extends HomeState {}
+
 class GetReportFailure extends HomeState {
   final String message;
   GetReportFailure({required this.message});
 }
 
+class GetInvoiceFailure extends HomeState {
+  final String message;
+  GetInvoiceFailure({required this.message});
+}
+
 class GetReportSuccess extends HomeState {
   final ReportResponse reportResponse;
   GetReportSuccess({required this.reportResponse});
+}
+
+class GetInvoiceSuccess extends HomeState {
+  final ReportResponse reportResponse;
+  GetInvoiceSuccess({required this.reportResponse});
 }
 
 class GetAllDayFailure extends HomeState {

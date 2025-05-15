@@ -1,10 +1,11 @@
+import 'dart:typed_data';
+
 class ReportResponse {
-  final String html;
+  final Uint8List pdfBytes;
 
-  ReportResponse({required this.html});
+  ReportResponse({required this.pdfBytes});
 
-  // Factory for plain HTML string
-  factory ReportResponse.fromRawHtml(String rawHtml) {
-    return ReportResponse(html: rawHtml);
+  factory ReportResponse.fromPdfBytes(Uint8List bytes) {
+    return ReportResponse(pdfBytes: bytes);
   }
 }

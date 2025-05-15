@@ -95,29 +95,21 @@ class _ProfilescreenState extends State<ProfileScreen> {
                           ),
                           SizedBox(height: 20),
                           Align(
-                            alignment: Alignment.centerLeft,
-                            child: Stack(
-                              alignment: Alignment.bottomRight,
-                              children: [
-                                CircleAvatar(
-                                  radius: 40,
-                                  backgroundColor: Colors.grey[300],
-                                  child: Icon(
-                                    Icons.person,
-                                    size: 40,
-                                    color: Colors.white,
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    state.gender == 'Male'
+                                        ? 'assets/icons/boy.png'
+                                        : 'assets/icons/girl.png',
                                   ),
+                                  fit: BoxFit.cover,
                                 ),
-                                CircleAvatar(
-                                  radius: 14,
-                                  backgroundColor: ColorPallete.primary,
-                                  child: Icon(
-                                    Icons.edit_note_sharp,
-                                    size: 14,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                           SizedBox(height: 20),
@@ -140,6 +132,14 @@ class _ProfilescreenState extends State<ProfileScreen> {
                           _buildTextField(
                             label: 'Email',
                             initialValue: state.email,
+                            onChanged: (value) =>
+                                context.read<ProfileCubit>().updateEmail(value),
+                            suffixIcon: state.isEmailValid ? Icons.check : null,
+                          ),
+                          SizedBox(height: 10),
+                          _buildTextField(
+                            label: 'Gander',
+                            initialValue: state.gender,
                             onChanged: (value) =>
                                 context.read<ProfileCubit>().updateEmail(value),
                             suffixIcon: state.isEmailValid ? Icons.check : null,

@@ -63,6 +63,7 @@ dependencies:
   webview_flutter_android: ^4.3.2
   share_plus: ^11.0.0
   htmltopdfwidgets: ^1.0.9
+  font_awesome_flutter: ^10.8.0
 
 
 dev_dependencies:

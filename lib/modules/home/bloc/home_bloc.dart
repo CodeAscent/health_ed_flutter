@@ -13,6 +13,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<GetAllQuestionRequested>(_getAllQuestion);
     on<SubmitAcknowledgementRequest>(_sendAcknowledgementRequest);
     on<GetReportRequested>(_getReport);
+    on<GetInvoiceRequested>(_getInvoice);
   }
 
   Future<void> _getAllDays(
@@ -82,6 +83,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       print("GetReportSuccess");
     } catch (error) {
       emit(GetReportFailure(message: error.toString()));
+    }
+  }
+
+  Future<void> _getInvoice(
+      GetInvoiceRequested event, Emitter<HomeState> emit) async {
+    emit(InvoiceLoading());
+    try {
+      final response = await homeRepository.getInvoice();
+      emit(GetInvoiceSuccess(reportResponse: response));
+    } catch (error) {
+      emit(GetInvoiceFailure(message: error.toString()));
     }
   }
 }

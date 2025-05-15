@@ -7,6 +7,7 @@ import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/AllPlanScreen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/DhwaniInfoScreen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/FaqScreen.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/UserSubscription.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/assessment_screen.dart';
 import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -256,7 +257,11 @@ class _PlanScreenState extends State<PlanScreen> {
           if (gridNo == 1) {
             Get.to(() => MainScreen());
           } else if (gridNo == 2) {
-            Get.to(() => AllPlanScreen());
+            if (userData['subscriptionStatus'] == 'active') {
+              Get.to(() => UserSubscription());
+            } else {
+              Get.to(() => AllPlanScreen());
+            }
           } else if (gridNo == 3) {
             Get.to(() => DhwaniInfoScreen());
           } else if (gridNo == 4) {
