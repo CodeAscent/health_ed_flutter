@@ -4,11 +4,8 @@ import 'package:logger/logger.dart';
 
 class AcknowledgmentService {
   static const Map<String, int> acknowledgmentScores = {
-    'Not Understood': 0,
-    'Partially Understood': 1,
-    'Understood': 2,
-    'Well Understood': 3,
-    'Fully Understood': 4,
+    'Done': 1,
+    'Not Done': 0,
   };
 
   static Future<Map<String, dynamic>?> showAcknowledgmentDialog(
@@ -51,7 +48,8 @@ class AcknowledgmentService {
         selectedAcknowledgement != 'Acknowledgement';
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0,top: 10,right: 20,left: 20),
+      padding:
+          const EdgeInsets.only(bottom: 20.0, top: 10, right: 20, left: 20),
       child: ElevatedButton(
         onPressed: () async {
           final result = await showAcknowledgmentDialog(context);

@@ -69,9 +69,33 @@ class _QuestionScreenState extends State<QuestionScreen> {
         if (state is AuthFailure) {
           customSnackbar(state.message, ContentType.failure);
         } else if (state is AuthSubmitQuestionSuccess) {
-          Get.dialog(CongratsPopup(
-              level: state.submitQuestionResponse.data!.onboardingScore
-                  .toString()));
+          Get.dialog(
+            CongratsPopup(
+              level: state.submitQuestionResponse.data!.completedQuiz['level']
+                  .toString(),
+              complaint: state
+                  .submitQuestionResponse.data!.completedQuiz['complaint']
+                  .toString(),
+              provisionalDiagnosis: state
+                  .submitQuestionResponse.data!.completedQuiz['speechType']
+                  .toString(),
+              sensoryIssue: state
+                  .submitQuestionResponse.data!.completedQuiz['sensoryIssue']
+                  .toString(),
+              speechDevelopment: state
+                  .submitQuestionResponse.data!.completedQuiz['speechOutput']
+                  .toString(),
+              generalBehaviour: state.submitQuestionResponse.data!
+                  .completedQuiz['generalBehaviour']
+                  .toString(),
+              cognitiveSkills: state
+                  .submitQuestionResponse.data!.completedQuiz['cognitiveSkills']
+                  .toString(),
+              socialBehaviour: state
+                  .submitQuestionResponse.data!.completedQuiz['socialBehaviour']
+                  .toString(),
+            ),
+          );
           Future.delayed(Duration(seconds: 4), () {
             _navigateToNextScreen();
           });

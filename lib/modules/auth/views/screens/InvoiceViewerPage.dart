@@ -35,7 +35,7 @@ class _InvoiceViewerPageState extends State<InvoiceViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Diagnostic Report'),
+        title: const Text('Invoice'),
         actions: [
           IconButton(
             icon: _isGeneratingPdf

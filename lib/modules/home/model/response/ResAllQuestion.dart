@@ -53,22 +53,22 @@ class Activity {
   PictureSequencings? pictureSequencings;
   String? sId;
   String? day;
-  int? level;
+  String? level;
   int? iV;
 
   Activity(
       {this.activityName,
-        this.activityDescription,
-        this.activityInstructions,
-        this.understandings,
-        this.matchings,
-        this.pictureUnderstandings,
-        this.pictureExpressions,
-        this.pictureSequencings,
-        this.sId,
-        this.day,
-        this.level,
-        this.iV});
+      this.activityDescription,
+      this.activityInstructions,
+      this.understandings,
+      this.matchings,
+      this.pictureUnderstandings,
+      this.pictureExpressions,
+      this.pictureSequencings,
+      this.sId,
+      this.day,
+      this.level,
+      this.iV});
 
   Activity.fromJson(Map<String, dynamic>? json) {
     activityName = json?['activityName'] != null
@@ -260,18 +260,19 @@ class Learnings {
 
   Learnings(
       {this.title,
-        this.sId,
-        this.level,
-        this.createdBy,
-        this.type,
-        this.media,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.sId,
+      this.level,
+      this.createdBy,
+      this.type,
+      this.media,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   Learnings.fromJson(Map<String, dynamic>? json) {
-    title =
-    json?['title'] != null ? new ActivityName.fromJson(json?['title']) : null;
+    title = json?['title'] != null
+        ? new ActivityName.fromJson(json?['title'])
+        : null;
     sId = json?['_id'];
     level = json?['level'];
     createdBy = json?['createdBy'];
@@ -340,13 +341,13 @@ class Instruction {
 
   Instruction(
       {this.body,
-        this.title,
-        this.sId,
-        this.createdBy,
-        this.type,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.title,
+      this.sId,
+      this.createdBy,
+      this.type,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   Instruction.fromJson(Map<String, dynamic>? json) {
     body = json?['body'];
@@ -393,21 +394,22 @@ class Learnings3 {
 
   Learnings3(
       {this.title,
-        this.sId,
-        this.level,
-        this.type,
-        this.matchingQuestions,
-        this.matchingAnswers,
-        this.direction,
-        this.drag,
-        this.matchType,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.sId,
+      this.level,
+      this.type,
+      this.matchingQuestions,
+      this.matchingAnswers,
+      this.direction,
+      this.drag,
+      this.matchType,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   Learnings3.fromJson(Map<String, dynamic>? json) {
-    title =
-    json?['title'] != null ? new ActivityName.fromJson(json?['title']) : null;
+    title = json?['title'] != null
+        ? new ActivityName.fromJson(json?['title'])
+        : null;
     sId = json?['_id'];
     level = json?['level'];
     type = json?['type'];
@@ -495,21 +497,22 @@ class Instruction1 {
 
   Instruction1(
       {this.title,
-        this.sId,
-        this.createdBy,
-        this.type,
-        this.matchingQuestions,
-        this.matchingAnswers,
-        this.direction,
-        this.drag,
-        this.matchType,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.sId,
+      this.createdBy,
+      this.type,
+      this.matchingQuestions,
+      this.matchingAnswers,
+      this.direction,
+      this.drag,
+      this.matchType,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   Instruction1.fromJson(Map<String, dynamic>? json) {
-    title =
-    json?['title'] != null ? new ActivityName.fromJson(json?['title']) : null;
+    title = json?['title'] != null
+        ? new ActivityName.fromJson(json?['title'])
+        : null;
     sId = json?['_id'];
     createdBy = json?['createdBy'];
     type = json?['type'];
@@ -558,6 +561,7 @@ class Instruction1 {
     return data;
   }
 }
+
 class PictureSequencings {
   List<Instruction2>? learnings;
   Instruction2? instruction;
@@ -587,7 +591,6 @@ class PictureSequencings {
     return data;
   }
 }
-
 
 class PictureUnderstandings {
   List<Learnings1>? learnings;
@@ -633,20 +636,21 @@ class Learnings1 {
 
   Learnings1(
       {this.media,
-        this.title,
-        this.sId,
-        this.createdBy,
-        this.type,
-        this.subType,
-        this.options,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.title,
+      this.sId,
+      this.createdBy,
+      this.type,
+      this.subType,
+      this.options,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   Learnings1.fromJson(Map<String, dynamic>? json) {
     media = json?['media'] != null ? new Media1.fromJson(json?['media']) : null;
-    title =
-    json?['title'] != null ? new ActivityName.fromJson(json?['title']) : null;
+    title = json?['title'] != null
+        ? new ActivityName.fromJson(json?['title'])
+        : null;
     sId = json?['_id'];
     createdBy = json?['createdBy'];
     type = json?['type'];
@@ -712,9 +716,8 @@ class Options {
   Options({this.option, this.correct, this.sId, this.media});
 
   Options.fromJson(Map<String, dynamic>? json) {
-    option = json?['option'] != null
-        ? ActivityName.fromJson(json?['option'])
-        : null;
+    option =
+        json?['option'] != null ? ActivityName.fromJson(json?['option']) : null;
     correct = json?['correct'];
     sId = json?['_id'];
     media = json?['media'] != null ? Media.fromJson(json?['media']) : null;
@@ -749,20 +752,21 @@ class Instruction2 {
 
   Instruction2(
       {this.title,
-        this.sId,
-        this.createdBy,
-        this.type,
-        this.sequenceImages,
-        this.sequenceAudios,
-        this.drag,
-        this.direction,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.sId,
+      this.createdBy,
+      this.type,
+      this.sequenceImages,
+      this.sequenceAudios,
+      this.drag,
+      this.direction,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   Instruction2.fromJson(Map<String, dynamic>? json) {
-    title =
-    json?['title'] != null ? new ActivityName.fromJson(json?['title']) : null;
+    title = json?['title'] != null
+        ? new ActivityName.fromJson(json?['title'])
+        : null;
     sId = json?['_id'];
     createdBy = json?['createdBy'];
     type = json?['type'];

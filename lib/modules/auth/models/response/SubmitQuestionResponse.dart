@@ -24,16 +24,19 @@ class SubmitQuestionResponse {
 
 class Data {
   int? onboardingScore;
+  dynamic completedQuiz;
 
-  Data({this.onboardingScore});
+  Data({this.onboardingScore, this.completedQuiz});
 
   Data.fromJson(Map<String, dynamic> json) {
     onboardingScore = json['onboardingScore'];
+    completedQuiz = json['completedQuiz'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['onboardingScore'] = this.onboardingScore;
+    data['completedQuiz'] = this.completedQuiz;
     return data;
   }
 }

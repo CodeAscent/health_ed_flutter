@@ -248,50 +248,23 @@ class _DragDropScreenState extends State<DragDropScreen> {
         title: Text('Acknowledge Child’s Understanding'),
         actions: <Widget>[
           CupertinoActionSheetAction(
-            child: Text('Not Understood'),
+            child: Text('Done'),
             onPressed: () {
               setState(() {
-                selectedAcknowledgement = 'Not Understood';
+                selectedAcknowledgement = 'Done';
               });
               Navigator.pop(context);
             },
           ),
           CupertinoActionSheetAction(
-            child: Text('Partially Understood'),
+            child: Text('Not Done'),
             onPressed: () {
               setState(() {
-                selectedAcknowledgement = 'Partially Understood';
+                selectedAcknowledgement = 'Not Done';
               });
               Navigator.pop(context);
             },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Understood'),
-            onPressed: () {
-              setState(() {
-                selectedAcknowledgement = 'Understood';
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Well Understood'),
-            onPressed: () {
-              setState(() {
-                selectedAcknowledgement = 'Well Understood';
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Fully Understood'),
-            onPressed: () {
-              setState(() {
-                selectedAcknowledgement = 'Fully Understood';
-              });
-              Navigator.pop(context);
-            },
-          ),
+          )
         ],
         cancelButton: CupertinoActionSheetAction(
           child: Text('Cancel'),

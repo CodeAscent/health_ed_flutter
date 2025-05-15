@@ -115,6 +115,8 @@ flutter:
     - assets/icons/profile/
     - assets/icons/blog/
     - assets/images/
+    - assets/bg/awsm.mp3
+    - assets/bg/sad.mp3
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -12,6 +12,7 @@ import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
 import 'package:health_ed_flutter/modules/shared_widget/activity_congrats_popup.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/tts/text_to_speech.dart';
@@ -35,6 +36,8 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
     with SingleTickerProviderStateMixin {
   String languageCode = "en-US";
   String selectedLanguage = 'English';
+  bool isPlaying = false;
+  AudioPlayer audioPlayer = AudioPlayer();
   final TextToSpeech _tts = TextToSpeech();
   bool isDragging = false;
   late Instruction2 instruction2;
@@ -50,14 +53,17 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
   @override
   void initState() {
     super.initState();
-    showingInstruction = widget.showInstruction;
-    if (widget.showInstruction) {
+    showingInstruction =
+        widget.resAllQuestion.data!.activity!.pictureSequencings!.instruction !=
+            null;
+    if (showingInstruction) {
       instruction2 = widget
           .resAllQuestion.data!.activity!.pictureSequencings!.instruction!;
-    } else {
+    } else if (widget.resAllQuestion.data!.activity!.pictureSequencings!
+        .learnings!.isNotEmpty) {
       instruction2 = widget
           .resAllQuestion.data!.activity!.pictureSequencings!.learnings!.first;
-    }
+    } else {}
 
     for (var answer in instruction2.sequenceAudios!) {
       matchedShapes[answer.correctIndex!] = false;
@@ -73,7 +79,26 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
   @override
   void dispose() {
     _tts.stop();
+    audioPlayer.dispose();
     super.dispose();
+  }
+
+  void _playMatchSound({required bool success}) {
+    final asset = success ? 'assets/bg/awsm.mp3' : 'assets/bg/sad.mp3';
+    toggleAudio(asset);
+  }
+
+  void toggleAudio(String url) async {
+    if (isPlaying) {
+      await audioPlayer.pause();
+    } else {
+      await audioPlayer.stop();
+      await audioPlayer.setAsset(url);
+      await audioPlayer.play();
+    }
+    setState(() {
+      isPlaying = !isPlaying;
+    });
   }
 
   void _autoMatchInstruction() async {
@@ -202,21 +227,21 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               AppBackButton(),
-                              GestureDetector(
-                                onTap: () => _showCupertinoDropdown(context),
-                                child: Row(
-                                  children: [
-                                    Text(selectedLanguage,
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.black)),
-                                    Icon(
-                                      CupertinoIcons.chevron_down,
-                                      color: Colors.black,
-                                      size: 14,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              // GestureDetector(
+                              //   onTap: () => _showCupertinoDropdown(context),
+                              //   child: Row(
+                              //     children: [
+                              //       Text(selectedLanguage,
+                              //           style: TextStyle(
+                              //               fontSize: 12, color: Colors.black)),
+                              //       Icon(
+                              //         CupertinoIcons.chevron_down,
+                              //         color: Colors.black,
+                              //         size: 14,
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
                             ],
                           ),
                           SizedBox(height: 10),
@@ -349,12 +374,18 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
           originalImageOpacity: matchedShapes[correctIndex]! ? 1.0 : 0.5,
         );
       },
-      onWillAccept: (data) =>
-          !matchedShapes[correctIndex]! && data == correctIndex.toString(),
+      onWillAccept: (data) {
+        bool willAccept =
+            !matchedShapes[correctIndex]! && data == correctIndex.toString();
+        return true; // always allow drop to check result manually
+      },
       onAccept: (data) {
+        bool isMatch = data == correctIndex.toString();
         setState(() {
-          matchedShapes[correctIndex] = true;
+          matchedShapes[correctIndex] = isMatch;
         });
+
+        _playMatchSound(success: isMatch);
       },
     );
   }

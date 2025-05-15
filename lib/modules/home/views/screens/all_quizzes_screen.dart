@@ -7,10 +7,8 @@ import 'package:health_ed_flutter/modules/home/bloc/home_state.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/core/utils/custom_loader.dart';
 import 'package:health_ed_flutter/modules/home/repository/home_repository.dart';
-import 'package:health_ed_flutter/modules/home/views/screens/home_screen.dart';
 import 'package:health_ed_flutter/modules/home/widgets/QuizItem.dart';
 import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
-import 'package:logger/logger.dart';
 
 class AllQuizzesScreen extends StatelessWidget {
   @override
@@ -28,7 +26,6 @@ class AllQuizzesContent extends StatelessWidget {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-      
         if (didPop == false) {
           Get.offAll(MainScreen());
         }
@@ -104,6 +101,7 @@ class AllQuizzesContent extends StatelessWidget {
                                                 .toDouble(),
                                             isLocked: state.getAllDaysResponse
                                                 .data!.days![index].locked!,
+                                            mContext: context,
                                           );
                                         },
                                       ),

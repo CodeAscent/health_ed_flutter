@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/tts/text_to_speech.dart';
@@ -32,7 +31,7 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
   int score = 0;
   void navigateIfNotAvailable() {
     if (widget.resAllQuestion.data!.activity!.understandings!.learnings!
-                .isEmpty &&
+            .isEmpty &&
         widget.resAllQuestion.data!.activity!.understandings!.instruction ==
             null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -229,73 +228,6 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
               setState(() {
                 selectedLanguage = 'Odia';
                 languageCode = 'or';
-              });
-              Navigator.pop(context);
-            },
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          child: Text('Cancel'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-
-  void _showAcknowledgeDropdown(BuildContext context) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: Text('Acknowledge Child\'s Understanding'),
-        actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: Text('Not Understood'),
-            onPressed: () {
-              setState(() {
-                selectedAcknowledgement = 'Not Understood';
-                score = 0;
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Partially Understood'),
-            onPressed: () {
-              setState(() {
-                selectedAcknowledgement = 'Partially Understood';
-                score = 1;
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Understood'),
-            onPressed: () {
-              setState(() {
-                selectedAcknowledgement = 'Understood';
-                score = 2;
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Well Understood'),
-            onPressed: () {
-              setState(() {
-                selectedAcknowledgement = 'Well Understood';
-                score = 3;
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Fully Understood'),
-            onPressed: () {
-              setState(() {
-                selectedAcknowledgement = 'Fully Understood';
-                score = 4;
               });
               Navigator.pop(context);
             },

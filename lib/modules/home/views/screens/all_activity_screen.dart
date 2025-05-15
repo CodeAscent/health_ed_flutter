@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
-import 'package:health_ed_flutter/modules/activity/views/MatchScreen.dart';
-import 'package:health_ed_flutter/modules/activity/views/PictureUnderstandingScreen.dart';
-import 'package:health_ed_flutter/modules/activity/views/pictureExpression.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_state.dart';
@@ -16,13 +13,16 @@ import '../../../activity/views/activity_Instructions_screen.dart';
 class AllActivityScreen extends StatelessWidget {
   final String activityId;
   final String dayName;
-  const AllActivityScreen({Key? key, required this.activityId, required this.dayName}) : super(key: key);
+  const AllActivityScreen(
+      {Key? key, required this.activityId, required this.dayName})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HomeBloc(HomeRepository())..add(GetAllActivityRequested(activityId: activityId)),
-      child: AllActivityContent(activityId: activityId,dayName:dayName),
+      create: (_) => HomeBloc(HomeRepository())
+        ..add(GetAllActivityRequested(activityId: activityId)),
+      child: AllActivityContent(activityId: activityId, dayName: dayName),
     );
   }
 }
@@ -30,7 +30,9 @@ class AllActivityScreen extends StatelessWidget {
 class AllActivityContent extends StatelessWidget {
   final String activityId;
   final String dayName;
-  const AllActivityContent({Key? key, required this.activityId, required this.dayName}) : super(key: key);
+  const AllActivityContent(
+      {Key? key, required this.activityId, required this.dayName})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +58,7 @@ class AllActivityContent extends StatelessWidget {
                           AppBackButton(),
                           SizedBox(width: 8),
                           Text(
-                             dayName,
+                            dayName,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -73,15 +75,18 @@ class AllActivityContent extends StatelessWidget {
                           } else if (state is GetAllActivitySuccess) {
                             return Expanded(
                               child: ListView.builder(
-                                padding: EdgeInsets.symmetric(horizontal: 2, vertical: 8),
-                                itemCount: state.resAllActivity.data!.activities!.length,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 2, vertical: 8),
+                                itemCount: state
+                                    .resAllActivity.data!.activities!.length,
                                 itemBuilder: (context, index) {
-                                  final activity = state.resAllActivity.data!.activities![index];
+                                  final activity = state
+                                      .resAllActivity.data!.activities![index];
                                   return GestureDetector(
                                     onTap: () {
-                                        Get.to(() => ActivityInstructionsScreen(
-                                          activityId: activity.sId!,
-                                        ));
+                                      Get.to(() => ActivityInstructionsScreen(
+                                            activityId: activity.sId!,
+                                          ));
                                     },
                                     child: ActivityCardItem(activity: activity),
                                   );
