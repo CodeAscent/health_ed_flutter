@@ -12,6 +12,7 @@ import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/modules/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/planScreen.dart';
+import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
 import '../../models/request/RegistrationRequest.dart';
 import '../../repository/auth_repository.dart';
 import '../../models/response/StateResponse.dart';
@@ -122,12 +123,12 @@ class _SignupScreenState extends State<SignupScreen> {
     return true;
   }
 
-    void _navigateToNextScreen() async {
-      await AuthRepository().fetchUser();
-            Get.to(() => PlanScreen());
+  void _navigateToNextScreen() async {
+    await AuthRepository().fetchUser();
+    Get.to(() => MainScreen());
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Form(
       key: formKey,
@@ -138,7 +139,7 @@ class _SignupScreenState extends State<SignupScreen> {
           }
           if (state is AuthRegisterSuccess) {
             customSnackbar(state.message, ContentType.success);
-           _navigateToNextScreen();
+            _navigateToNextScreen();
           }
         },
         builder: (context, state) {
@@ -279,9 +280,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 //   },
                                 //   sufix: Icon(Icons.arrow_downward),
                                 // ),
-                               
+
                                 // New fields added below
-                               /*  CustomTextFieldWithLabel(
+                                /*  CustomTextFieldWithLabel(
                                   controller: _fatherOccupation,
                                   label: 'Father Occupation',
                                   hintText: 'Select occupation',
@@ -298,7 +299,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     controller: _fatherOccupation,
                                   ),
                                 ), */
-                           /*      CustomTextFieldWithLabel(
+                                /*      CustomTextFieldWithLabel(
                                   controller: _motherOccupation,
                                   label: 'Mother Occupation',
                                   hintText: 'Select occupation',
@@ -315,8 +316,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                     controller: _motherOccupation,
                                   ),
                                 ), */
-                               
-                            /*     CustomTextFieldWithLabel(
+
+                                /*     CustomTextFieldWithLabel(
                                   controller: _siblings,
                                   label: 'No. of Siblings',
                                   hintText: 'Select number',
@@ -330,7 +331,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ),
                                 ),
                                 */
-                            /*     CustomTextFieldWithLabel(
+                                /*     CustomTextFieldWithLabel(
                                   controller: _childLanguage,
                                   label: 'Languages Spokenby the Child',
                                   hintText: 'Select language',
@@ -377,7 +378,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     },
                                   ),
                                 ),
-                               /*  CustomTextFieldWithLabel(
+                                /*  CustomTextFieldWithLabel(
                                   controller: _city,
                                   label: 'Current City/District',
                                   hintText: 'Select your city',
@@ -413,7 +414,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     controller: _speechTherapy,
                                   ),
                                 ),
-                               /*  CustomTextFieldWithLabel(
+                                /*  CustomTextFieldWithLabel(
                                   controller: _medium,
                                   label: 'Medium',
                                   hintText: 'Select medium',
@@ -571,12 +572,3 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 }
-
-
-
-
-
-
-
-
-

@@ -36,6 +36,7 @@ class _MatchScreenState extends State<MatchScreen>
   final TextToSpeech _tts = TextToSpeech();
   bool isDragging = false;
   late Learnings3 learnings3;
+  late Instruction instruction;
   int currentIndex = 0;
 
   Map<int, bool> matchedShapes = {};
@@ -48,32 +49,11 @@ class _MatchScreenState extends State<MatchScreen>
   void initState() {
     super.initState();
     // navigateIfNotAvailable();
-    showingInstruction =
-        widget.resAllQuestion.data!.activity!.matchings!.instruction != null;
-    if (showingInstruction) {
-      learnings3 =
-          widget.resAllQuestion.data!.activity!.matchings!.instruction!;
-    } else if (widget
-        .resAllQuestion.data!.activity!.matchings!.learnings!.isNotEmpty) {
-      learnings3 = widget
-          .resAllQuestion.data!.activity!.matchings!.learnings![currentIndex];
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Get.to(() => PictureUnderstandingInstructionsScreen(
-              resAllQuestion: widget.resAllQuestion,
-              showInstruction: true,
-            ));
-      });
-    }
+    learnings3 = widget
+        .resAllQuestion.data!.activity!.matchings!.learnings![currentIndex];
 
     for (var answer in learnings3.matchingQuestions!) {
       matchedShapes[answer.correctIndex!] = false;
-    }
-
-    if (showingInstruction) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _autoMatchInstruction();
-      });
     }
   }
 

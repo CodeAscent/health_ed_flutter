@@ -8,6 +8,9 @@ import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/tts/text_to_speech.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/modules/activity/views/MatchScreen.dart';
+import 'package:health_ed_flutter/modules/activity/views/PictureSequencings.dart';
+import 'package:health_ed_flutter/modules/activity/views/PictureUnderstandingScreen.dart';
+import 'package:health_ed_flutter/modules/activity/views/picture_expression_instruction.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
@@ -16,7 +19,10 @@ import 'package:health_ed_flutter/modules/activity/views/understanding_screen.da
 
 class UnderstandingInstruction extends StatefulWidget {
   final ResAllQuestion resAllQuestion;
-  const UnderstandingInstruction({super.key, required this.resAllQuestion});
+  final int activityNo;
+
+  const UnderstandingInstruction(
+      {super.key, required this.resAllQuestion, required this.activityNo});
 
   @override
   State<UnderstandingInstruction> createState() =>
@@ -29,19 +35,7 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
   final _tts = TextToSpeech();
   String selectedAcknowledgement = 'Acknowledgement';
   int score = 0;
-  void navigateIfNotAvailable() {
-    if (widget.resAllQuestion.data!.activity!.understandings!.learnings!
-            .isEmpty &&
-        widget.resAllQuestion.data!.activity!.understandings!.instruction ==
-            null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Get.to(() => MatchScreen(
-              resAllQuestion: widget.resAllQuestion,
-              showInstruction: true,
-            ));
-      });
-    }
-  }
+  bool isCompleted = false;
 
   @override
   void initState() {
@@ -49,11 +43,74 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
     navigateIfNotAvailable();
   }
 
+  void navigateIfNotAvailable() {
+    final data = widget.resAllQuestion.data!.activity!;
+    final no = widget.activityNo;
+
+    final hasInstructionAndLearnings =
+        (instruction, learnings) => instruction != null && learnings.isNotEmpty;
+
+    switch (no) {
+      case 0:
+        if (!hasInstructionAndLearnings(data.understandings?.instruction,
+            data.understandings?.learnings ?? [])) {
+          Get.off(() => UnderstandingInstruction(
+              resAllQuestion: widget.resAllQuestion, activityNo: 1));
+        }
+        break;
+      case 1:
+        if (!hasInstructionAndLearnings(
+            data.matchings?.instruction, data.matchings?.learnings ?? [])) {
+          Get.off(() => UnderstandingInstruction(
+              resAllQuestion: widget.resAllQuestion, activityNo: 2));
+        }
+        break;
+      case 2:
+        if (!hasInstructionAndLearnings(data.pictureUnderstandings?.instruction,
+            data.pictureUnderstandings?.learnings ?? [])) {
+          Get.off(() => UnderstandingInstruction(
+              resAllQuestion: widget.resAllQuestion, activityNo: 3));
+        }
+        break;
+      case 3:
+        if (!hasInstructionAndLearnings(data.pictureExpressions?.instruction,
+            data.pictureExpressions?.learnings ?? [])) {
+          Get.off(() => UnderstandingInstruction(
+              resAllQuestion: widget.resAllQuestion, activityNo: 4));
+        }
+        break;
+      case 4:
+        if (!hasInstructionAndLearnings(data.pictureSequencings?.instruction,
+            data.pictureSequencings?.learnings ?? [])) {
+          showDialog(
+            context: context,
+            builder: (context) => CustomDialog(
+              title: 'No Activity',
+              message: 'No activity available',
+            ),
+          );
+        }
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final understanding = widget.resAllQuestion.data!.activity!.understandings!;
-    String titleData = understanding.instruction!.title![languageCode]!;
-    String bodyData = understanding.instruction!.body![languageCode]!;
+    final data = widget.resAllQuestion.data!.activity!;
+    final no = widget.activityNo;
+
+    final instruction = switch (no) {
+      0 => data.understandings?.instruction,
+      1 => data.matchings?.instruction,
+      2 => data.pictureUnderstandings?.instruction,
+      3 => data.pictureExpressions?.instruction,
+      4 => data.pictureSequencings?.instruction,
+      _ => null,
+    };
+
+    String titleData = instruction?.title?[languageCode] ?? '';
+    String bodyData = instruction?.body?[languageCode] ?? '';
+
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -76,84 +133,46 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           AppBackButton(),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  spreadRadius: 1,
-                                  blurRadius: 1,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: GestureDetector(
-                              onTap: () => _showCupertinoDropdown(context),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    selectedLanguage,
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.black),
-                                  ),
-                                  Icon(
-                                    CupertinoIcons.chevron_down,
-                                    color: Colors.black,
-                                    size: 14,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                       SizedBox(height: 10),
                       Expanded(
-                          child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  _tts.speak(titleData + bodyData,
-                                      languageCode: languageCode);
-                                },
-                                child: Image.asset(
-                                  'assets/icons/volume_up1.png',
-                                  width: 40,
-                                ),
-                              ),
-                              SizedBox(width: 20),
-                              Expanded(
-                                child: Text(
-                                  titleData,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    _tts.speak(titleData + bodyData,
+                                        languageCode: languageCode);
+                                  },
+                                  child: Image.asset(
+                                    'assets/icons/volume_up1.png',
+                                    width: 40,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          HtmlWidget(
-                            bodyData,
-                            textStyle: TextStyle(fontSize: 16),
-                          ),
-                        ],
-                      )),
-                      // Second Row: Speaker Icon and "Tiger" text
-                      // MediaSlider()
-                      // _buildSlider()
-                      _buildAcknowledgementButton(context)
+                                SizedBox(width: 20),
+                                Expanded(
+                                  child: Text(
+                                    titleData,
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            HtmlWidget(
+                              bodyData,
+                              textStyle: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      _buildAcknowledgementButton(context),
                     ],
                   ),
                 ),
@@ -165,81 +184,64 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
     );
   }
 
-  bool isCompleted = false;
   Widget _buildAcknowledgementButton(BuildContext context) {
-    final understanding = widget.resAllQuestion.data!.activity!.understandings!;
+    final data = widget.resAllQuestion.data!.activity!;
+    final no = widget.activityNo;
 
     return AcknowledgmentService.buildAcknowledgmentButton(
       context: context,
       selectedAcknowledgement: selectedAcknowledgement,
       secondaryColor: ColorPallete.secondary,
       onNext: () {
-        Get.to(() => UnderstandingScreen(
-              resAllQuestion: widget.resAllQuestion,
-            ));
+        switch (no) {
+          case 0:
+            Get.to(() =>
+                UnderstandingScreen(resAllQuestion: widget.resAllQuestion));
+            break;
+          case 1:
+            Get.to(() => MatchScreen(
+                resAllQuestion: widget.resAllQuestion, showInstruction: false));
+            break;
+          case 2:
+            Get.to(() => PictureUnderstandingScreen(
+                showInstruction: false, resAllQuestion: widget.resAllQuestion));
+            break;
+          case 3:
+            Get.to(() => PictureExpressionInstruction(
+                resAllQuestion: widget.resAllQuestion));
+            break;
+          case 4:
+            Get.to(() => PictureSequencingsScreen(
+                resAllQuestion: widget.resAllQuestion, showInstruction: false));
+            break;
+        }
       },
       onAcknowledge: (acknowledgement, score) async {
         setState(() {
           selectedAcknowledgement = acknowledgement;
           this.score = score;
         });
+
+        final instructionId = switch (no) {
+          0 => data.understandings!.instruction!.sId!,
+          1 => data.matchings!.instruction!.sId!,
+          2 => data.pictureUnderstandings!.instruction!.sId!,
+          3 => data.pictureExpressions!.instruction!.sId!,
+          4 => data.pictureSequencings!.instruction!.sId!,
+          _ => ''
+        };
+
         context.read<HomeBloc>().add(
               SubmitAcknowledgementRequest(
                 acknowledgementRequest: AcknowledgementRequest(
-                  activity: widget.resAllQuestion.data!.activity!.sId!,
+                  activity: data.sId!,
                   acknowledgement: selectedAcknowledgement,
-                  learningInstruction: understanding.instruction!.sId!,
+                  learningInstruction: instructionId,
                   score: score,
                 ),
               ),
             );
       },
-    );
-  }
-
-  void _showCupertinoDropdown(BuildContext context) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: Text('Select Language'),
-        actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: Text('Hindi'),
-            onPressed: () {
-              setState(() {
-                selectedLanguage = 'Hindi';
-                languageCode = 'hi';
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('English'),
-            onPressed: () {
-              setState(() {
-                selectedLanguage = 'English';
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Odia'),
-            onPressed: () {
-              setState(() {
-                selectedLanguage = 'Odia';
-                languageCode = 'or';
-              });
-              Navigator.pop(context);
-            },
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          child: Text('Cancel'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
     );
   }
 }

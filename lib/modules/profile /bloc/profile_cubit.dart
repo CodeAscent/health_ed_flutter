@@ -81,7 +81,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> loadUserData() async {
     final userData = await LocalStorage.getUserData();
-
+    print('User data loaded: ${userData?.user?.fullName}');
     if (userData != null) {
       emit(state.copyWith(
         sId: userData.user!.sId ?? '',

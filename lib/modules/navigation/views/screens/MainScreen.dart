@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:health_ed_flutter/core/local/local_storage.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/planScreen.dart';
 import 'package:health_ed_flutter/modules/home/events/dashboard_events.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/modules/home/bloc/dashboard_bloc.dart';
@@ -21,9 +25,9 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
+    PlanScreen(),
     HomeScreen(),
     BlogListScreen(),
-    ReportScreen(),
     ProfileScreen(),
   ];
   @override
@@ -35,6 +39,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var userData = LocalStorage.prefs.getString('userProfileData') != null
+        ? jsonDecode(LocalStorage.prefs.getString('userProfileData')!)['user']
+        : '';
     return BlocProvider(
       create: (_) => BottomNavigationCubit(),
       child: BlocBuilder<BottomNavigationCubit, BottomNavItem>(
@@ -49,6 +56,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
             bottomNavigationBar: CustomBottomNavBar(
+              userData: userData,
               pageIndex: currentNavItem.index,
               onTap: (index) {
                 if (index == 0) {
@@ -68,10 +76,18 @@ class _MainScreenState extends State<MainScreen> {
               child: FloatingActionButton(
                 backgroundColor: ColorPallete.primary,
                 elevation: 0,
-                onPressed: () => Get.to(() => AllQuizzesScreen())!.then(
-                    (value) => Get.find<Rx<DashboardRefreshEvent>>(
-                            tag: 'dashboard_refresh')
-                        .trigger(DashboardRefreshEvent())),
+                onPressed: () {
+                  if (userData['onboardingScore'] == 0) {
+                    Get.snackbar(
+                      'Assessment Incomplete',
+                      'Please complete the assessment to continue.',
+                      backgroundColor: Colors.orange.shade100,
+                      colorText: Colors.black,
+                    );
+                  } else {
+                    Get.to(() => AllQuizzesScreen());
+                  }
+                },
                 shape: RoundedRectangleBorder(
                   side: const BorderSide(
                       width: 3, color: ColorPallete.whiteShade),
@@ -97,11 +113,13 @@ class _MainScreenState extends State<MainScreen> {
 class CustomBottomNavBar extends StatelessWidget {
   final int pageIndex;
   final Function(int) onTap;
+  final userData;
 
   const CustomBottomNavBar({
     Key? key,
     required this.pageIndex,
     required this.onTap,
+    required this.userData,
   }) : super(key: key);
 
   @override
@@ -119,24 +137,63 @@ class CustomBottomNavBar extends StatelessWidget {
                 : 'assets/icons/home/home.png',
             label: "Home",
             isSelected: pageIndex == 0,
-            onTap: () => onTap(0),
+            onTap: () => {
+              if (userData['onboardingScore'] == 0)
+                {
+                  Get.snackbar(
+                    'Assessment Incomplete',
+                    'Please complete the assessment to continue.',
+                    backgroundColor: Colors.orange.shade100,
+                    colorText: Colors.black,
+                  )
+                  // Prevent further navigation
+                }
+              else
+                {onTap(0)}
+            },
           ),
           navItem(
             imagePath: pageIndex == 1
-                ? 'assets/icons/blog/blog1.png'
-                : 'assets/icons/blog/blog.png',
-            label: "Blogs",
+                ? 'assets/icons/report/report1.png'
+                : 'assets/icons/report/report.png',
+            label: "Report",
             isSelected: pageIndex == 1,
-            onTap: () => onTap(1),
+            onTap: () => {
+              if (userData['onboardingScore'] == 0)
+                {
+                  Get.snackbar(
+                    'Assessment Incomplete',
+                    'Please complete the assessment to continue.',
+                    backgroundColor: Colors.orange.shade100,
+                    colorText: Colors.black,
+                  )
+                  // Prevent further navigation
+                }
+              else
+                {onTap(1)}
+            },
           ),
           const SizedBox(width: 80), // Spacer for the middle FAB
           navItem(
             imagePath: pageIndex == 2
-                ? 'assets/icons/report/report1.png'
-                : 'assets/icons/report/report.png',
-            label: "Report",
+                ? 'assets/icons/blog/blog1.png'
+                : 'assets/icons/blog/blog.png',
+            label: "Blogs",
             isSelected: pageIndex == 2,
-            onTap: () => onTap(2),
+            onTap: () => {
+              if (userData['onboardingScore'] == 0)
+                {
+                  Get.snackbar(
+                    'Assessment Incomplete',
+                    'Please complete the assessment to continue.',
+                    backgroundColor: Colors.orange.shade100,
+                    colorText: Colors.black,
+                  )
+                  // Prevent further navigation
+                }
+              else
+                {onTap(2)}
+            },
           ),
           navItem(
             imagePath: pageIndex == 3
@@ -144,7 +201,20 @@ class CustomBottomNavBar extends StatelessWidget {
                 : 'assets/icons/profile/profile.png',
             label: "Profile",
             isSelected: pageIndex == 3,
-            onTap: () => onTap(3),
+            onTap: () => {
+              if (userData['onboardingScore'] == 0)
+                {
+                  Get.snackbar(
+                    'Assessment Incomplete',
+                    'Please complete the assessment to continue.',
+                    backgroundColor: Colors.orange.shade100,
+                    colorText: Colors.black,
+                  )
+                  // Prevent further navigation
+                }
+              else
+                {onTap(3)}
+            },
           ),
         ],
       ),

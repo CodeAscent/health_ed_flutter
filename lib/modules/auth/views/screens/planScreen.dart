@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
+import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/AllPlanScreen.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/ContactUs.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/DhwaniInfoScreen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/FaqScreen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/UserSubscription.dart';
@@ -95,140 +97,184 @@ class _PlanScreenState extends State<PlanScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-
-            // Carousel Section
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/bg/auth_bg.png'),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      height: 120,
-                      autoPlay: true,
-                      enlargeCenterPage: true,
-                      viewportFraction: 0.9,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
-                      },
-                    ),
-                    items: carouselImages.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final image = entry.value;
+                  Expanded(
+                    child: CustomTransparentContainer(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20),
 
-                      return GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text("Message"),
-                              content: SingleChildScrollView(
-                                child: Text(carouselMessages[index]),
+                            // Carousel Section
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                children: [
+                                  CarouselSlider(
+                                    options: CarouselOptions(
+                                      height: 120,
+                                      autoPlay: true,
+                                      enlargeCenterPage: true,
+                                      viewportFraction: 1,
+                                      onPageChanged: (index, reason) {
+                                        setState(() {
+                                          _currentIndex = index;
+                                        });
+                                      },
+                                    ),
+                                    items: carouselImages
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      final index = entry.key;
+                                      final image = entry.value;
+
+                                      return GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: Text("Message"),
+                                              content: SingleChildScrollView(
+                                                child: Text(
+                                                    carouselMessages[index]),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(),
+                                                  child: Text("Close"),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: Image.asset(image,
+                                              fit: BoxFit.fill),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                  SizedBox(height: 10),
+                                  AnimatedSmoothIndicator(
+                                    activeIndex: _currentIndex,
+                                    count: carouselImages.length,
+                                    effect: ExpandingDotsEffect(
+                                      activeDotColor: Colors.black,
+                                      dotColor: Colors.grey.shade300,
+                                      dotHeight: 8,
+                                      dotWidth: 8,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: Text("Close"),
-                                ),
-                              ],
                             ),
-                          );
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.asset(image, fit: BoxFit.fill),
+
+                            // Assessment Card Section
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 2),
+                              child: Card(
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: InkWell(
+                                  onTap: onTapAction,
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 120,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: buildImage(userData),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 30),
+
+                            // Grid Buttons Section
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 2),
+                              child: GridView.count(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
+                                childAspectRatio: 1.5,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                children: [
+                                  _buildGridButton(
+                                      'Contact Us',
+                                      Icons.contact_page,
+                                      Color.fromARGB(255, 219, 67, 21),
+                                      1,
+                                      userData),
+                                  _buildGridButton(
+                                      'Get Pro',
+                                      Icons.emoji_events,
+                                      Color(0xFFF7CE45),
+                                      2,
+                                      userData),
+                                  _buildGridButton(
+                                      'How to get best\nresults!',
+                                      Icons.menu_book,
+                                      Color(0xFF01D15F),
+                                      3,
+                                      userData),
+                                  _buildGridButton('FAQ', Icons.help,
+                                      Color(0xFF5370C8), 4, userData),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(height: 40),
+
+                            // Contact Us Section
+                            // Padding(
+                            //   padding: const EdgeInsets.only(bottom: 30),
+                            //   child: Column(
+                            //     children: [
+                            //       Text(
+                            //         'Contact us:',
+                            //         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            //       ),
+                            //       Text('dhiwani1234@gmail.com'),
+                            //       Text('+91 7878473497'),
+                            //     ],
+                            //   ),
+                            // ),
+                          ],
                         ),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: 10),
-                  AnimatedSmoothIndicator(
-                    activeIndex: _currentIndex,
-                    count: carouselImages.length,
-                    effect: ExpandingDotsEffect(
-                      activeDotColor: Colors.black,
-                      dotColor: Colors.grey.shade300,
-                      dotHeight: 8,
-                      dotWidth: 8,
+                      ),
                     ),
                   ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),
-
-            // Assessment Card Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: InkWell(
-                  onTap: onTapAction,
-                  child: Container(
-                    width: double.infinity,
-                    height: 120,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: buildImage(userData),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            SizedBox(height: 30),
-
-            // Grid Buttons Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 1.5,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                children: [
-                  _buildGridButton('Home', Icons.home,
-                      Color.fromARGB(255, 219, 67, 21), 1, userData),
-                  _buildGridButton('Get Pro', Icons.emoji_events,
-                      Color(0xFFF7CE45), 2, userData),
-                  _buildGridButton('How to get best\nresults!', Icons.menu_book,
-                      Color(0xFF01D15F), 3, userData),
-                  _buildGridButton(
-                      'FAQ', Icons.help, Color(0xFF5370C8), 4, userData),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 40),
-
-            // Contact Us Section
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30),
-              child: Column(
-                children: [
-                  Text(
-                    'Contact us:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  Text('dhiwani1234@gmail.com'),
-                  Text('+91 7878473497'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Widget _buildGridButton(
@@ -244,8 +290,7 @@ class _PlanScreenState extends State<PlanScreen> {
           padding: EdgeInsets.symmetric(vertical: 10),
         ),
         onPressed: () {
-          if ((gridNo == 1 || gridNo == 2) &&
-              userData['onboardingScore'] == 0) {
+          if ((gridNo == 2) && userData['onboardingScore'] == 0) {
             Get.snackbar(
               'Assessment Incomplete',
               'Please complete the assessment to continue.',
@@ -255,7 +300,7 @@ class _PlanScreenState extends State<PlanScreen> {
             return; // Prevent further navigation
           }
           if (gridNo == 1) {
-            Get.to(() => MainScreen());
+            Get.to(() => ContactScreen());
           } else if (gridNo == 2) {
             if (userData['subscriptionStatus'] == 'active') {
               Get.to(() => UserSubscription());

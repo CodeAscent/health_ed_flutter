@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/modules/auth/repository/auth_repository.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/planScreen.dart';
+import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
 
 import '../../../../core/tts/text_to_speech.dart';
 import '../../../../core/utils/custom_loader.dart';
@@ -46,7 +47,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
   void _navigateToNextScreen() async {
     await AuthRepository().fetchUser();
     Get.back();
-    Get.to(PlanScreen());
+    Get.to(MainScreen());
   }
 
   @override

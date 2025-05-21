@@ -10,8 +10,6 @@ import '../../../core/utils/custom_widgets.dart';
 import '../../../core/utils/helper.dart';
 import 'PictureUnderstandingScreen.dart';
 
-
-
 class PictureUnderstandingInstructionsScreen extends StatefulWidget {
   final ResAllQuestion resAllQuestion;
   final bool showInstruction;
@@ -22,7 +20,6 @@ class PictureUnderstandingInstructionsScreen extends StatefulWidget {
   _PictureUnderstandingScreenState createState() =>
       _PictureUnderstandingScreenState();
 }
-
 
 class _PictureUnderstandingScreenState
     extends State<PictureUnderstandingInstructionsScreen> {
@@ -43,116 +40,112 @@ class _PictureUnderstandingScreenState
     super.deactivate();
   }
 
-   @override
+  @override
   void initState() {
     super.initState();
     // navigateIfNotAvailable();
 
-          
-      instruction = widget.resAllQuestion.data!.activity!.pictureUnderstandings!
-          .instruction!;
-   
+    instruction = widget
+        .resAllQuestion.data!.activity!.pictureUnderstandings!.instruction!;
   }
 
-@override
-Widget build(BuildContext context) {
-      String titleData = instruction.title![languageCode1]!;
-    String bodyData =  instruction.body![languageCode1]!;
- 
-  return SafeArea(
-    child: Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: AssetImage('assets/bg/auth_bg.png'),
+  @override
+  Widget build(BuildContext context) {
+    String titleData = instruction.title![languageCode1]!;
+    String bodyData = instruction.body![languageCode1]!;
+
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage('assets/bg/auth_bg.png'),
+            ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomTransparentContainer(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              AppBackButton(),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Instructions',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomTransparentContainer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                AppBackButton(),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Instructions',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                // _buildLanguageDropdown(context),
+                                SizedBox(width: 8),
+                                GestureDetector(
+                                  onTap: () {
+                                    _tts.speak(
+                                      parse(bodyData).documentElement!.text,
+                                      languageCode: getLanguageCode(
+                                          selectedLanguage, languageCode1),
+                                    );
+                                  },
+                                  child: Image.asset(
+                                    'assets/icons/volume_up1.png',
+                                    width: 40,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // Make the HTML content scrollable
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: HtmlWidget(
+                                  bodyData,
+                                  textStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: ColorPallete.greyColor,
                                   ),
                                 ),
                               ),
-                              _buildLanguageDropdown(context),
-                              SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () {
-                                  _tts.speak(
-                                    parse(bodyData)
-                                        .documentElement!
-                                        .text,
-                                    languageCode: getLanguageCode(selectedLanguage, languageCode1),
-                                  );
-                                },
-                                child: Image.asset(
-                                  'assets/icons/volume_up1.png',
-                                  width: 40,
-                                ),
-                              ),
-                            ],
-                          ),
-                          // Make the HTML content scrollable
-                          Expanded(
-                            child: SingleChildScrollView(
-                              child: HtmlWidget(
-                                bodyData,
-                                textStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: ColorPallete.greyColor,
-                                ),
-                              ),
                             ),
-                          ),
-                          SizedBox(height: 20), // Space before the button
-                        ],
+                            SizedBox(height: 20), // Space before the button
+                          ],
+                        ),
                       ),
-                    ),
-                    // Spacer to push the button to the bottom
-                    Spacer(),
-                   CustomGradientButton(
-                            label: 'Done',
-                            onTap: () {
-                              _tts.stop();
-                                 Get.to(() => PictureUnderstandingScreen(
-                                  resAllQuestion: widget.resAllQuestion,
-                                  showInstruction: false,
-                                ));
-                            },
-                          )
-                  ],
+                      // Spacer to push the button to the bottom
+                      Spacer(),
+                      CustomGradientButton(
+                        label: 'Done',
+                        onTap: () {
+                          _tts.stop();
+                          Get.to(() => PictureUnderstandingScreen(
+                                resAllQuestion: widget.resAllQuestion,
+                                showInstruction: false,
+                              ));
+                        },
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildLanguageDropdown(BuildContext context) {
     return GestureDetector(
@@ -194,9 +187,9 @@ Widget build(BuildContext context) {
       builder: (BuildContext context) => CupertinoActionSheet(
         title: Text('Select Language'),
         actions: <Widget>[
-          _buildLanguageOption('Hindi','hi'),
-          _buildLanguageOption('English','en'),
-          _buildLanguageOption('Odia','or'),
+          _buildLanguageOption('Hindi', 'hi'),
+          _buildLanguageOption('English', 'en'),
+          _buildLanguageOption('Odia', 'or'),
         ],
         cancelButton: CupertinoActionSheetAction(
           child: Text('Cancel'),
@@ -208,7 +201,8 @@ Widget build(BuildContext context) {
     );
   }
 
-  CupertinoActionSheetAction _buildLanguageOption(String language,String languagecode) {
+  CupertinoActionSheetAction _buildLanguageOption(
+      String language, String languagecode) {
     return CupertinoActionSheetAction(
       child: Text(language),
       onPressed: () {

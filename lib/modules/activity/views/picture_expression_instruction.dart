@@ -22,16 +22,19 @@ class PictureExpressionInstruction extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PictureExpressionInstructionState createState() => _PictureExpressionInstructionState();
+  _PictureExpressionInstructionState createState() =>
+      _PictureExpressionInstructionState();
 }
 
-class _PictureExpressionInstructionState extends State<PictureExpressionInstruction> {
+class _PictureExpressionInstructionState
+    extends State<PictureExpressionInstruction> {
   String selectedLanguage = 'English';
   String languageCode = "en-US";
   bool isLoading = true;
   String selectedAcknowledgement = 'Acknowledgement';
   int score = 0;
   late Learnings1 learnings1;
+  late Instruction instruction;
   final TextToSpeech _tts = TextToSpeech();
 
   @override
@@ -41,7 +44,8 @@ class _PictureExpressionInstructionState extends State<PictureExpressionInstruct
   }
 
   void initInstruction() {
-    final expressions = widget.resAllQuestion.data!.activity!.pictureExpressions;
+    final expressions =
+        widget.resAllQuestion.data!.activity!.pictureExpressions;
     if (expressions!.learnings!.isEmpty && expressions.instruction == null) {
       Get.off(() => PictureSequencingsScreen(
             resAllQuestion: widget.resAllQuestion,
@@ -49,7 +53,7 @@ class _PictureExpressionInstructionState extends State<PictureExpressionInstruct
           ));
     } else {
       setState(() {
-        learnings1 = expressions.instruction!;
+        instruction = expressions.instruction!;
         isLoading = false;
       });
     }
@@ -150,7 +154,8 @@ class _PictureExpressionInstructionState extends State<PictureExpressionInstruct
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       child: CustomGradientButton(
-                        isDisabled: selectedAcknowledgement == 'Acknowledgement',
+                        isDisabled:
+                            selectedAcknowledgement == 'Acknowledgement',
                         label: 'Done Watching?',
                         onTap: () {
                           if (selectedAcknowledgement != 'Acknowledgement') {

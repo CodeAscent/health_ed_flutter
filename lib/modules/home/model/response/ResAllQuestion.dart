@@ -189,7 +189,7 @@ class Understandings {
 
 class Understandings1 {
   List<Learnings1>? learnings;
-  Learnings1? instruction;
+  Instruction? instruction;
 
   Understandings1({this.learnings, this.instruction});
 
@@ -201,7 +201,7 @@ class Understandings1 {
       });
     }
     instruction = json?['instruction'] != null
-        ? new Learnings1.fromJson(json?['instruction'])
+        ? new Instruction.fromJson(json?['instruction'])
         : null;
   }
 
@@ -219,7 +219,7 @@ class Understandings1 {
 
 class Matching {
   List<Learnings3>? learnings;
-  Learnings3? instruction;
+  Instruction? instruction;
 
   Matching({this.learnings, this.instruction});
 
@@ -231,7 +231,7 @@ class Matching {
       });
     }
     instruction = json?['instruction'] != null
-        ? new Learnings3.fromJson(json?['instruction'])
+        ? new Instruction.fromJson(json?['instruction'])
         : null;
   }
 
@@ -564,7 +564,7 @@ class Instruction1 {
 
 class PictureSequencings {
   List<Instruction2>? learnings;
-  Instruction2? instruction;
+  Instruction? instruction;
 
   PictureSequencings({this.learnings, this.instruction});
 
@@ -576,7 +576,7 @@ class PictureSequencings {
       });
     }
     instruction = json?['instruction'] != null
-        ? new Instruction2.fromJson(json?['instruction'])
+        ? new Instruction.fromJson(json?['instruction'])
         : null;
   }
 

@@ -40,6 +40,7 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
   AudioPlayer audioPlayer = AudioPlayer();
   final TextToSpeech _tts = TextToSpeech();
   bool isDragging = false;
+  late Instruction instruction;
   late Instruction2 instruction2;
   int currentLearningIndex = 0;
   bool showingInstruction = true;
@@ -53,27 +54,19 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
   @override
   void initState() {
     super.initState();
-    showingInstruction =
-        widget.resAllQuestion.data!.activity!.pictureSequencings!.instruction !=
-            null;
-    if (showingInstruction) {
-      instruction2 = widget
-          .resAllQuestion.data!.activity!.pictureSequencings!.instruction!;
-    } else if (widget.resAllQuestion.data!.activity!.pictureSequencings!
-        .learnings!.isNotEmpty) {
-      instruction2 = widget
-          .resAllQuestion.data!.activity!.pictureSequencings!.learnings!.first;
-    } else {}
+
+    instruction2 = widget
+        .resAllQuestion.data!.activity!.pictureSequencings!.learnings!.first;
 
     for (var answer in instruction2.sequenceAudios!) {
       matchedShapes[answer.correctIndex!] = false;
     }
 
-    if (showingInstruction) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _autoMatchInstruction();
-      });
-    }
+    // if (showingInstruction) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _autoMatchInstruction();
+    //   });
+    // }
   }
 
   @override

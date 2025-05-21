@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,12 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
-import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
-import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
-import 'package:health_ed_flutter/modules/home/bloc/home_state.dart';
-import 'package:health_ed_flutter/modules/home/model/request/ReportRequest.dart';
 import 'package:health_ed_flutter/modules/profile%20/views/screens/ReportPreviewScreen.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../core/local/local_storage.dart';
 import '../../../../core/utils/custom_widgets.dart';
@@ -37,13 +33,14 @@ class _ProfilescreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var userData = LocalStorage.prefs.getString('userProfileData') != null
+        ? jsonDecode(LocalStorage.prefs.getString('userProfileData')!)['user']
+        : '';
     return BlocProvider(
       create: (_) => ProfileCubit()..loadUserData(),
       child: SafeArea(
         child:
             BlocBuilder<ProfileCubit, ProfileState>(builder: (context, state) {
-          (context, state) {};
-
           return Scaffold(
             body: Container(
               decoration: BoxDecoration(
@@ -103,7 +100,7 @@ class _ProfilescreenState extends State<ProfileScreen> {
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   image: AssetImage(
-                                    state.gender == 'Male'
+                                    userData['gender'] == 'Male'
                                         ? 'assets/icons/boy.png'
                                         : 'assets/icons/girl.png',
                                   ),
@@ -115,40 +112,41 @@ class _ProfilescreenState extends State<ProfileScreen> {
                           SizedBox(height: 20),
                           _buildTextField(
                             label: 'Name',
-                            initialValue: state.name,
+                            initialValue: userData['fullName'] ?? '',
                             onChanged: (value) =>
                                 context.read<ProfileCubit>().updateName(value),
+                            suffixIcon: Icons.check,
                           ),
                           SizedBox(height: 10),
                           _buildTextField(
                             label: 'Phone number',
-                            initialValue: state.phoneNumber,
+                            initialValue: userData['mobile'] ?? '',
                             onChanged: (value) => context
                                 .read<ProfileCubit>()
                                 .updatePhoneNumber(value),
-                            suffixIcon: state.isPhoneValid ? Icons.check : null,
+                            suffixIcon: Icons.check,
                           ),
                           SizedBox(height: 10),
                           _buildTextField(
                             label: 'Email',
-                            initialValue: state.email,
+                            initialValue: userData['email'] ?? '',
                             onChanged: (value) =>
                                 context.read<ProfileCubit>().updateEmail(value),
-                            suffixIcon: state.isEmailValid ? Icons.check : null,
+                            suffixIcon: Icons.check,
                           ),
                           SizedBox(height: 10),
                           _buildTextField(
-                            label: 'Gander',
-                            initialValue: state.gender,
+                            label: 'Gender',
+                            initialValue: userData['gender'] ?? '',
                             onChanged: (value) =>
                                 context.read<ProfileCubit>().updateEmail(value),
-                            suffixIcon: state.isEmailValid ? Icons.check : null,
+                            suffixIcon: Icons.check,
                           ),
                           SizedBox(height: 40),
                           Center(
                             child: TextButton.icon(
                               onPressed: () {
-                                _downloadReport(state.sId);
+                                _downloadReport(userData['_id']);
                               },
                               style: TextButton.styleFrom(
                                 backgroundColor: Colors.white,

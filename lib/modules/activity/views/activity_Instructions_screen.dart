@@ -55,7 +55,7 @@ class ActivityInstructionContent
   final TextToSpeech _tts = TextToSpeech();
   @override
   void dispose() {
-    _tts.stop(); // Stop TTS when the screen is closed
+    _tts.stop();
     super.dispose();
   }
 
@@ -129,7 +129,7 @@ class ActivityInstructionContent
                                             ),
                                           ),
                                         ),
-                                        _buildLanguageDropdown(context),
+                                        // _buildLanguageDropdown(context),
                                         SizedBox(width: 8),
                                         GestureDetector(
                                           onTap: () {
@@ -176,75 +176,81 @@ class ActivityInstructionContent
                               label: 'Done',
                               onTap: () {
                                 _tts.stop();
-                                if (state.resAllQuestion.data!.activity!.understandings!.learnings!.length > 0 &&
-                                    state.resAllQuestion.data!.activity!.understandings!.instruction !=
-                                        null) {
-                                  Get.off(() => UnderstandingInstruction(
-                                        resAllQuestion: state.resAllQuestion,
-                                      ));
-                                } else if (state.resAllQuestion.data!.activity!.matchings!.learnings!.length > 0 &&
-                                    state.resAllQuestion.data!.activity!.matchings!.instruction !=
-                                        null) {
-                                  Get.off(() => MatchScreen(
-                                        resAllQuestion: state.resAllQuestion,
-                                        showInstruction: true,
-                                      ));
-                                } else if (state
-                                            .resAllQuestion
-                                            .data!
-                                            .activity!
-                                            .pictureUnderstandings!
-                                            .learnings!
-                                            .length >
-                                        0 &&
-                                    state
-                                            .resAllQuestion
-                                            .data!
-                                            .activity!
-                                            .pictureUnderstandings!
-                                            .instruction !=
-                                        null) {
-                                  Get.off(() =>
-                                      PictureUnderstandingInstructionsScreen(
-                                        resAllQuestion: state.resAllQuestion,
-                                        showInstruction: true,
-                                      ));
-                                } else if (state
-                                            .resAllQuestion
-                                            .data!
-                                            .activity!
-                                            .pictureExpressions!
-                                            .learnings!
-                                            .length >
-                                        0 &&
-                                    state.resAllQuestion.data!.activity!
-                                            .pictureExpressions!.instruction !=
-                                        null) {
-                                  Get.off(() => PictureExpressionInstruction(
-                                        resAllQuestion: state.resAllQuestion,
-                                      ));
-                                } else if (state
-                                            .resAllQuestion
-                                            .data!
-                                            .activity!
-                                            .pictureSequencings!
-                                            .learnings!
-                                            .length >
-                                        0 &&
-                                    state.resAllQuestion.data!.activity!.pictureSequencings!.instruction != null) {
-                                  Get.off(() => PictureSequencingsScreen(
-                                        resAllQuestion: state.resAllQuestion,
-                                        showInstruction: true,
-                                      ));
-                                } else {
-                                  print("No activity available");
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) => CustomDialog(
-                                            title: 'No Activity',
-                                            message: 'No activity available',
-                                          ));
-                                }
+                                Get.off(() => UnderstandingInstruction(
+                                      activityNo: 0,
+                                      resAllQuestion: state.resAllQuestion,
+                                    ));
+                                // if (state.resAllQuestion.data!.activity!.understandings!.learnings!.length > 0 &&
+                                //     state.resAllQuestion.data!.activity!.understandings!.instruction !=
+                                //         null) {
+                                //   Get.off(() => UnderstandingInstruction(
+                                //          activityNo: 0,
+                                //         resAllQuestion: state.resAllQuestion,
+                                //       ));
+
+                                // } else if (state.resAllQuestion.data!.activity!.matchings!.learnings!.length > 0 &&
+                                //     state.resAllQuestion.data!.activity!.matchings!.instruction !=
+                                //         null) {
+                                //   Get.off(() => MatchScreen(
+                                //         resAllQuestion: state.resAllQuestion,
+                                //         showInstruction: true,
+                                //       ));
+                                // } else if (state
+                                //             .resAllQuestion
+                                //             .data!
+                                //             .activity!
+                                //             .pictureUnderstandings!
+                                //             .learnings!
+                                //             .length >
+                                //         0 &&
+                                //     state
+                                //             .resAllQuestion
+                                //             .data!
+                                //             .activity!
+                                //             .pictureUnderstandings!
+                                //             .instruction !=
+                                //         null) {
+                                //   Get.off(() =>
+                                //       PictureUnderstandingInstructionsScreen(
+                                //         resAllQuestion: state.resAllQuestion,
+                                //         showInstruction: true,
+                                //       ));
+                                // } else if (state
+                                //             .resAllQuestion
+                                //             .data!
+                                //             .activity!
+                                //             .pictureExpressions!
+                                //             .learnings!
+                                //             .length >
+                                //         0 &&
+                                //     state.resAllQuestion.data!.activity!
+                                //             .pictureExpressions!.instruction !=
+                                //         null) {
+                                //   Get.off(() => PictureExpressionInstruction(
+                                //         resAllQuestion: state.resAllQuestion,
+                                //       ));
+                                // } else if (state
+                                //             .resAllQuestion
+                                //             .data!
+                                //             .activity!
+                                //             .pictureSequencings!
+                                //             .learnings!
+                                //             .length >
+                                //         0 &&
+                                //     state.resAllQuestion.data!.activity!.pictureSequencings!.instruction != null) {
+                                //   Get.off(() => PictureSequencingsScreen(
+                                //         resAllQuestion: state.resAllQuestion,
+                                //         showInstruction: true,
+                                //       ));
+                                // } else {
+                                //   print("No activity available");
+                                //   showDialog(
+                                //       context: context,
+                                //       builder: (context) => CustomDialog(
+                                //             title: 'No Activity',
+                                //             message: 'No activity available',
+                                //           ));
+                                // }
                               },
                             );
                           }

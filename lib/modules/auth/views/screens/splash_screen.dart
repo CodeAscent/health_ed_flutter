@@ -6,6 +6,7 @@ import 'package:health_ed_flutter/modules/auth/repository/auth_repository.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/PlanScreen.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
+import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 3));
     String? token = await LocalStorage.getString('userData');
     await AuthRepository().fetchUser();
-    Get.off(() => PlanScreen());
+    Get.off(() => MainScreen());
   }
 
   @override

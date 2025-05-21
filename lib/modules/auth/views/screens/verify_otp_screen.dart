@@ -102,7 +102,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
   void _navigateToNextScreen() async {
     await AuthRepository().fetchUser();
-    Get.to(() => PlanScreen());
+    Get.to(() => MainScreen());
   }
 
   @override
