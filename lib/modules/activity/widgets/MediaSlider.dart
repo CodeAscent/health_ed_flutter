@@ -52,11 +52,10 @@ class _MediaSliderState extends State<MediaSlider> {
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white, // Set the background color to white
-                borderRadius: BorderRadius.circular(20), // Apply border radius
+                // Apply border radius
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(
-                    20), // Ensure radius applies to content
+                // Ensure radius applies to content
                 child: PageView.builder(
                   onPageChanged: (index) {
                     setState(() {
@@ -67,7 +66,7 @@ class _MediaSliderState extends State<MediaSlider> {
                   itemCount: widget.mediaList.length,
                   itemBuilder: (context, index) {
                     final mediaPath = widget.mediaList[index].url;
-                    debugPrint("Media List: ${widget.mediaList[index].type}");
+                    // debugPrint("Media List: ${widget.mediaList[index].type}");
                     if (mediaPath != null &&
                         widget.mediaList[index].type == "video") {
                       return _buildVideoPlayer(index, mediaPath);
@@ -77,7 +76,7 @@ class _MediaSliderState extends State<MediaSlider> {
                     } else {
                       return Image.network(
                         mediaPath ?? '',
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         errorBuilder: (context, error, stackTrace) =>
                             Icon(Icons.error),
                       );
@@ -173,7 +172,7 @@ class _MediaSliderState extends State<MediaSlider> {
         if (player!.playing) {
           await player.pause();
         } else {
-          _pausePreviousMedia(currentIndex); // Pause any other playing media
+          _pausePreviousMedia(currentIndex);
           await player.setUrl(audioPath);
           await player.play();
         }

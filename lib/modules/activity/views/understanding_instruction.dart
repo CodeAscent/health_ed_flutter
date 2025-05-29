@@ -10,12 +10,15 @@ import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/modules/activity/views/MatchScreen.dart';
 import 'package:health_ed_flutter/modules/activity/views/PictureSequencings.dart';
 import 'package:health_ed_flutter/modules/activity/views/PictureUnderstandingScreen.dart';
-import 'package:health_ed_flutter/modules/activity/views/picture_expression_instruction.dart';
+import 'package:health_ed_flutter/modules/activity/views/pictureExpression.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
 import 'package:health_ed_flutter/modules/activity/views/understanding_screen.dart';
+import 'package:health_ed_flutter/modules/shared_widget/activity_congrats_popup.dart';
+import 'package:html/parser.dart' as html_parser;
+import 'package:html/dom.dart' as dom;
 
 class UnderstandingInstruction extends StatefulWidget {
   final ResAllQuestion resAllQuestion;
@@ -35,67 +38,97 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
   final _tts = TextToSpeech();
   String selectedAcknowledgement = 'Acknowledgement';
   int score = 0;
+  bool isLastScreen = false;
   bool isCompleted = false;
-
   @override
   void initState() {
     super.initState();
-    navigateIfNotAvailable();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(Duration(milliseconds: 100));
+      _navigateToFirstValidActivity();
+    });
   }
 
-  void navigateIfNotAvailable() {
+  String htmlToPlainText(String htmlString) {
+    dom.Document document = html_parser.parse(htmlString);
+    return document.body?.text ?? '';
+  }
+
+  void _navigateToFirstValidActivity() {
     final data = widget.resAllQuestion.data!.activity!;
-    final no = widget.activityNo;
+    final currentNo = widget.activityNo;
 
-    final hasInstructionAndLearnings =
-        (instruction, learnings) => instruction != null && learnings.isNotEmpty;
+    final instructionList = [
+      data.understandings?.instruction,
+      data.matchings?.instruction,
+      data.pictureUnderstandings?.instruction,
+      data.pictureExpressions?.instruction,
+      data.pictureSequencings?.instruction,
+    ];
 
-    switch (no) {
-      case 0:
-        if (!hasInstructionAndLearnings(data.understandings?.instruction,
-            data.understandings?.learnings ?? [])) {
-          Get.off(() => UnderstandingInstruction(
-              resAllQuestion: widget.resAllQuestion, activityNo: 1));
-        }
+    final learningList = [
+      data.understandings?.learnings,
+      data.matchings?.learnings,
+      data.pictureUnderstandings?.learnings,
+      data.pictureExpressions?.learnings,
+      data.pictureSequencings?.learnings,
+    ];
+
+    int? nextValidActivity;
+
+    for (int i = currentNo; i < instructionList.length; i++) {
+      print(learningList[i]!.isNotEmpty);
+      if (instructionList[i] != null && learningList[i]!.isNotEmpty) {
+        nextValidActivity = i;
         break;
-      case 1:
-        if (!hasInstructionAndLearnings(
-            data.matchings?.instruction, data.matchings?.learnings ?? [])) {
-          Get.off(() => UnderstandingInstruction(
-              resAllQuestion: widget.resAllQuestion, activityNo: 2));
-        }
-        break;
-      case 2:
-        if (!hasInstructionAndLearnings(data.pictureUnderstandings?.instruction,
-            data.pictureUnderstandings?.learnings ?? [])) {
-          Get.off(() => UnderstandingInstruction(
-              resAllQuestion: widget.resAllQuestion, activityNo: 3));
-        }
-        break;
-      case 3:
-        if (!hasInstructionAndLearnings(data.pictureExpressions?.instruction,
-            data.pictureExpressions?.learnings ?? [])) {
-          Get.off(() => UnderstandingInstruction(
-              resAllQuestion: widget.resAllQuestion, activityNo: 4));
-        }
-        break;
-      case 4:
-        if (!hasInstructionAndLearnings(data.pictureSequencings?.instruction,
-            data.pictureSequencings?.learnings ?? [])) {
-          showDialog(
-            context: context,
-            builder: (context) => CustomDialog(
-              title: 'No Activity',
-              message: 'No activity available',
-            ),
-          );
-        }
-        break;
+      }
+    }
+
+    if (nextValidActivity != null && nextValidActivity != currentNo) {
+      Navigator.of(context, rootNavigator: true).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => UnderstandingInstruction(
+            key: ValueKey('activity_$nextValidActivity'),
+            resAllQuestion: widget.resAllQuestion,
+            activityNo: nextValidActivity!,
+          ),
+        ),
+      );
+    } else if (nextValidActivity == null) {
+      setState(() {
+        isLastScreen = true;
+      });
+
+      // Get.dialog(
+      //   ActivityCongratsPopup(
+      //     activityId: widget.resAllQuestion.data!.activity!.sId!,
+      //   ),
+      //   barrierDismissible: false,
+      // );
+      // print('No instruction available for any remaining activity');
+      // showDialog(
+      //   context: context,
+      //   builder: (context) => CustomDialog(
+      //     title: 'No Activity',
+      //     message: 'No activity available',
+      //   ),
+      // );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLastScreen) {
+      return Scaffold(
+        backgroundColor: Colors.black.withOpacity(0.6),
+        body: Center(
+          child: ActivityCongratsPopup(
+            activityId: widget.resAllQuestion.data!.activity!.sId!,
+          ),
+        ),
+      );
+    }
+
     final data = widget.resAllQuestion.data!.activity!;
     final no = widget.activityNo;
 
@@ -137,39 +170,43 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
                       ),
                       SizedBox(height: 10),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    _tts.speak(titleData + bodyData,
-                                        languageCode: languageCode);
-                                  },
-                                  child: Image.asset(
-                                    'assets/icons/volume_up1.png',
-                                    width: 40,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      _tts.speak(
+                                        titleData + htmlToPlainText(bodyData),
+                                        languageCode: languageCode,
+                                      );
+                                    },
+                                    child: Image.asset(
+                                      'assets/icons/volume_up1.png',
+                                      width: 40,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 20),
-                                Expanded(
-                                  child: Text(
-                                    titleData,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                  SizedBox(width: 20),
+                                  Expanded(
+                                    child: Text(
+                                      titleData,
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 20),
-                            HtmlWidget(
-                              bodyData,
-                              textStyle: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              HtmlWidget(
+                                bodyData,
+                                textStyle: TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       _buildAcknowledgementButton(context),
@@ -195,23 +232,23 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
       onNext: () {
         switch (no) {
           case 0:
-            Get.to(() =>
+            Get.off(() =>
                 UnderstandingScreen(resAllQuestion: widget.resAllQuestion));
             break;
           case 1:
-            Get.to(() => MatchScreen(
+            Get.off(() => MatchScreen(
                 resAllQuestion: widget.resAllQuestion, showInstruction: false));
             break;
           case 2:
-            Get.to(() => PictureUnderstandingScreen(
+            Get.off(() => PictureUnderstandingScreen(
                 showInstruction: false, resAllQuestion: widget.resAllQuestion));
             break;
           case 3:
-            Get.to(() => PictureExpressionInstruction(
-                resAllQuestion: widget.resAllQuestion));
+            Get.off(
+                () => PictureExpression(resAllQuestion: widget.resAllQuestion));
             break;
           case 4:
-            Get.to(() => PictureSequencingsScreen(
+            Get.off(() => PictureSequencingsScreen(
                 resAllQuestion: widget.resAllQuestion, showInstruction: false));
             break;
         }

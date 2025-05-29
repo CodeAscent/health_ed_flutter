@@ -110,7 +110,6 @@ class ActivityInstructionContent
                                           .activity!.activityInstructions!.en ??
                                       "Instructions not available";
                               }
-
                               return SingleChildScrollView(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,10 +175,16 @@ class ActivityInstructionContent
                               label: 'Done',
                               onTap: () {
                                 _tts.stop();
-                                Get.off(() => UnderstandingInstruction(
-                                      activityNo: 0,
+                                Navigator.of(context, rootNavigator: true)
+                                    .pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (_) => UnderstandingInstruction(
+                                      key: ValueKey('activity_0'),
                                       resAllQuestion: state.resAllQuestion,
-                                    ));
+                                      activityNo: 0,
+                                    ),
+                                  ),
+                                );
                                 // if (state.resAllQuestion.data!.activity!.understandings!.learnings!.length > 0 &&
                                 //     state.resAllQuestion.data!.activity!.understandings!.instruction !=
                                 //         null) {

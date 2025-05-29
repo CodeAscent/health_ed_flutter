@@ -6,6 +6,7 @@ import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
 import 'package:health_ed_flutter/modules/activity/views/MatchScreen.dart';
 import 'package:health_ed_flutter/modules/activity/views/PictureUnderstandingScreen.dart';
+import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/OtpVerifyResponse.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
@@ -300,14 +301,12 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
         margin: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isMatched ? Colors.green : Colors.transparent,
             width: 1,
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
           child: Image.network(
             imageUrl,
             fit: BoxFit.cover,
@@ -450,11 +449,14 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
                         )));
           } else {
             if (isCompleted) {
-              Get.dialog(
-                ActivityCongratsPopup(
-                  activityId: widget.resAllQuestion.data!.activity!.sId!,
+              Navigator.of(context, rootNavigator: true).pushReplacement(
+                MaterialPageRoute(
+                  builder: (_) => UnderstandingInstruction(
+                    key: ValueKey('activity_5'),
+                    resAllQuestion: widget.resAllQuestion,
+                    activityNo: 5,
+                  ),
                 ),
-                barrierDismissible: false,
               );
             } else {
               _updateLearningData();

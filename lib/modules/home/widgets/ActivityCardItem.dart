@@ -57,22 +57,32 @@ class ActivityCardItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              activity.activityName!.en!,
-              style: TextStyle(
-                color: getTextStatus() == 'NOT_STARTED'
-                    ? Colors.black
-                    : Colors.white,
-                fontSize: 16,
+            Expanded(
+              flex: 3,
+              child: Text(
+                activity.activityName!.en!,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: getTextStatus() == 'NOT_STARTED'
+                      ? Colors.black
+                      : Colors.white,
+                  fontSize: 16,
+                ),
               ),
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                getStatusEmoji(),
-                style: TextStyle(
-                  fontSize: activity.status == 'NOT_STARTED' ? 50 : 16,
-                  color: getTextStatus() == 'NOT_STARTED' ? Colors.green : null,
+            SizedBox(width: 10),
+            Flexible(
+              flex: 1,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  getStatusEmoji(),
+                  style: TextStyle(
+                    fontSize: activity.status == 'NOT_STARTED' ? 50 : 16,
+                    color:
+                        getTextStatus() == 'NOT_STARTED' ? Colors.green : null,
+                  ),
                 ),
               ),
             ),

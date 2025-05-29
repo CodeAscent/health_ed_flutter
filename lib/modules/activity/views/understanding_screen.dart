@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/modules/activity/views/MatchScreen.dart';
+import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResUserAcknowledgement.dart';
 import 'package:health_ed_flutter/modules/home/views/screens/all_activity_screen.dart';
@@ -102,38 +103,38 @@ class _ActivityUnderstandingScreenContentState
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               AppBackButton(),
-                              Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      spreadRadius: 1,
-                                      blurRadius: 1,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: GestureDetector(
-                                  onTap: () => _showCupertinoDropdown(context),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        selectedLanguage,
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.black),
-                                      ),
-                                      Icon(
-                                        CupertinoIcons.chevron_down,
-                                        color: Colors.black,
-                                        size: 14,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              // Container(
+                              //   padding: EdgeInsets.all(8),
+                              //   decoration: BoxDecoration(
+                              //     color: Colors.white.withOpacity(0.6),
+                              //     borderRadius: BorderRadius.circular(5),
+                              //     boxShadow: [
+                              //       BoxShadow(
+                              //         color: Colors.black.withOpacity(0.1),
+                              //         spreadRadius: 1,
+                              //         blurRadius: 1,
+                              //         offset: Offset(0, 2),
+                              //       ),
+                              //     ],
+                              //   ),
+                              //   child: GestureDetector(
+                              //     onTap: () => _showCupertinoDropdown(context),
+                              //     child: Row(
+                              //       children: [
+                              //         Text(
+                              //           selectedLanguage,
+                              //           style: TextStyle(
+                              //               fontSize: 12, color: Colors.black),
+                              //         ),
+                              //         Icon(
+                              //           CupertinoIcons.chevron_down,
+                              //           color: Colors.black,
+                              //           size: 14,
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                           SizedBox(height: 10),
@@ -252,10 +253,20 @@ class _ActivityUnderstandingScreenContentState
       secondaryColor: ColorPallete.secondary,
       onNext: () {
         if (isCompleted) {
-          Get.to(() => MatchScreen(
+          Navigator.of(context, rootNavigator: true).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => UnderstandingInstruction(
+                key: ValueKey('activity_1'),
                 resAllQuestion: widget.resAllQuestion,
-                showInstruction: true,
-              ));
+                activityNo: 1,
+              ),
+            ),
+          );
+
+          // Get.to(() => MatchScreen(
+          //       resAllQuestion: widget.resAllQuestion,
+          //       showInstruction: true,
+          //     ));
         } else {
           setState(() {
             currentIndex++;

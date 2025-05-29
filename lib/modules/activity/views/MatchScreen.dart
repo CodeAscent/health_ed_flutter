@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
 import 'package:health_ed_flutter/modules/activity/views/PictureUnderstandingScreen.dart';
 import 'package:health_ed_flutter/modules/activity/views/picture_understanding_Instructions_screen.dart';
+import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
@@ -253,21 +254,21 @@ class _MatchScreenState extends State<MatchScreen>
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               AppBackButton(),
-                              GestureDetector(
-                                onTap: () => _showCupertinoDropdown(context),
-                                child: Row(
-                                  children: [
-                                    Text(selectedLanguage,
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.black)),
-                                    Icon(
-                                      CupertinoIcons.chevron_down,
-                                      color: Colors.black,
-                                      size: 14,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              // GestureDetector(
+                              //   onTap: () => _showCupertinoDropdown(context),
+                              //   child: Row(
+                              //     children: [
+                              //       Text(selectedLanguage,
+                              //           style: TextStyle(
+                              //               fontSize: 12, color: Colors.black)),
+                              //       Icon(
+                              //         CupertinoIcons.chevron_down,
+                              //         color: Colors.black,
+                              //         size: 14,
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
                             ],
                           ),
                           SizedBox(height: 10),
@@ -334,10 +335,8 @@ class _MatchScreenState extends State<MatchScreen>
         width: 90,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
           child: Opacity(
             opacity: opacity,
             child: Image.network(
@@ -467,10 +466,20 @@ class _MatchScreenState extends State<MatchScreen>
                       )));
         } else {
           if (isCompleted) {
-            Get.to(() => PictureUnderstandingInstructionsScreen(
+            Navigator.of(context, rootNavigator: true).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => UnderstandingInstruction(
+                  key: ValueKey('activity_2'),
                   resAllQuestion: widget.resAllQuestion,
-                  showInstruction: true,
-                ));
+                  activityNo: 2,
+                ),
+              ),
+            );
+
+            // Get.to(() => PictureUnderstandingInstructionsScreen(
+            //       resAllQuestion: widget.resAllQuestion,
+            //       showInstruction: true,
+            //     ));
           } else {
             _updateLearningData();
           }

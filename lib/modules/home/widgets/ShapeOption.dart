@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
@@ -24,10 +23,9 @@ class ShapeOption extends StatelessWidget {
     return Container(
       height: 90,
       width: 90,
-       margin: const EdgeInsets.all(4),
+      margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.white, // Background color
-        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isHighlighted
               ? ColorPallete.primary
@@ -42,7 +40,6 @@ class ShapeOption extends StatelessWidget {
           // Image as background
           Positioned.fill(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
               child: Image.network(
                 shape,
                 fit: BoxFit.cover, // Fill the full container
@@ -79,8 +76,6 @@ class ShapeOption extends StatelessWidget {
     );
   }
 }
-
-
 
 class AudioOption extends StatefulWidget {
   final String audio;
@@ -132,7 +127,6 @@ class _AudioOptionState extends State<AudioOption> {
       margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: widget.isHighlighted
               ? ColorPallete.primary
@@ -146,7 +140,6 @@ class _AudioOptionState extends State<AudioOption> {
         children: [
           Positioned.fill(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
               child: GestureDetector(
                 onTap: toggleAudio,
                 child: Container(
@@ -157,7 +150,8 @@ class _AudioOptionState extends State<AudioOption> {
                       fit: BoxFit.contain,
                       width: 40,
                       height: 40,
-                      opacity: AlwaysStoppedAnimation(widget.originalImageOpacity),
+                      opacity:
+                          AlwaysStoppedAnimation(widget.originalImageOpacity),
                     ),
                   ),
                 ),
@@ -179,5 +173,3 @@ class _AudioOptionState extends State<AudioOption> {
     );
   }
 }
-
-

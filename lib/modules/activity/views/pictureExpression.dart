@@ -8,6 +8,7 @@ import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/tts/text_to_speech.dart';
 import 'package:health_ed_flutter/core/utils/helper.dart';
 import 'package:health_ed_flutter/modules/activity/views/PictureSequencings.dart';
+import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
 import 'package:health_ed_flutter/modules/shared_widget/activity_congrats_popup.dart';
 import '../../../core/utils/custom_snackbar.dart';
@@ -47,8 +48,6 @@ class _PictureExpressionState extends State<PictureExpression> {
     _tts.stop();
     super.dispose();
   }
-
-
 
   // Track selected card
   List<bool> selectedCards = [];
@@ -92,40 +91,40 @@ class _PictureExpressionState extends State<PictureExpression> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         AppBackButton(color: Colors.white),
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(5),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                spreadRadius: 1,
-                                blurRadius: 1,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: GestureDetector(
-                            onTap: () => _showCupertinoDropdown(context),
-                            child: Row(
-                              children: [
-                                Text(
-                                  selectedLanguage,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Icon(
-                                  CupertinoIcons.chevron_down,
-                                  color: Colors.black,
-                                  size: 14,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   padding: EdgeInsets.all(8),
+                        //   decoration: BoxDecoration(
+                        //     color: Colors.white.withOpacity(0.6),
+                        //     borderRadius: BorderRadius.circular(5),
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color: Colors.black.withOpacity(0.1),
+                        //         spreadRadius: 1,
+                        //         blurRadius: 1,
+                        //         offset: Offset(0, 2),
+                        //       ),
+                        //     ],
+                        //   ),
+                        //   child: GestureDetector(
+                        //     onTap: () => _showCupertinoDropdown(context),
+                        //     child: Row(
+                        //       children: [
+                        //         Text(
+                        //           selectedLanguage,
+                        //           style: TextStyle(
+                        //             fontSize: 12,
+                        //             color: Colors.black,
+                        //           ),
+                        //         ),
+                        //         Icon(
+                        //           CupertinoIcons.chevron_down,
+                        //           color: Colors.black,
+                        //           size: 14,
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                     SizedBox(height: 10),
@@ -161,7 +160,7 @@ class _PictureExpressionState extends State<PictureExpression> {
                       height: 227,
                       child: Image.network(
                         learnings1.media?.url ?? '',
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
                           return Center(
@@ -326,10 +325,19 @@ class _PictureExpressionState extends State<PictureExpression> {
         secondaryColor: ColorPallete.secondary,
         onNext: () {
           if (isCompleted) {
-            Get.to(() => PictureSequencingsScreen(
+            Navigator.of(context, rootNavigator: true).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => UnderstandingInstruction(
+                  key: ValueKey('activity_4'),
                   resAllQuestion: widget.resAllQuestion,
-                  showInstruction: true,
-                ));
+                  activityNo: 4,
+                ),
+              ),
+            );
+            // Get.to(() => PictureSequencingsScreen(
+            //       resAllQuestion: widget.resAllQuestion,
+            //       showInstruction: true,
+            //     ));
           } else {
             currentIndex++;
             selectedAcknowledgement = 'Acknowledgement';
