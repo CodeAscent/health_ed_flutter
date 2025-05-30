@@ -11,6 +11,8 @@ import 'package:health_ed_flutter/modules/home/repository/home_repository.dart';
 import '../views/screens/all_activity_screen.dart';
 
 class QuizItem extends StatelessWidget {
+  final double prevDayProgress;
+  final int dayIndex;
   final String day;
   final double progress;
   final String dayId;
@@ -19,11 +21,13 @@ class QuizItem extends StatelessWidget {
 
   const QuizItem({
     Key? key,
+    required this.prevDayProgress,
     required this.day,
     required this.progress,
     required this.dayId,
     required this.isLocked,
     required this.mContext,
+    required this.dayIndex,
   }) : super(key: key);
 
   void _showLockedDialog(BuildContext context) {
@@ -65,6 +69,14 @@ class QuizItem extends StatelessWidget {
             if (isLocked) {
               _showLockedDialog(
                   context); // Show modal instead of direct navigation
+            } else if (prevDayProgress < 100) {
+              Get.snackbar(
+                'Locked',
+                'Please complete the previous day to access this day.',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red.withOpacity(0.8),
+                colorText: Colors.white,
+              );
             } else {
               Get.to(() => AllActivityScreen(
                     activityId: dayId,

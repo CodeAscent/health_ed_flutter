@@ -92,6 +92,12 @@ class AllQuizzesContent extends StatelessWidget {
                                             .data!.days!.length,
                                         itemBuilder: (context, index) {
                                           return QuizItem(
+                                            dayIndex: index,
+                                            prevDayProgress: index > 0
+                                                ? state.getAllDaysResponse.data!
+                                                    .days![index - 1].progress!
+                                                    .toDouble()
+                                                : 100.0,
                                             dayId: state.getAllDaysResponse
                                                 .data!.days![index].sId!,
                                             day:
