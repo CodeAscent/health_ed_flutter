@@ -98,7 +98,6 @@ class _MainScreenState extends State<MainScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 35,
-                    fontFamily: 'Gilroy',
                   ),
                 ),
               ),

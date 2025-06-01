@@ -169,7 +169,35 @@ class _PictureUnderstandingScreenState
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        AppBackButton(color: Colors.white),
+                        AppBackButton(
+                          color: Colors.white,
+                          onTap: () async {
+                            final shouldExit = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Confirmation'),
+                                content: Text(
+                                    'Are you sure you want to exit the activity?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context)
+                                        .pop(false), // Cancel
+                                    child: Text('Cancel'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () => Navigator.of(context)
+                                        .pop(true), // Confirm
+                                    child: Text('Confirm'),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (shouldExit == true) {
+                              Navigator.of(context).pop(); // Exit the activity
+                            }
+                          },
+                        ),
 
                         // Container(
                         //   padding: EdgeInsets.all(8),

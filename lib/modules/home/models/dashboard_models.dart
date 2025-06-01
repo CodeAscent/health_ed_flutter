@@ -22,7 +22,7 @@ class DashboardData {
   final Map<String, bool> weeklyStreak;
   final Progress progress;
   final List<RecentQuiz> recentQuizzes;
-  final List<ActivityTypeStat> activityTypeStats;
+  final ActivityTypeStats activityTypeStats;
   final WeeklyReport weeklyReport;
 
   DashboardData({
@@ -40,9 +40,7 @@ class DashboardData {
       recentQuizzes: (json['recentQuizzes'] as List)
           .map((quiz) => RecentQuiz.fromJson(quiz))
           .toList(),
-      activityTypeStats: (json['activityTypeStats'] as List)
-          .map((stat) => ActivityTypeStat.fromJson(stat))
-          .toList(),
+      activityTypeStats: ActivityTypeStats.fromJson(json['activityTypeStats']),
       weeklyReport: WeeklyReport.fromJson(json['weeklyReport']),
     );
   }
@@ -107,6 +105,32 @@ class RecentQuiz {
       totalActivities: json['totalActivities'],
       completedActivities: json['completedActivities'],
       progress: json['progress'],
+    );
+  }
+}
+
+class ActivityTypeStats {
+  final List<ActivityTypeStat> weeklyStats;
+  final List<ActivityTypeStat> monthlyStats;
+  final List<ActivityTypeStat> overallStats;
+
+  ActivityTypeStats({
+    required this.weeklyStats,
+    required this.monthlyStats,
+    required this.overallStats,
+  });
+
+  factory ActivityTypeStats.fromJson(Map<String, dynamic> json) {
+    return ActivityTypeStats(
+      weeklyStats: (json['weeklyStats'] as List)
+          .map((e) => ActivityTypeStat.fromJson(e))
+          .toList(),
+      monthlyStats: (json['monthlyStats'] as List)
+          .map((e) => ActivityTypeStat.fromJson(e))
+          .toList(),
+      overallStats: (json['overallStats'] as List)
+          .map((e) => ActivityTypeStat.fromJson(e))
+          .toList(),
     );
   }
 }

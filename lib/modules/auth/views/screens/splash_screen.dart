@@ -23,8 +23,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateToNextScreen() async {
-    await Future.delayed(const Duration(seconds: 3));
-    String? token = await LocalStorage.getString('userData');
+    await Future.delayed(const Duration(seconds: 6));
+    // String? token = await LocalStorage.getString('userData');
     await AuthRepository().fetchUser();
     Get.off(() => MainScreen());
   }
@@ -44,12 +44,21 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         ),
         child: Center(
-          child: Image.asset(
-            'assets/icons/icon.png',
-            width: 150,
-            height: 150,
-          ),
-        ),
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              height: 120,
+              width: 170,
+              "assets/images/logo.gif",
+              fit: BoxFit.fill,
+            ),
+            Text(
+              "The Dhwani",
+              style: TextStyle(color: Colors.white, fontSize: 30),
+            )
+          ],
+        )),
       ),
     );
   }

@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
+import 'package:health_ed_flutter/core/services/globals.dart';
 import 'package:health_ed_flutter/models/completed_activity.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/OtpVerifyResponse.dart';
+import 'package:health_ed_flutter/modules/home/views/screens/all_activity_screen.dart';
 import 'package:health_ed_flutter/modules/home/views/screens/all_quizzes_screen.dart';
+import 'package:health_ed_flutter/modules/home/widgets/QuizItem.dart';
 import 'package:health_ed_flutter/modules/profile%20/bloc/profile_cubit.dart';
 import 'package:health_ed_flutter/viewmodels/complete_activity_viewmodel.dart';
 import 'package:logger/logger.dart';
@@ -97,7 +100,15 @@ class _ActivityCongratsPopupState extends State<ActivityCongratsPopup> {
             child: IconButton(
               icon: Icon(Icons.close, color: Colors.white, size: 30),
               onPressed: () {
-                Get.to(() => AllQuizzesScreen());
+                if (selectedDayName != null) {
+                  Get.back();
+                  // Get.off(() => AllActivityScreen(
+                  //       dayName: selectedDayName!,
+                  //       activityId: selectedDayId!,
+                  //     ));
+                } else {
+                  Get.off(() => AllQuizzesScreen());
+                }
               },
             ),
           ),

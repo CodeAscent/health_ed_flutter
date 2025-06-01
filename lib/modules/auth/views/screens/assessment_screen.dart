@@ -161,9 +161,52 @@ class AssessmentScreen extends StatelessWidget {
                         height: 15,
                       ),
                       CustomGradientButton(
-                        label: 'Pay & Start! (Rs 200)',
+                        label: 'Pay & Start! (Rs 399)',
                         onTap: () {
-                          Get.to(Assessmentpaymentpage());
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Refund Policy'),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'The following pointers are applicable for the Users who are paying for any services:-\n',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      '''
+• There will be no refund for any of the subscription availed (Monthly or Annually)
+• The refund for Comprehensive Assessment Plan will only be applicable if the assessment is not done and the report is not provided within 15 days of payment received
+• The refund for online speech therapy will be provided for the unused sessions only after 15 days of the expired date of the sessions. The refund will be processed only after the communication is received from the users over mail to archanasthedhwani@gmail.com  (Ex- If for a month 16 sessions are scheduled from 1 May 2025 to 31 May 2025, only 12 are availed, the refund will be provided after 15 June 2025)
+• A single promotional code can be used once and cannot be clubbed with any other offers
+• For all payments an additional 18% GST will be charged
+• All payments to be done through Razorpay
+• All disputes are subjected to Bhubaneswar jurisdiction only
+• Cancellation of service can be done by writing to us at archanasthedhwani@gmail.com
+''',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context); // Close dialog
+                                    Get.to(Assessmentpaymentpage()); // Navigate
+                                  },
+                                  child: Text('Agree'),
+                                ),
+                              ],
+                            ),
+                          );
                         },
                       ),
                       SizedBox(

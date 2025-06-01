@@ -1,3 +1,4 @@
+import 'package:health_ed_flutter/modules/home/model/request/FeedbackRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/request/ReportRequest.dart';
 import 'package:meta/meta.dart';
 
@@ -41,4 +42,11 @@ class GetReportRequested extends HomeEvent {
 
 class GetInvoiceRequested extends HomeEvent {
   GetInvoiceRequested();
+}
+
+// Corrected version
+class SubmitFeedbackRequest extends HomeEvent {
+  final FeedbackRequest feedbackRequest;
+
+  SubmitFeedbackRequest({required this.feedbackRequest});
 }

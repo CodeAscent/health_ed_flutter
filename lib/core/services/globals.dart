@@ -1,0 +1,2 @@
+String? selectedDayName;
+String? selectedDayId;

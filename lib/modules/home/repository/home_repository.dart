@@ -2,13 +2,16 @@ import 'dart:convert';
 
 import 'package:health_ed_flutter/core/services/api_urls.dart';
 import 'package:health_ed_flutter/core/services/http_wrapper.dart';
+import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
+import 'package:health_ed_flutter/modules/home/model/request/FeedbackRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/request/ReportRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/GetAllDaysResponse.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ReportResponse.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResActivityInstructions.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllActivity.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
+import 'package:health_ed_flutter/modules/home/model/response/ResFeedback.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResUserAcknowledgement.dart';
 
 class HomeRepository {
@@ -79,6 +82,23 @@ class HomeRepository {
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return ResUserAcknowledgement.fromJson(data);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ResFeedback> submitFeedback(FeedbackRequest feedbackRequest) async {
+    try {
+      final res = await HttpWrapper.postRequest(
+        ApiUrls.submit_feedback,
+        feedbackRequest.toJson(),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return ResFeedback.fromJson(data);
       } else {
         throw data['message'];
       }

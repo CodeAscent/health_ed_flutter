@@ -353,7 +353,20 @@ class _SignupScreenState extends State<SignupScreen> {
                                   onTap: () => customPicker(
                                     context: context,
                                     title: 'Languages Spoken\nat Home',
-                                    options: ['English', 'Hindi', 'Other'],
+                                    options: [
+                                      'English',
+                                      'Hindi',
+                                      'Odia',
+                                      'Bengali',
+                                      'Telugu',
+                                      'Tamil',
+                                      'Kannada',
+                                      'Malayalam',
+                                      'Marathi',
+                                      'Gujarati',
+                                      'Punjabi',
+                                      'Other'
+                                    ],
                                     controller: _homeLanguage,
                                   ),
                                 ),
@@ -368,7 +381,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                     title: 'Current State',
                                     options: states
                                         .map((state) => state.state.toString())
-                                        .toList(),
+                                        .toList()
+                                      ..sort(),
                                     controller: _state,
                                     onSelect: (value) {
                                       final selectedState = states.firstWhere(
@@ -401,19 +415,19 @@ class _SignupScreenState extends State<SignupScreen> {
                                     );
                                   },
                                 ), */
-                                CustomTextFieldWithLabel(
-                                  controller: _speechTherapy,
-                                  label: 'Already taking speech therapy?',
-                                  hintText: 'Yes or No',
-                                  readOnly: true,
-                                  sufix: Icon(Icons.arrow_downward),
-                                  onTap: () => customPicker(
-                                    context: context,
-                                    title: 'Speech Therapy',
-                                    options: ['Yes', 'No'],
-                                    controller: _speechTherapy,
-                                  ),
-                                ),
+                                // CustomTextFieldWithLabel(
+                                //   controller: _speechTherapy,
+                                //   label: 'Already taking speech therapy?',
+                                //   hintText: 'Yes or No',
+                                //   readOnly: true,
+                                //   sufix: Icon(Icons.arrow_downward),
+                                //   onTap: () => customPicker(
+                                //     context: context,
+                                //     title: 'Speech Therapy',
+                                //     options: ['Yes', 'No'],
+                                //     controller: _speechTherapy,
+                                //   ),
+                                // ),
                                 /*  CustomTextFieldWithLabel(
                                   controller: _medium,
                                   label: 'Medium',

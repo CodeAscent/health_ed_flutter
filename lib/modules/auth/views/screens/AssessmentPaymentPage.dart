@@ -12,32 +12,24 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../../../core/utils/custom_snackbar.dart';
 
 class Assessmentpaymentpage extends StatelessWidget {
-
-
-  const Assessmentpaymentpage({Key? key})
-      : super(key: key);
+  const Assessmentpaymentpage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return PaymentPageScreenContent(
-    );
+    return PaymentPageScreenContent();
   }
 }
 
 class PaymentPageScreenContent extends StatefulWidget {
-
-  const PaymentPageScreenContent(
-      {Key? key})
-      : super(key: key);
+  const PaymentPageScreenContent({Key? key}) : super(key: key);
 
   @override
   ActivityInstructionContent createState() => ActivityInstructionContent();
 }
+
 enum PaymentResultStatus { loading, success, failure, none }
 
-class ActivityInstructionContent
-    extends State<PaymentPageScreenContent> {
-
+class ActivityInstructionContent extends State<PaymentPageScreenContent> {
   late Razorpay _razorpay;
   PaymentResultStatus paymentStatus = PaymentResultStatus.loading;
   String paymentMessage = '';
@@ -56,8 +48,12 @@ class ActivityInstructionContent
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    final verifyPayOrderReq = VerifyPayOrderReq(orderId:orderId ,paymentId:response.paymentId!,razorpaySignature:response.signature! );
-    context.read<AuthBloc>().add(VerifyAssessPaymentRequested(verifyPayOrderReq: verifyPayOrderReq));
+    final verifyPayOrderReq = VerifyPayOrderReq(
+        orderId: orderId,
+        paymentId: response.paymentId!,
+        razorpaySignature: response.signature!);
+    context.read<AuthBloc>().add(
+        VerifyAssessPaymentRequested(verifyPayOrderReq: verifyPayOrderReq));
     // setState(() {
     //   paymentStatus = PaymentResultStatus.success;
     //   paymentMessage = "Payment successful! Payment ID: ${response.paymentId}";
@@ -107,13 +103,15 @@ class ActivityInstructionContent
           } catch (e) {
             debugPrint('Error: $e');
           }
-        }else if (state is VerifyPaymentOrderSuccess) {
-           AuthRepository().fetchUser();
+        } else if (state is VerifyPaymentOrderSuccess) {
+          AuthRepository().fetchUser();
           try {
-               setState(() {
-                paymentStatus =state.resVerifyOrder.success!? PaymentResultStatus.success:PaymentResultStatus.failure;
-                paymentMessage = state.resVerifyOrder.message!;
-           });
+            setState(() {
+              paymentStatus = state.resVerifyOrder.success!
+                  ? PaymentResultStatus.success
+                  : PaymentResultStatus.failure;
+              paymentMessage = state.resVerifyOrder.message!;
+            });
           } catch (e) {
             debugPrint('Error: $e');
           }
@@ -127,15 +125,16 @@ class ActivityInstructionContent
               children: [
                 // Top Bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 12),
                   child: Row(
                     children: [
                       IconButton(
                         icon: Icon(Icons.arrow_back),
                         onPressed: () {
                           Get.back();
-                          if(paymentStatus==PaymentResultStatus.success)
-                          Get.back();
+                          if (paymentStatus == PaymentResultStatus.success)
+                            Get.back();
                         },
                       ),
                       SizedBox(width: 8),
@@ -158,18 +157,17 @@ class ActivityInstructionContent
                         switch (paymentStatus) {
                           case PaymentResultStatus.success:
                             return _buildResultCard(
-                              icon: Icons.check_circle,
-                              color: Colors.green,
-                              title: "Payment Successful",
-                              message: paymentMessage
-                            );
+                                icon: Icons.check_circle,
+                                color: Colors.green,
+                                title: "Payment Successful",
+                                message:
+                                    'Team will contact within 24 hours for an online comprehensive Speech Assessment session.');
                           case PaymentResultStatus.failure:
                             return _buildResultCard(
-                              icon: Icons.cancel,
-                              color: Colors.red,
-                              title: "Payment Failed",
-                              message: paymentMessage
-                            );
+                                icon: Icons.cancel,
+                                color: Colors.red,
+                                title: "Payment Failed",
+                                message: paymentMessage);
                           case PaymentResultStatus.loading:
                             return CustomLoader();
                           case PaymentResultStatus.none:
@@ -192,7 +190,7 @@ class ActivityInstructionContent
     required IconData icon,
     required Color color,
     required String title,
-    required String message, 
+    required String message,
   }) {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 20),
@@ -207,7 +205,8 @@ class ActivityInstructionContent
             SizedBox(height: 16),
             Text(
               title,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(
+                  fontSize: 22, fontWeight: FontWeight.bold, color: color),
             ),
             SizedBox(height: 10),
             Text(
@@ -219,8 +218,7 @@ class ActivityInstructionContent
             ElevatedButton(
               onPressed: () {
                 Get.back();
-                if(paymentStatus==PaymentResultStatus.success)         
-                Get.back();
+                if (paymentStatus == PaymentResultStatus.success) Get.back();
               },
               child: Text("Go Back"),
             )

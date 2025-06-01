@@ -102,7 +102,35 @@ class _ActivityUnderstandingScreenContentState
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              AppBackButton(),
+                              AppBackButton(
+                                onTap: () async {
+                                  final shouldExit = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Confirmation'),
+                                      content: Text(
+                                          'Are you sure you want to exit the activity?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context)
+                                              .pop(false), // Cancel
+                                          child: Text('Cancel'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () => Navigator.of(context)
+                                              .pop(true), // Confirm
+                                          child: Text('Confirm'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (shouldExit == true) {
+                                    Navigator.of(context)
+                                        .pop(); // Exit the activity
+                                  }
+                                },
+                              ),
                               // Container(
                               //   padding: EdgeInsets.all(8),
                               //   decoration: BoxDecoration(
@@ -171,10 +199,15 @@ class _ActivityUnderstandingScreenContentState
                               SizedBox(
                                 height: 10,
                               ),
-                              MediaSlider(
-                                mediaList: learnings.media!,
+                              SizedBox(
+                                width: Get.width,
+                                height: Get.width,
+                                child: MediaSlider(
+                                  key: ValueKey(learnings.sId),
+                                  mediaList: learnings.media!,
+                                ),
                               ),
-                              SizedBox(height: 20),
+                              Spacer(),
                               _buildAcknowledgementButton(context),
                             ],
                           )),

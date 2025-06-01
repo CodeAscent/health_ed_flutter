@@ -122,8 +122,8 @@ class _AudioOptionState extends State<AudioOption> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 90,
-      width: 90,
+      height: 110,
+      width: 110,
       margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.white,

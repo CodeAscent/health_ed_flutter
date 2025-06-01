@@ -26,4 +26,5 @@ class ApiUrls {
   static String user_report = 'onboarding/onboarding-report';
   static String user_report_html = 'onboarding/onboarding-report-html';
   static String user_report_pdf = 'subscription/download-report';
+  static String submit_feedback = 'contact-us/';
 }

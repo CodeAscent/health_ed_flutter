@@ -83,16 +83,18 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
   }
 
   void toggleAudio(String url) async {
-    if (isPlaying) {
+    if (audioPlayer.playing) {
       await audioPlayer.pause();
-    } else {
-      await audioPlayer.stop();
-      await audioPlayer.setAsset(url);
-      await audioPlayer.play();
     }
-    setState(() {
-      isPlaying = !isPlaying;
-    });
+
+    await audioPlayer.stop();
+    await audioPlayer.setAsset(url);
+    await audioPlayer.play();
+    // isPlaying = false;
+
+    // setState(() {
+    //   isPlaying = !isPlaying;
+    // });
   }
 
   void _autoMatchInstruction() async {
@@ -220,7 +222,35 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              AppBackButton(),
+                              AppBackButton(
+                                onTap: () async {
+                                  final shouldExit = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Confirmation'),
+                                      content: Text(
+                                          'Are you sure you want to exit the activity?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context)
+                                              .pop(false), // Cancel
+                                          child: Text('Cancel'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () => Navigator.of(context)
+                                              .pop(true), // Confirm
+                                          child: Text('Confirm'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (shouldExit == true) {
+                                    Navigator.of(context)
+                                        .pop(); // Exit the activity
+                                  }
+                                },
+                              ),
                               // GestureDetector(
                               //   onTap: () => _showCupertinoDropdown(context),
                               //   child: Row(
@@ -296,8 +326,8 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
 
     Widget imageContainer({required double opacity}) {
       return Container(
-        height: 90,
-        width: 90,
+        height: 110,
+        width: 110,
         margin: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -373,11 +403,19 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
       },
       onAccept: (data) {
         bool isMatch = data == correctIndex.toString();
-        setState(() {
-          matchedShapes[correctIndex] = isMatch;
-        });
-
         _playMatchSound(success: isMatch);
+        if (isMatch) {
+          setState(() {
+            matchedShapes[correctIndex] = true;
+          });
+        }
+      },
+      onLeave: (data) {
+        // Called when item is dragged away without being accepted
+        // But we only want to play fail sound if it was a wrong match
+        if (data != correctIndex.toString()) {
+          _playMatchSound(success: false);
+        }
       },
     );
   }
@@ -510,17 +548,15 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
                   children: [
                     Row(
                       children: [
+                        _buildDragTarget(
+                          answer.audio!,
+                          answer.correctIndex!,
+                        ),
+                        SizedBox(width: Get.width * 0.3),
                         _buildDraggable(
                           question.image!,
                           question.correctIndex!,
                         ),
-                        SizedBox(width: 4),
-                        Image.asset("assets/icons/blackArrow.png"),
-                        SizedBox(width: 4),
-                        _buildDragTarget(
-                          answer.audio!,
-                          answer.correctIndex!,
-                        )
                       ],
                     ),
                     SizedBox(height: 8),

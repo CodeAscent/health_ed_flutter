@@ -70,6 +70,14 @@ class CongratsPopup extends StatelessWidget {
                   _buildInfoRow('General Behaviour', generalBehaviour),
                   _buildInfoRow('Cognitive Skills', cognitiveSkills),
                   _buildInfoRow('Social Behaviour', socialBehaviour),
+                  Text(
+                    'Report can be downloaded in Profile section',
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),

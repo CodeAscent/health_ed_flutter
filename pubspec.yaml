@@ -64,20 +64,27 @@ dependencies:
   share_plus: ^11.0.0
   htmltopdfwidgets: ^1.0.9
   font_awesome_flutter: ^10.8.0
+  flutter_launcher_icons: ^0.14.3
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.14.2
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icons/app_icon.png"
+  image_path: "assets/icons/logo.jpg"
   min_sdk_android: 21
-  adaptive_icon_foreground: "assets/icons/app_icon.png"
+  adaptive_icon_foreground: "assets/icons/logo.jpg"
   adaptive_icon_background: "#ffffff"
+# flutter_launcher_icons:
+#   android: "launcher_icon"
+#   ios: true
+#   image_path: "assets/icons/app_icon.png"
+#   min_sdk_android: 21
+#   adaptive_icon_foreground: "assets/icons/app_icon.png"
+#   adaptive_icon_background: "#ffffff"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -96,14 +103,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   fonts:
-    - family: Gilroy
+    - family: Comic
       fonts:
-        - asset: assets/fonts/Gilroy-Regular.ttf
-          weight: 400 # Regular weight
-        - asset: assets/fonts/Gilroy-SemiBold.ttf
-          weight: 600 # SemiBold weight
-        - asset: assets/fonts/Gilroy-Bold.ttf
-          weight: 700 # Bold weight
+        - asset: assets/fonts/Comic-Sans-Ms.ttf
 
     # To add assets to your application, add an assets section, like this:
   assets:

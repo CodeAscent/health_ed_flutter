@@ -145,7 +145,6 @@ class ActivityInstructionContent
                                         ),
                                       ],
                                     ),
-                                    // Make the HTML content scrollable
                                     SingleChildScrollView(
                                       child: HtmlWidget(
                                         instructionHtml,
@@ -166,8 +165,6 @@ class ActivityInstructionContent
                           },
                         ),
                       ),
-                      // Spacer to push the button to the bottom
-                      Spacer(),
                       BlocBuilder<HomeBloc, HomeState>(
                         builder: (context, state) {
                           if (state is GetAllQuestionSuccess) {

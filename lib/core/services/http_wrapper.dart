@@ -3,6 +3,7 @@ import 'package:health_ed_flutter/core/config/app_config.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:get/get.dart'; // <-- Required for Get.offAll
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/onboarding_screen.dart';
 import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,7 +27,7 @@ class HttpWrapper {
     if (res.statusCode == 401) {
       _logger.w("Unauthorized! Logging out user.");
       await LocalStorage.removeUserData(); // Clear local storage
-      Get.offAll(() => LoginScreen()); // Navigate to Login screen
+      Get.offAll(() => OnboardingScreen()); // Navigate to Login screen
     }
   }
 

@@ -12,6 +12,7 @@ import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
+import 'package:just_audio/just_audio.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/tts/text_to_speech.dart';
 import '../../../core/utils/custom_widgets.dart';
@@ -34,7 +35,9 @@ class _MatchScreenState extends State<MatchScreen>
     with SingleTickerProviderStateMixin {
   String languageCode = "en-US";
   String selectedLanguage = 'English';
+  bool isPlaying = false;
   final TextToSpeech _tts = TextToSpeech();
+  AudioPlayer audioPlayer = AudioPlayer();
   bool isDragging = false;
   late Learnings3 learnings3;
   late Instruction instruction;
@@ -73,7 +76,29 @@ class _MatchScreenState extends State<MatchScreen>
   @override
   void dispose() {
     _tts.stop();
+    audioPlayer.dispose();
     super.dispose();
+  }
+
+  void _playMatchSound({required bool success}) {
+    print(success);
+    final asset = success ? 'assets/bg/awsm.mp3' : 'assets/bg/sad.mp3';
+    toggleAudio(asset);
+  }
+
+  void toggleAudio(String url) async {
+    if (audioPlayer.playing) {
+      await audioPlayer.pause();
+    }
+
+    await audioPlayer.stop();
+    await audioPlayer.setAsset(url);
+    await audioPlayer.play();
+    // isPlaying = false;
+
+    // setState(() {
+    //   isPlaying = !isPlaying;
+    // });
   }
 
   void _autoMatchInstruction() async {
@@ -253,7 +278,36 @@ class _MatchScreenState extends State<MatchScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              AppBackButton(),
+                              AppBackButton(
+                                onTap: () async {
+                                  final shouldExit = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Confirmation'),
+                                      content: Text(
+                                          'Are you sure you want to exit the activity?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context)
+                                              .pop(false), // Cancel
+                                          child: Text('Cancel'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () => Navigator.of(context)
+                                              .pop(true), // Confirm
+                                          child: Text('Confirm'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (shouldExit == true) {
+                                    Navigator.of(context)
+                                        .pop(); // Exit the activity
+                                  }
+                                },
+                              )
+
                               // GestureDetector(
                               //   onTap: () => _showCupertinoDropdown(context),
                               //   child: Row(
@@ -375,11 +429,12 @@ class _MatchScreenState extends State<MatchScreen>
   }
 
   Widget _buildDragTarget(String imageUrl, int correctIndex) {
-    final key = GlobalKey(); // Add this line
+    final key = GlobalKey();
+
     return DragTarget<String>(
       builder: (context, candidateData, rejectedData) {
         return Container(
-          key: key, // Add this line
+          key: key,
           child: ShapeOption(
             shape: imageUrl,
             isHighlighted: candidateData.isNotEmpty,
@@ -389,13 +444,26 @@ class _MatchScreenState extends State<MatchScreen>
           ),
         );
       },
-      onWillAccept: (data) =>
-          !(matchedShapes[correctIndex] ?? false) &&
-          data == correctIndex.toString(),
+      onWillAccept: (data) {
+        bool willAccept = !(matchedShapes[correctIndex] ?? false) &&
+            data == correctIndex.toString();
+        return true; // Always return true so we get `onAccept` or `onLeave`
+      },
       onAccept: (data) {
-        setState(() {
-          matchedShapes[correctIndex] = true;
-        });
+        bool isMatch = data == correctIndex.toString();
+        _playMatchSound(success: isMatch);
+        if (isMatch) {
+          setState(() {
+            matchedShapes[correctIndex] = true;
+          });
+        }
+      },
+      onLeave: (data) {
+        // Called when item is dragged away without being accepted
+        // But we only want to play fail sound if it was a wrong match
+        if (data != correctIndex.toString()) {
+          _playMatchSound(success: false);
+        }
       },
     );
   }

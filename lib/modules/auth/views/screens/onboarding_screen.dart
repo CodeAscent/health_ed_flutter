@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/signup_screen.dart';
-
+import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../bloc/intro/nextpage_event.dart';
 import '../../bloc/intro/slider_bloc.dart';
@@ -42,33 +40,33 @@ class OnboardingScreen extends StatelessWidget {
               ),
             ),
             // Skip button at top-left corner
-            Positioned(
-              top: 16,
-              left: 16,
-              child: TextButton(
-                onPressed: () {
-                  // Skip to the last page
-                  _pageController.jumpToPage(2);
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      "Skip",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Icon(
-                      Icons.double_arrow,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // Positioned(
+            //   top: 16,
+            //   left: 16,
+            //   child: TextButton(
+            //     onPressed: () {
+            //       Get.off(() => LoginScreen());
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text(
+            //           "Skip",
+            //           style: TextStyle(
+            //             color: Colors.white,
+            //             fontSize: 16,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //         Icon(
+            //           Icons.double_arrow,
+            //           color: Colors.white,
+            //           size: 20,
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+
             Column(
               children: [
                 Expanded(
@@ -81,18 +79,24 @@ class OnboardingScreen extends StatelessWidget {
                         },
                         children: [
                           _buildPage(
-                            title: "Challenge Your Mind",
-                            description: "Get a new creative question every day & learn something new daily!",
+                            title:
+                                "Cure Delayed Speech \n&\nAccelerate the speaking power of your child",
+                            description:
+                                "Get a new customised question every day & learn something new daily!",
                             imagePath: 'assets/images/intro_icon1.png',
                           ),
                           _buildPage(
-                            title: "Automatic\nAttendance Tracking",
-                            description: "Just log in and out each day, and we’ll handle the rest.",
+                            title:
+                                "Curated & Customised content\nas per the child’s ability",
+                            description:
+                                "Just log in and out each day, and we’ll handle the rest.",
                             imagePath: 'assets/images/intro_icon2.png',
                           ),
                           _buildPage(
-                            title: "Track Your Child’s\nProgress Effortlessly",
-                            description: "Get weekly, monthly, and yearly report cards with detailed insights.",
+                            title:
+                                "Track the progress through our Speech Analytics",
+                            description:
+                                "Get Category wise Weekly & Monthly Dashboards.",
                             imagePath: 'assets/images/intro_icon3.png',
                           ),
                         ],
@@ -108,19 +112,21 @@ class OnboardingScreen extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            final currentPage = _pageController.page?.toInt() ?? 0;
+                            final currentPage =
+                                _pageController.page?.toInt() ?? 0;
                             if (currentPage < 2) {
                               _pageController.nextPage(
                                 duration: Duration(milliseconds: 300),
                                 curve: Curves.easeIn,
                               );
-                            }else{
-                              Get.off(() => SignupScreen());
+                            } else {
+                              Get.off(() => LoginScreen());
                             }
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0), // Increase the radius
+                              borderRadius: BorderRadius.circular(
+                                  20.0), // Increase the radius
                             ),
                           ),
                           child: Row(
@@ -157,26 +163,34 @@ class OnboardingScreen extends StatelessWidget {
       children: [
         // Main image
         SizedBox(height: 50),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white, // Text color to stand out on gradient
-          ),
-        ),
-        SizedBox(height: 16),
-        Text(
-          description,
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.visible,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white.withOpacity(0.8), // Lighter text for description
-          ),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // Text color to stand out on gradient
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  description,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.visible,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white
+                        .withOpacity(0.8), // Lighter text for description
+                  ),
+                ),
+              ],
+            )),
 
-        ),
         SizedBox(height: 32),
         Image.asset(imagePath),
       ],

@@ -590,45 +590,45 @@ class _ReportScreenWidgetState extends State<ReportScreen> {
                     Spacer(),
                   ],
                 ),
-                SizedBox(height: 15),
-                ...activityStats
-                    .map((stat) => Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  stat.label.toLowerCase().capitalizeFirst ??
-                                      '',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  "${stat.completed}/${stat.total}",
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: LinearProgressIndicator(
-                                value: stat.percentage / 100,
-                                backgroundColor: _getCategoryColor(stat.label)
-                                    .withOpacity(0.2),
-                                color: _getCategoryColor(stat.label),
-                                minHeight: 15,
-                              ),
-                            ),
-                            SizedBox(height: 15),
-                          ],
-                        ))
-                    .toList(),
+                // SizedBox(height: 15),
+                // ...activityStats
+                //     .map((stat) => Column(
+                //           children: [
+                //             Row(
+                //               children: [
+                //                 Text(
+                //                   stat.label.toLowerCase().capitalizeFirst ??
+                //                       '',
+                //                   style: TextStyle(
+                //                     color: Colors.grey[600],
+                //                     fontSize: 12,
+                //                   ),
+                //                 ),
+                //                 Spacer(),
+                //                 Text(
+                //                   "${stat.completed}/${stat.total}",
+                //                   style: TextStyle(
+                //                     color: Colors.grey[600],
+                //                     fontSize: 12,
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //             SizedBox(height: 8),
+                //             ClipRRect(
+                //               borderRadius: BorderRadius.circular(12),
+                //               child: LinearProgressIndicator(
+                //                 value: stat.percentage / 100,
+                //                 backgroundColor: _getCategoryColor(stat.label)
+                //                     .withOpacity(0.2),
+                //                 color: _getCategoryColor(stat.label),
+                //                 minHeight: 15,
+                //               ),
+                //             ),
+                //             SizedBox(height: 15),
+                //           ],
+                //         ))
+                //     .toList(),
               ],
             ),
           );

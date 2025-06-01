@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/tts/text_to_speech.dart';
 import 'package:health_ed_flutter/core/utils/helper.dart';
@@ -74,7 +72,35 @@ class _PictureDescriptionScreenState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    AppBackButton(color: Colors.white),
+                    AppBackButton(
+                      color: Colors.white,
+                      onTap: () async {
+                        final shouldExit = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Confirmation'),
+                            content: Text(
+                                'Are you sure you want to exit the activity?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false), // Cancel
+                                child: Text('Cancel'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true), // Confirm
+                                child: Text('Confirm'),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (shouldExit == true) {
+                          Navigator.of(context).pop(); // Exit the activity
+                        }
+                      },
+                    ),
                     Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(

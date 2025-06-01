@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:health_ed_flutter/core/services/globals.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/AllPlanScreen.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
@@ -78,6 +79,8 @@ class QuizItem extends StatelessWidget {
                 colorText: Colors.white,
               );
             } else {
+              selectedDayName = day;
+              selectedDayId = dayId;
               Get.to(() => AllActivityScreen(
                     activityId: dayId,
                     dayName: day,

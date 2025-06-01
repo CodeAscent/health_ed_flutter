@@ -12,6 +12,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<GetAllActivityRequested>(_getAllActivity);
     on<GetAllQuestionRequested>(_getAllQuestion);
     on<SubmitAcknowledgementRequest>(_sendAcknowledgementRequest);
+    on<SubmitFeedbackRequest>(_submitFeedBackRequest);
     on<GetReportRequested>(_getReport);
     on<GetInvoiceRequested>(_getInvoice);
   }
@@ -70,6 +71,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(GetSubmitAcknowledgeResponse(resUserAcknowledgement: response));
     } catch (error) {
       emit(GetSubmitAcknowledgeResponseFailure(message: error.toString()));
+    }
+  }
+
+  Future<void> _submitFeedBackRequest(
+      SubmitFeedbackRequest event, Emitter<HomeState> emit) async {
+    emit(SubmitFeedbackLoading());
+    try {
+      final response =
+          await homeRepository.submitFeedback(event.feedbackRequest);
+      emit(GetSubmitFeedbackResponse(resFeedback: response));
+    } catch (error) {
+      emit(GetSubmitFeedBackResponseFailure(message: error.toString()));
     }
   }
 

@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenWidgetState extends State<HomeScreen> {
   int _activeDayIndex = 0;
   late Worker _worker;
-
+  String selectedPeriod = 'Week wise';
   @override
   void initState() {
     super.initState();
@@ -37,6 +37,13 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
   void dispose() {
     _worker.dispose();
     super.dispose();
+  }
+
+  String _getLevelFromPercentage(int percentage) {
+    if (percentage == 100) return 'Sharp';
+    if (percentage >= 70) return 'Strong';
+    if (percentage >= 40) return 'Growing';
+    return 'Weak';
   }
 
   @override
@@ -83,7 +90,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                                     SizedBox(height: 20),
                                     // _buildCategoryChart(),
                                     // SizedBox(height: 20),
-                                    _barChart(),
+                                    _categoryStatsTable(),
                                     SizedBox(height: 20),
                                     _buildWeeklyReport(state, context)
                                   ],
@@ -255,31 +262,26 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                 width:
                     15), // Add some space between the text and the progress bar
 
-            // Stack to overlay percentage text on the progress bar
             Expanded(
               child: Stack(
-                alignment:
-                    Alignment.center, // Center the text in the progress bar
+                alignment: Alignment.center,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(12), // Rounded corners
+                    borderRadius: BorderRadius.circular(12),
                     child: LinearProgressIndicator(
                       value: (total != 0) ? (progress / total) : 0,
                       color: color,
                       backgroundColor: color.withOpacity(0.2),
-                      minHeight: 15, // Adjust the height of the progress bar
+                      minHeight: 15,
                     ),
                   ),
-                  // Percentage text inside the progress bar with left margin
                   Positioned.fill(
                     child: Align(
-                      alignment: Alignment
-                          .centerLeft, // Align in the left of the progress bar
+                      alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: 8.0), // Add left margin
+                        padding: const EdgeInsets.only(left: 8.0),
                         child: Text(
-                          "${((total != 0) ? (progress / total) : 0 * 100).toStringAsFixed(1)}%", // Show percentage
+                          "${((total != 0) ? (progress / total) * 100 : 0 * 100).toStringAsFixed(0)}%", // Show percentage
                           style: TextStyle(
                             color: Colors.white, // Color of the percentage text
                             fontWeight: FontWeight.bold,
@@ -307,8 +309,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
 
   Widget _buildRecentQuizzes(DashboardLoaded state) {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start, // Align children to the start (left)
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Recent Quizzes",
             style: TextStyle(
@@ -317,13 +318,13 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                 fontSize: 14)),
         SizedBox(height: 10),
         Container(
-          height: 60, // Adjust height as needed for the quiz cards
+          height: 60,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: state.dashboardData.recentQuizzes
-                .length, // Get the number of quizzes dynamically
+            itemCount: state.dashboardData.recentQuizzes.length,
             itemBuilder: (context, index) {
-              return _buildQuizCard("Day ${index + 1}",
+              return _buildQuizCard(
+                  "Day ${state.dashboardData.recentQuizzes[index].dayNumber}",
                   state.dashboardData.recentQuizzes[index].progress >= 100);
             },
           ),
@@ -614,123 +615,133 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
     );
   }
 
-  Widget _barChart() {
+  Widget _categoryStatsTable() {
     return BlocBuilder<DashboardBloc, DashboardState>(
       builder: (context, state) {
         if (state is DashboardLoaded) {
           final activityStats = state.dashboardData.activityTypeStats;
 
-          // Find max total for Y-axis scale
-          final maxTotal = activityStats.fold(
-              0, (max, stat) => stat.total > max ? stat.total : max);
+          List<ActivityTypeStat> getSelectedStats() {
+            switch (selectedPeriod) {
+              case 'Month wise':
+                return activityStats.monthlyStats;
+              case 'Overall':
+                return activityStats.overallStats;
+              default:
+                return activityStats.weeklyStats;
+            }
+          }
+
+          final stats = getSelectedStats();
 
           return Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 8,
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 10,
                   spreadRadius: 2,
-                )
+                ),
               ],
-              borderRadius: BorderRadius.circular(15),
             ),
-            height: 400,
-            child: BarChart(
-              BarChartData(
-                maxY: maxTotal.toDouble(),
-                alignment: BarChartAlignment.spaceAround,
-                barTouchData: BarTouchData(
-                  enabled: true,
-                  touchTooltipData: BarTouchTooltipData(
-                    // tooltipBgColor: Colors.grey.shade200,
-                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      return BarTooltipItem(
-                        'Completed: ${rod.toY.toInt()}',
-                        TextStyle(color: Colors.black),
-                      );
-                    },
-                  ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Category",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 80,
-                      getTitlesWidget: (value, meta) {
-                        final index = value.toInt();
-                        if (index >= 0 && index < activityStats.length) {
-                          return Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(height: 30),
-                                Transform.rotate(
-                                  angle: -math.pi / 4,
-                                  child: Text(
-                                    activityStats[index]
-                                        .label
-                                        .split(' ')
-                                        .join('\n'),
-                                    style: TextStyle(fontSize: 10),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        return Container();
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 1, // Show every integer value
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          value.toInt().toString(),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    const Icon(Icons.bar_chart,
+                        size: 18, color: ColorPallete.primary),
+                    const SizedBox(width: 8),
+                    DropdownButton<String>(
+                      value: selectedPeriod,
+                      underline: const SizedBox(),
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: ColorPallete.primary),
+                      borderRadius: BorderRadius.circular(8),
+                      items: ['Week wise', 'Month wise', 'Overall']
+                          .map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
                         );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedPeriod = value!;
+                        });
                       },
                     ),
-                  ),
-                  topTitles:
-                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles:
-                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  ],
                 ),
-                borderData: FlBorderData(show: false),
-                barGroups: activityStats.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final stat = entry.value;
-                  return BarChartGroupData(
-                    x: index,
-                    barRods: [
-                      // BarChartRodData(
-                      //   toY: stat.total.toDouble(),
-                      //   color: _getCategoryColor(stat.label).withOpacity(0.3),
-                      //   width: 16,
-                      // ),
-                      BarChartRodData(
-                        toY: stat.completed.toDouble(),
-                        color: _getCategoryColor(stat.label),
-                        width: 16,
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
+                const SizedBox(height: 16),
+                Table(
+                  columnWidths: const {
+                    0: FlexColumnWidth(2),
+                    1: FlexColumnWidth(1.2),
+                    2: FlexColumnWidth(1.2),
+                  },
+                  children: [
+                    const TableRow(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: Text("Category",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 14)),
+                        ),
+                        Text("Questions",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 14)),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text("Level",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 14)),
+                        ),
+                      ],
+                    ),
+                    ...stats.map((stat) {
+                      return TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              stat.label,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ),
+                          Text(
+                            "${stat.completed}/${stat.total}",
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              _getLevelFromPercentage(stat.percentage),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 14),
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ],
+                ),
+              ],
             ),
           );
         }
-        return Container();
+        return const SizedBox.shrink();
       },
     );
   }

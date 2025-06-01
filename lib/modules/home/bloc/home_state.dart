@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:health_ed_flutter/modules/home/model/request/FeedbackRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/GetAllDaysResponse.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ReportResponse.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllActivity.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResActivityInstructions.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
+import 'package:health_ed_flutter/modules/home/model/response/ResFeedback.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResUserAcknowledgement.dart';
 
 @immutable
@@ -22,6 +24,8 @@ class ActivityInstructionLoading extends HomeState {}
 class ActivityQuestionLoading extends HomeState {}
 
 class SubmitAcknowledgeLoading extends HomeState {}
+
+class SubmitFeedbackLoading extends HomeState {}
 
 class reportLoading extends HomeState {}
 
@@ -95,4 +99,14 @@ class GetSubmitAcknowledgeResponse extends HomeState {
 class GetSubmitAcknowledgeResponseFailure extends HomeState {
   final String message;
   GetSubmitAcknowledgeResponseFailure({required this.message});
+}
+
+class GetSubmitFeedBackResponseFailure extends HomeState {
+  final String message;
+  GetSubmitFeedBackResponseFailure({required this.message});
+}
+
+class GetSubmitFeedbackResponse extends HomeState {
+  final ResFeedback resFeedback;
+  GetSubmitFeedbackResponse({required this.resFeedback});
 }

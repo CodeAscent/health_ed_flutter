@@ -165,7 +165,35 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          AppBackButton(),
+                          AppBackButton(
+                            onTap: () async {
+                              final shouldExit = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Confirmation'),
+                                  content: Text(
+                                      'Are you sure you want to exit the activity?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context)
+                                          .pop(false), // Cancel
+                                      child: Text('Cancel'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () => Navigator.of(context)
+                                          .pop(true), // Confirm
+                                      child: Text('Confirm'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (shouldExit == true) {
+                                Navigator.of(context)
+                                    .pop(); // Exit the activity
+                              }
+                            },
+                          ),
                         ],
                       ),
                       SizedBox(height: 10),
@@ -230,6 +258,7 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
       selectedAcknowledgement: selectedAcknowledgement,
       secondaryColor: ColorPallete.secondary,
       onNext: () {
+        _tts.stop();
         switch (no) {
           case 0:
             Get.off(() =>

@@ -11,6 +11,7 @@ import 'package:health_ed_flutter/modules/auth/views/screens/DhwaniInfoScreen.da
 import 'package:health_ed_flutter/modules/auth/views/screens/FaqScreen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/UserSubscription.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/assessment_screen.dart';
+import 'package:health_ed_flutter/modules/home/views/screens/all_quizzes_screen.dart';
 import 'package:health_ed_flutter/modules/navigation/views/screens/MainScreen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -87,12 +88,13 @@ class _PlanScreenState extends State<PlanScreen> {
       }
     } else {
       onTapAction = () {
-        Get.snackbar(
-          'Assessment Completed',
-          'Your onboarding score is: ${userData['onboardingScore']}',
-          backgroundColor: Colors.red.shade100,
-          colorText: Colors.black,
-        );
+        Get.to(() => AllQuizzesScreen());
+        // Get.snackbar(
+        //   'Assessment Completed',
+        //   'Your onboarding score is: ${userData['onboardingScore']}',
+        //   backgroundColor: Colors.red.shade100,
+        //   colorText: Colors.black,
+        // );
       };
     }
 

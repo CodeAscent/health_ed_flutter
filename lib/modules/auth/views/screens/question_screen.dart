@@ -228,6 +228,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                 // ),
                               ],
                             ),
+                            SizedBox(height: 5),
                             Text(
                               currentQuestion.example != ''
                                   ? 'Ex: ' + currentQuestion.example!

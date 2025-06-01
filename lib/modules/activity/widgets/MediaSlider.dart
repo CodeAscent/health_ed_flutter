@@ -7,7 +7,12 @@ import '../../home/model/response/ResAllQuestion.dart';
 
 class MediaSlider extends StatefulWidget {
   final List<Media> mediaList;
-  MediaSlider({required this.mediaList});
+
+  const MediaSlider({
+    Key? key,
+    required this.mediaList,
+  }) : super(key: key);
+
   @override
   _MediaSliderState createState() => _MediaSliderState();
 }
