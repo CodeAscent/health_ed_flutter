@@ -22,7 +22,7 @@ class PlanScreen extends StatefulWidget {
 
 class _PlanScreenState extends State<PlanScreen> {
   final String pendingEvaluationImage = 'assets/images/pending.png';
-  final String startEvaluationImage = 'assets/images/startassess.png';
+  final String startEvaluationImage = 'assets/images/startassess.gif';
   final String assessmentCompletedGif = 'assets/images/startactivity.gif';
 
   final List<String> carouselImages = [
@@ -233,9 +233,9 @@ class _PlanScreenState extends State<PlanScreen> {
                                       1,
                                       userData),
                                   _buildGridButton(
-                                      'Get Pro',
+                                      'Get Premium',
                                       Icons.emoji_events,
-                                      Color(0xFFF7CE45),
+                                      Color(0xFF5370C8),
                                       2,
                                       userData),
                                   _buildGridButton(
@@ -245,7 +245,7 @@ class _PlanScreenState extends State<PlanScreen> {
                                       3,
                                       userData),
                                   _buildGridButton('FAQ', Icons.help,
-                                      Color(0xFF5370C8), 4, userData),
+                                      Color(0xFFF7CE45), 4, userData),
                                 ],
                               ),
                             ),
@@ -292,15 +292,15 @@ class _PlanScreenState extends State<PlanScreen> {
           padding: EdgeInsets.symmetric(vertical: 10),
         ),
         onPressed: () {
-          if ((gridNo == 2) && userData['onboardingScore'] == 0) {
-            Get.snackbar(
-              'Assessment Incomplete',
-              'Please complete the assessment to continue.',
-              backgroundColor: Colors.orange.shade100,
-              colorText: Colors.black,
-            );
-            return; // Prevent further navigation
-          }
+          // if ((gridNo == 2) && userData['onboardingScore'] == 0) {
+          //   Get.snackbar(
+          //     'Assessment Incomplete',
+          //     'Please complete the assessment to continue.',
+          //     backgroundColor: Colors.orange.shade100,
+          //     colorText: Colors.black,
+          //   );
+          //   return; // Prevent further navigation
+          // }
           if (gridNo == 1) {
             Get.to(() => ContactScreen());
           } else if (gridNo == 2) {

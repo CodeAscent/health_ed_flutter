@@ -5,10 +5,15 @@ class TextToSpeech {
 
   // Set default configurations
   TextToSpeech() {
-    _flutterTts.setVolume(0.8); // Slightly lower volume for more clarity
-    _flutterTts
-        .setSpeechRate(0.4); // Adjust to slower speed if it sounds rushed
-    _flutterTts.setPitch(1.1); // Slightly higher pitch can help with clarity
+    _flutterTts.setVolume(1.0); // Full volume for better audibility
+    _flutterTts.setSpeechRate(
+        0.3); // Slower speech rate to make it easier for children
+    _flutterTts.setPitch(1.0); // Normal pitch for a more natural voice
+    _flutterTts.setVoice({
+      'name':
+          'en-us-x-sfg#female_2-local', // Example voice (can vary by platform)
+      'locale': 'en-US'
+    });
   }
 
   Future<void> speak(String text, {String languageCode = 'hi-IN'}) async {

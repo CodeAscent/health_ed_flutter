@@ -8,8 +8,8 @@ final class AuthInitial extends AuthState {}
 final class AuthLoading extends AuthState {}
 
 final class AuthLoginSuccess extends AuthState {
-  final String message;
-  AuthLoginSuccess({required this.message});
+  final LoginResponse loginResponse;
+  AuthLoginSuccess({required this.loginResponse});
 }
 
 final class AuthRegisterSuccess extends AuthState {
@@ -52,7 +52,6 @@ final class AuthPlanFailure extends AuthState {
   AuthPlanFailure({required this.message});
 }
 
-
 final class UserPlanDataSuccess extends AuthState {
   final ResUserPlanData resUserPlanData;
   UserPlanDataSuccess({required this.resUserPlanData});
@@ -82,6 +81,3 @@ final class VerifyPaymentOrderSuccess extends AuthState {
   final ResVerifyOrder resVerifyOrder;
   VerifyPaymentOrderSuccess({required this.resVerifyOrder});
 }
-
-
-

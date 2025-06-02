@@ -254,9 +254,10 @@ class _PictureUnderstandingScreenState
                           child: Text(
                             titleData,
                             style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                            maxLines: 5,
                           ),
                         ),
                       ],

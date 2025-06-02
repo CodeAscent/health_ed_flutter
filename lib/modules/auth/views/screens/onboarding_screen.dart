@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/signupscreennew.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../bloc/intro/nextpage_event.dart';
 import '../../bloc/intro/slider_bloc.dart';
@@ -120,7 +121,7 @@ class OnboardingScreen extends StatelessWidget {
                                 curve: Curves.easeIn,
                               );
                             } else {
-                              Get.off(() => LoginScreen());
+                              Get.off(() => SignupScreenNew());
                             }
                           },
                           style: ElevatedButton.styleFrom(

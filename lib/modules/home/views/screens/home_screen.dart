@@ -704,7 +704,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                                 fontWeight: FontWeight.w500, fontSize: 14)),
                         Align(
                           alignment: Alignment.centerRight,
-                          child: Text("Level",
+                          child: Text("Percentage",
                               style: TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 14)),
                         ),
@@ -721,13 +721,13 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                             ),
                           ),
                           Text(
-                            "${stat.completed}/${stat.total}",
+                            "${stat.score ?? 0}/${stat.total}",
                             style: const TextStyle(fontSize: 14),
                           ),
                           Align(
                             alignment: Alignment.centerRight,
                             child: Text(
-                              _getLevelFromPercentage(stat.percentage),
+                              '${stat.percentage}%',
                               style: const TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 14),
                             ),

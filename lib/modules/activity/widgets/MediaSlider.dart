@@ -157,7 +157,7 @@ class _MediaSliderState extends State<MediaSlider> {
             Icon(
               Icons.play_arrow,
               size: 80,
-              color: Colors.white.withOpacity(0.8),
+              color: ColorPallete.primary,
             ),
         ],
       ),

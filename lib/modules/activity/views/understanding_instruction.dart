@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
+import 'package:health_ed_flutter/core/services/globals.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/core/tts/text_to_speech.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
@@ -180,8 +181,12 @@ class _UnderstandingInstructionState extends State<UnderstandingInstruction> {
                                       child: Text('Cancel'),
                                     ),
                                     ElevatedButton(
-                                      onPressed: () => Navigator.of(context)
-                                          .pop(true), // Confirm
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                        context.read<HomeBloc>().add(
+                                            GetAllActivityRequested(
+                                                activityId: selectedDayId!));
+                                      }, // Confirm
                                       child: Text('Confirm'),
                                     ),
                                   ],

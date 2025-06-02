@@ -137,18 +137,19 @@ class CustomBottomNavBar extends StatelessWidget {
             label: "Home",
             isSelected: pageIndex == 0,
             onTap: () => {
-              if (userData['onboardingScore'] == 0)
-                {
-                  Get.snackbar(
-                    'Assessment Incomplete',
-                    'Please complete the assessment to continue.',
-                    backgroundColor: Colors.orange.shade100,
-                    colorText: Colors.black,
-                  )
-                  // Prevent further navigation
-                }
-              else
-                {onTap(0)}
+              onTap(0)
+              // if (userData['onboardingScore'] == 0)
+              //   {
+              //     Get.snackbar(
+              //       'Assessment Incomplete',
+              //       'Please complete the assessment to continue.',
+              //       backgroundColor: Colors.orange.shade100,
+              //       colorText: Colors.black,
+              //     )
+              //     // Prevent further navigation
+              //   }
+              // else
+              // {onTap(0)}
             },
           ),
           navItem(
@@ -180,18 +181,19 @@ class CustomBottomNavBar extends StatelessWidget {
             label: "Blogs",
             isSelected: pageIndex == 2,
             onTap: () => {
-              if (userData['onboardingScore'] == 0)
-                {
-                  Get.snackbar(
-                    'Assessment Incomplete',
-                    'Please complete the assessment to continue.',
-                    backgroundColor: Colors.orange.shade100,
-                    colorText: Colors.black,
-                  )
-                  // Prevent further navigation
-                }
-              else
-                {onTap(2)}
+              onTap(2)
+              // if (userData['onboardingScore'] == 0)
+              //   {
+              //     Get.snackbar(
+              //       'Assessment Incomplete',
+              //       'Please complete the assessment to continue.',
+              //       backgroundColor: Colors.orange.shade100,
+              //       colorText: Colors.black,
+              //     )
+              //     // Prevent further navigation
+              //   }
+              // else
+              //   {onTap(2)}
             },
           ),
           navItem(
@@ -201,18 +203,19 @@ class CustomBottomNavBar extends StatelessWidget {
             label: "Profile",
             isSelected: pageIndex == 3,
             onTap: () => {
-              if (userData['onboardingScore'] == 0)
-                {
-                  Get.snackbar(
-                    'Assessment Incomplete',
-                    'Please complete the assessment to continue.',
-                    backgroundColor: Colors.orange.shade100,
-                    colorText: Colors.black,
-                  )
-                  // Prevent further navigation
-                }
-              else
-                {onTap(3)}
+              onTap(3)
+              // if (userData['onboardingScore'] == 0)
+              //   {
+              //     Get.snackbar(
+              //       'Assessment Incomplete',
+              //       'Please complete the assessment to continue.',
+              //       backgroundColor: Colors.orange.shade100,
+              //       colorText: Colors.black,
+              //     )
+              //     // Prevent further navigation
+              //   }
+              // else
+              //   {onTap(3)}
             },
           ),
         ],

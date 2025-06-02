@@ -97,9 +97,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
                   .toString(),
             ),
           );
-          Future.delayed(Duration(seconds: 4), () {
-            _navigateToNextScreen();
-          });
+          // Future.delayed(Duration(seconds: 4), () {
+          //   _navigateToNextScreen();
+          // });
         }
       },
       builder: (context, state) {

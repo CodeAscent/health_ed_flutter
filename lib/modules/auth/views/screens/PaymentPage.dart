@@ -174,7 +174,7 @@ class ActivityInstructionContent extends State<PaymentPageScreenContent> {
                                 color: Colors.green,
                                 title: "Payment Successful",
                                 message:
-                                    'Team will contact within 24 hours for an online comprehensive Speech Assessment session.',
+                                    'Thank You! The team will get back to you shortly.',
                                 isSuccess: true);
                           case PaymentResultStatus.failure:
                             return _buildResultCard(

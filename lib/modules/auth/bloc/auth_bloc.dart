@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/modules/auth/models/request/CreatePayOrderReq.dart';
+import 'package:health_ed_flutter/modules/auth/models/response/LoginResponse.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/ResAssesmentCreateOrder.dart';
 import 'package:health_ed_flutter/modules/auth/models/request/VerifyPayOrderReq.dart';
 import 'package:health_ed_flutter/modules/auth/models/request/LoginRequest.dart';
@@ -57,8 +58,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final res = await authRepository.login(event.loginRequest);
       // final user = User.fromMap(res['user']);
       // await LocalStorage.prefs.setString('token', res['token']);
-      emit(AuthLoginSuccess(
-          message: res.message + "\nOtp Is ${res.data.otp.toString()}"));
+      emit(AuthLoginSuccess(loginResponse: res));
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }

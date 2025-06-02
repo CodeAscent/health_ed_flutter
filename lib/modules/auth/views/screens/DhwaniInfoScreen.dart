@@ -32,13 +32,29 @@ class DhwaniInfoScreen extends StatelessWidget {
             const SizedBox(height: 24),
             _buildSectionTitle("How to Get Best Results"),
             _buildBulletPoint(
-              "The Dhwani platform is designed to support and enhance your child's speech and language development.",
+              "Our platform is designed to help your child develop strong, age-appropriate speaking & language skills — starting as early as 1.5 years and continuing up to 7 years.",
+            ),
+            Text(
+              'Objective of this journey is to:-',
+              style: const TextStyle(fontSize: 20, height: 1.4),
             ),
             _buildBulletPoint(
-              "For children experiencing speech or language delays, the app guides them toward achieving age-appropriate communication skills.",
+              "Expand your child’s vocabulary to around 20,000 words",
             ),
             _buildBulletPoint(
-              "For children developing normally, it helps strengthen their speaking abilities through a personalized learning journey.",
+              "Build stronger sentence structure and correct grammar.",
+            ),
+            _buildBulletPoint(
+              "Deepen your child’s understanding and ability to express themselves clearly.",
+            ),
+            _buildBulletPoint(
+              "Strengthen social communication skills and confidence.",
+            ),
+            _buildBulletPoint(
+              "Help your child tell stories with clear beginnings, characters, challenges, and resolutions.",
+            ),
+            _buildBulletPoint(
+              "Develop critical thinking and problem-solving abilities.",
             ),
             const SizedBox(height: 8),
             const Text(

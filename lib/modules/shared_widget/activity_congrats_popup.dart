@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/core/services/globals.dart';
 import 'package:health_ed_flutter/models/completed_activity.dart';
 import 'package:health_ed_flutter/modules/auth/models/response/OtpVerifyResponse.dart';
+import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
+import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/views/screens/all_activity_screen.dart';
 import 'package:health_ed_flutter/modules/home/views/screens/all_quizzes_screen.dart';
 import 'package:health_ed_flutter/modules/home/widgets/QuizItem.dart';
@@ -101,6 +104,9 @@ class _ActivityCongratsPopupState extends State<ActivityCongratsPopup> {
               icon: Icon(Icons.close, color: Colors.white, size: 30),
               onPressed: () {
                 if (selectedDayName != null) {
+                  context
+                      .read<HomeBloc>()
+                      .add(GetAllActivityRequested(activityId: selectedDayId!));
                   Get.back();
                   // Get.off(() => AllActivityScreen(
                   //       dayName: selectedDayName!,

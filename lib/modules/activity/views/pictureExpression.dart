@@ -11,6 +11,7 @@ import 'package:health_ed_flutter/modules/activity/views/PictureSequencings.dart
 import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
 import 'package:health_ed_flutter/modules/shared_widget/activity_congrats_popup.dart';
+import 'package:just_audio/just_audio.dart';
 import '../../../core/utils/custom_snackbar.dart';
 import '../../../core/utils/custom_widgets.dart';
 import '../../home/bloc/home_bloc.dart';
@@ -30,6 +31,7 @@ class _PictureExpressionState extends State<PictureExpression> {
   String selectedLanguage = 'English';
   String selectedAcknowledgement = 'Acknowledgement';
   bool isDragging = false;
+  AudioPlayer audioPlayer = AudioPlayer();
   String languageCode = "en-US";
   late Learnings1 learnings1;
   final TextToSpeech _tts = TextToSpeech();
@@ -46,7 +48,28 @@ class _PictureExpressionState extends State<PictureExpression> {
   @override
   void dispose() {
     _tts.stop();
+    audioPlayer.dispose();
     super.dispose();
+  }
+
+  void _playMatchSound({required bool success}) {
+    final asset = success ? 'assets/bg/awsm.mp3' : 'assets/bg/sad.mp3';
+    toggleAudio(asset);
+  }
+
+  void toggleAudio(String url) async {
+    if (audioPlayer.playing) {
+      await audioPlayer.pause();
+    }
+
+    await audioPlayer.stop();
+    await audioPlayer.setAsset(url);
+    await audioPlayer.play();
+    // isPlaying = false;
+
+    // setState(() {
+    //   isPlaying = !isPlaying;
+    // });
   }
 
   // Track selected card
@@ -256,6 +279,7 @@ class _PictureExpressionState extends State<PictureExpression> {
   Widget _buildOptionCard(String text, bool isCorrect, int index) {
     return GestureDetector(
       onTap: () {
+        _playMatchSound(success: isCorrect);
         setState(() {
           selectedCards[index] = true;
         });

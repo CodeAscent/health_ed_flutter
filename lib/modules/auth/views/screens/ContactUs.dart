@@ -155,22 +155,22 @@ class _ContactInfoScreenState extends State<ContactScreen> {
                   const SizedBox(height: 24),
 
                   // Contact Tiles
-                  _buildTile(
-                    icon: Icons.email,
-                    label: "Email",
-                    actionLabel: "archanasthedhwani@gmail.com",
-                    onTap: () =>
-                        _launchUrl("mailto:archanasthedhwani@gmail.com"),
-                    index: 0,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTile(
-                    icon: Icons.phone,
-                    label: "Phone",
-                    actionLabel: "+91 7978062836",
-                    onTap: () => _launchUrl("tel:+917978062836"),
-                    index: 1,
-                  ),
+                  // _buildTile(
+                  //   icon: Icons.email,
+                  //   label: "Email",
+                  //   actionLabel: "archanasthedhwani@gmail.com",
+                  //   onTap: () =>
+                  //       _launchUrl("mailto:archanasthedhwani@gmail.com"),
+                  //   index: 0,
+                  // ),
+                  // const SizedBox(height: 16),
+                  // _buildTile(
+                  //   icon: Icons.phone,
+                  //   label: "Phone",
+                  //   actionLabel: "+91 7978062836",
+                  //   onTap: () => _launchUrl("tel:+917978062836"),
+                  //   index: 1,
+                  // ),
                   const SizedBox(height: 16),
                   _buildTile(
                     icon: Icons.language,
@@ -189,7 +189,7 @@ class _ContactInfoScreenState extends State<ContactScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Your Feedback",
+                          "Your Queries & Feedback",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -222,7 +222,7 @@ class _ContactInfoScreenState extends State<ContactScreen> {
                               ),
                             ),
                             child: const Text(
-                              "Submit Feedback",
+                              "Submit",
                               style:
                                   TextStyle(fontSize: 16, color: Colors.white),
                             ),

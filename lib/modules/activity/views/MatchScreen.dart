@@ -343,9 +343,10 @@ class _MatchScreenState extends State<MatchScreen>
                                 child: Text(
                                   titleData,
                                   style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black,
-                                  ),
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                  maxLines: 5,
                                 ),
                               ),
                             ],

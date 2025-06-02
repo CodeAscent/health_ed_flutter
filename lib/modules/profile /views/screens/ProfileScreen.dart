@@ -146,7 +146,17 @@ class _ProfilescreenState extends State<ProfileScreen> {
                           Center(
                             child: TextButton.icon(
                               onPressed: () {
-                                _downloadReport(userData['_id']);
+                                if (userData['onboardingScore'] == 0) {
+                                  Get.snackbar(
+                                    'Assessment Incomplete',
+                                    'Please complete the assessment to continue.',
+                                    backgroundColor: Colors.orange.shade100,
+                                    colorText: Colors.black,
+                                  );
+                                  // Prevent further navigation
+                                } else {
+                                  _downloadReport(userData['_id']);
+                                }
                               },
                               style: TextButton.styleFrom(
                                 backgroundColor: Colors.white,

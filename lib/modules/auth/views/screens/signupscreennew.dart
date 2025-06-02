@@ -9,27 +9,26 @@ import 'package:health_ed_flutter/core/utils/custom_snackbar.dart';
 import 'package:health_ed_flutter/core/utils/custom_widgets.dart';
 import 'package:health_ed_flutter/modules/auth/bloc/auth_bloc.dart';
 import 'package:health_ed_flutter/modules/auth/models/request/LoginRequest.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/signupscreennew.dart';
+import 'package:health_ed_flutter/modules/auth/views/screens/login_screen.dart';
 import 'package:health_ed_flutter/modules/auth/views/screens/verify_otp_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignupScreenNew extends StatefulWidget {
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignupScreenNew> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<SignupScreenNew> {
   late List<FocusNode> focusNodes;
   final _mobileNoController = TextEditingController();
   List<TextEditingController> controllers =
       List.generate(4, (_) => TextEditingController());
   String otp = "";
 
-  // Timer related variables
   late int secondsRemaining;
   bool enableResend = false;
   late Timer timer;
 
-  // bool isTermsAccepted = false; // Added for checkbox
+  bool isTermsAccepted = false;
 
   @override
   void initState() {
@@ -80,9 +79,9 @@ class _LoginScreenState extends State<LoginScreen> {
             customSnackbar(state.message, ContentType.failure);
           }
           if (state is AuthLoginSuccess) {
-            if (state.loginResponse.data.currentStep == 0) {
+            if (state.loginResponse.data.currentStep > 0) {
               customSnackbar(
-                "You are not registered. Please sign up to continue.",
+                "You are already registered. Please login.",
                 ContentType.failure,
               );
             } else {
@@ -131,67 +130,67 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               SizedBox(height: 20),
 
-                              // // Terms and Conditions Checkbox
-                              // Row(
-                              //   children: [
-                              //     Checkbox(
-                              //       value: isTermsAccepted,
-                              //       onChanged: (value) {
-                              //         setState(() {
-                              //           isTermsAccepted = value ?? false;
-                              //         });
-                              //       },
-                              //     ),
-                              //     Expanded(
-                              //       child: RichText(
-                              //         text: TextSpan(
-                              //           style: TextStyle(
-                              //               color: Colors.black, fontSize: 14),
-                              //           children: [
-                              //             TextSpan(text: 'I agree to the '),
-                              //             TextSpan(
-                              //               text: 'Terms & Conditions',
-                              //               style: TextStyle(
-                              //                   color: ColorPallete.primary,
-                              //                   decoration:
-                              //                       TextDecoration.underline),
-                              //               recognizer: TapGestureRecognizer()
-                              //                 ..onTap = () {
-                              //                   // Navigate or show T&C page
-                              //                   Get.to(() => TermsScreen());
-                              //                 },
-                              //             ),
-                              //             TextSpan(text: ' and '),
-                              //             TextSpan(
-                              //               text: 'Privacy Policy',
-                              //               style: TextStyle(
-                              //                   color: ColorPallete.primary,
-                              //                   decoration:
-                              //                       TextDecoration.underline),
-                              //               recognizer: TapGestureRecognizer()
-                              //                 ..onTap = () {
-                              //                   // Navigate or show Privacy Policy page
-                              //                   Get.to(() =>
-                              //                       PrivacyPolicyScreen());
-                              //                 },
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
+                              // Terms and Conditions Checkbox
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: isTermsAccepted,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        isTermsAccepted = value ?? false;
+                                      });
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 14),
+                                        children: [
+                                          TextSpan(text: 'I agree to the '),
+                                          TextSpan(
+                                            text: 'Terms & Conditions',
+                                            style: TextStyle(
+                                                color: ColorPallete.primary,
+                                                decoration:
+                                                    TextDecoration.underline),
+                                            recognizer: TapGestureRecognizer()
+                                              ..onTap = () {
+                                                // Navigate or show T&C page
+                                                Get.to(() => TermsScreen());
+                                              },
+                                          ),
+                                          TextSpan(text: ' and '),
+                                          TextSpan(
+                                            text: 'Privacy Policy',
+                                            style: TextStyle(
+                                                color: ColorPallete.primary,
+                                                decoration:
+                                                    TextDecoration.underline),
+                                            recognizer: TapGestureRecognizer()
+                                              ..onTap = () {
+                                                // Navigate or show Privacy Policy page
+                                                Get.to(() =>
+                                                    PrivacyPolicyScreen());
+                                              },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
 
                               SizedBox(height: 30),
                               CustomGradientButton(
                                 label: 'Send me the code',
                                 onTap: () {
-                                  // if (!isTermsAccepted) {
-                                  //   customSnackbar(
-                                  //       "Please accept Terms & Conditions and Privacy Policy",
-                                  //       ContentType.failure);
-                                  //   return;
-                                  // }
+                                  if (!isTermsAccepted) {
+                                    customSnackbar(
+                                        "Please accept Terms & Conditions and Privacy Policy",
+                                        ContentType.failure);
+                                    return;
+                                  }
 
                                   if (_mobileNoController.text.length >= 10) {
                                     final loginRequest = LoginRequest(
@@ -210,12 +209,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               Center(
                                 child: RichText(
                                   text: TextSpan(
+                                    text: "Already registered? ",
                                     style: TextStyle(
                                         color: Colors.black, fontSize: 14),
                                     children: [
-                                      TextSpan(text: "New user? "),
                                       TextSpan(
-                                        text: "Signup",
+                                        text: "Login",
                                         style: TextStyle(
                                           color: ColorPallete.primary,
                                           fontWeight: FontWeight.bold,
@@ -223,14 +222,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {
-                                            // Navigate to signup screen
-                                            Get.off(() => SignupScreenNew());
+                                            Get.off(() => LoginScreen());
                                           },
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
+                              SizedBox(height: 20),
                             ],
                           ),
                         ),

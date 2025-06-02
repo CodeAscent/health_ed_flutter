@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
+import 'package:health_ed_flutter/core/services/globals.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
 import 'package:health_ed_flutter/modules/activity/views/MatchScreen.dart';
 import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
@@ -117,8 +118,13 @@ class _ActivityUnderstandingScreenContentState
                                           child: Text('Cancel'),
                                         ),
                                         ElevatedButton(
-                                          onPressed: () => Navigator.of(context)
-                                              .pop(true), // Confirm
+                                          onPressed: () {
+                                            Navigator.of(context).pop(true);
+                                            context.read<HomeBloc>().add(
+                                                GetAllActivityRequested(
+                                                    activityId:
+                                                        selectedDayId!));
+                                          }, // Confirm
                                           child: Text('Confirm'),
                                         ),
                                       ],
@@ -187,25 +193,21 @@ class _ActivityUnderstandingScreenContentState
                                     child: Text(
                                       titleData,
                                       style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                      ),
-                                      maxLines: 2,
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 5,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
                               ),
                               SizedBox(
-                                height: 10,
+                                height: 30,
                               ),
-                              SizedBox(
-                                width: Get.width,
-                                height: Get.width,
-                                child: MediaSlider(
-                                  key: ValueKey(learnings.sId),
-                                  mediaList: learnings.media!,
-                                ),
+                              MediaSlider(
+                                key: ValueKey(learnings.sId),
+                                mediaList: learnings.media!,
                               ),
                               Spacer(),
                               _buildAcknowledgementButton(context),

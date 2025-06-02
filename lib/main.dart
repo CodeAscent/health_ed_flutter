@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:health_ed_flutter/modules/auth/views/screens/onboarding_screen.dart';
 import 'package:health_ed_flutter/modules/home/events/dashboard_events.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/core/theme/app_theme.dart';
@@ -23,7 +22,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStorage.initialize();
 
-  // Initialize the dashboard refresh event
   Get.put(Rx<DashboardRefreshEvent>(DashboardRefreshEvent()),
       tag: 'dashboard_refresh');
 

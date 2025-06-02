@@ -146,10 +146,10 @@ class _AudioOptionState extends State<AudioOption> {
                   color: Colors.white,
                   child: Center(
                     child: Image.asset(
-                      'assets/icons/audioicon.png',
+                      'assets/icons/bluesound.png',
                       fit: BoxFit.contain,
-                      width: 40,
-                      height: 40,
+                      width: 60,
+                      height: 60,
                       opacity:
                           AlwaysStoppedAnimation(widget.originalImageOpacity),
                     ),

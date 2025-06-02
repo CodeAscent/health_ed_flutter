@@ -81,10 +81,13 @@ class QuizItem extends StatelessWidget {
             } else {
               selectedDayName = day;
               selectedDayId = dayId;
+
               Get.to(() => AllActivityScreen(
                     activityId: dayId,
                     dayName: day,
-                  ));
+                  ))?.then((_) {
+                mContext.read<HomeBloc>().add(GetAllDayRequested());
+              });
             }
           },
           child: Stack(

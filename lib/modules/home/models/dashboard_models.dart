@@ -140,13 +140,14 @@ class ActivityTypeStat {
   final int completed;
   final int total;
   final int percentage;
+  final int score;
 
-  ActivityTypeStat({
-    required this.label,
-    required this.completed,
-    required this.total,
-    required this.percentage,
-  });
+  ActivityTypeStat(
+      {required this.label,
+      required this.completed,
+      required this.total,
+      required this.percentage,
+      required this.score});
 
   factory ActivityTypeStat.fromJson(Map<String, dynamic> json) {
     return ActivityTypeStat(
@@ -154,6 +155,7 @@ class ActivityTypeStat {
       completed: json['completed'],
       total: json['total'],
       percentage: json['percentage'],
+      score: json['score'],
     );
   }
 }
