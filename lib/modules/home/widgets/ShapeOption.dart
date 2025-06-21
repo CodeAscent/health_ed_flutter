@@ -21,11 +21,11 @@ class ShapeOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 90,
-      width: 90,
+      height: 105,
+      width: 105,
       margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Colors.white, // Background color
+        color: Colors.white,
         border: Border.all(
           color: isHighlighted
               ? ColorPallete.primary

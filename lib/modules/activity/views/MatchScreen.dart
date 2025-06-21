@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
-import 'package:health_ed_flutter/modules/activity/views/PictureUnderstandingScreen.dart';
 import 'package:health_ed_flutter/modules/activity/views/picture_understanding_Instructions_screen.dart';
 import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
@@ -123,7 +122,7 @@ class _MatchScreenState extends State<MatchScreen>
         final itemHeight = 90.0;
         final handSize = 50.0;
 
-        if (learnings3.direction == 'vertical') {
+        if (learnings3.direction != 'vertical') {
           // Vertical layout calculations
           startX = (MediaQuery.of(context).size.width * (0.25 + (i * 0.25))) +
               (itemWidth / 2);
@@ -378,16 +377,14 @@ class _MatchScreenState extends State<MatchScreen>
     );
   }
 
-  // Method to build draggable for each shape
   Widget _buildDraggable(String imageUrl, int currentIndex) {
     bool isMatched = matchedShapes[currentIndex] ?? false;
-    final key = GlobalKey(); // Add this line
 
     Widget styledImage({required double opacity}) {
       return Container(
-        key: key, // Add this line
-        height: 90,
-        width: 90,
+        margin: EdgeInsets.all(4),
+        height: 105,
+        width: 105,
         decoration: BoxDecoration(
           color: Colors.white,
         ),
@@ -404,29 +401,45 @@ class _MatchScreenState extends State<MatchScreen>
       );
     }
 
-    return isMatched
-        ? styledImage(opacity: 0.5)
-        : Draggable<String>(
-            data: currentIndex.toString(),
-            feedback: styledImage(opacity: 0.8),
-            childWhenDragging: styledImage(opacity: 0.5),
-            child: styledImage(opacity: 1.0),
-            onDragStarted: () {
-              setState(() {
-                isDragging = true;
-              });
-            },
-            onDraggableCanceled: (_, __) {
-              setState(() {
-                isDragging = false;
-              });
-            },
-            onDragEnd: (details) {
-              setState(() {
-                isDragging = false;
-              });
-            },
-          );
+    if (learnings3.drag!) {
+      return isMatched
+          ? styledImage(opacity: 0.5)
+          : Draggable<String>(
+              data: currentIndex.toString(),
+              feedback: styledImage(opacity: 0.8),
+              childWhenDragging: styledImage(opacity: 0.5),
+              child: styledImage(opacity: 1.0),
+              onDragStarted: () => setState(() => isDragging = true),
+              onDraggableCanceled: (_, __) =>
+                  setState(() => isDragging = false),
+              onDragEnd: (_) => setState(() => isDragging = false),
+            );
+    } else {
+      return GestureDetector(
+        onTap: () {
+          if (isMatched) return;
+
+          bool isMatch = currentIndex == 1;
+
+          _playMatchSound(success: isMatch);
+          if (isMatch) {
+            setState(() {
+              matchedShapes[currentIndex] = true;
+            });
+          }
+        },
+        child: isMatched
+            ? Stack(
+                alignment: Alignment.center,
+                children: [
+                  styledImage(opacity: 0.5),
+                  Icon(Icons.check_circle,
+                      color: ColorPallete.ceruleanBlue, size: 30),
+                ],
+              )
+            : styledImage(opacity: 1.0),
+      );
+    }
   }
 
   Widget _buildDragTarget(String imageUrl, int correctIndex) {
@@ -441,7 +454,7 @@ class _MatchScreenState extends State<MatchScreen>
             isHighlighted: candidateData.isNotEmpty,
             showCheck: matchedShapes[correctIndex] ?? false,
             originalImageOpacity:
-                matchedShapes[correctIndex] ?? false ? 1.0 : 0.5,
+                matchedShapes[correctIndex] ?? false ? 1.0 : 0.8,
           ),
         );
       },
@@ -514,7 +527,9 @@ class _MatchScreenState extends State<MatchScreen>
   }
 
   String selectedAcknowledgement = 'Acknowledgement';
+
   int score = 0;
+
   Widget _buildAcknowledgementButton(BuildContext context) {
     bool isCompleted =
         widget.resAllQuestion.data!.activity!.matchings!.learnings!.length ==
@@ -588,57 +603,83 @@ class _MatchScreenState extends State<MatchScreen>
   }
 
   Widget _buildMatchingContent() {
-    if (learnings3.direction == 'vertical') {
+    final isDragEnabled = learnings3.drag!;
+
+    if (learnings3.direction != 'vertical') {
       return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Top row for answers in horizontal layout
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: learnings3.matchingAnswers!.map((question) {
-              return _buildDraggable(
-                question.image!,
-                question.correctIndex!,
-              );
-            }).toList(),
-          ),
-          SizedBox(height: 40),
-          // Bottom row for questions in horizontal layout
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: learnings3.matchingQuestions!.map((answer) {
-              return _buildDragTarget(
-                answer.image!,
-                answer.correctIndex!,
-              );
-            }).toList(),
+          if (isDragEnabled)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: learnings3.matchingAnswers!.map((question) {
+                return _buildDraggable(
+                  question.image!,
+                  question.correctIndex!,
+                );
+              }).toList(),
+            ),
+          if (isDragEnabled) SizedBox(height: 60),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: learnings3.matchingQuestions!.map((answer) {
+                return isDragEnabled
+                    ? _buildDragTarget(
+                        answer.image!,
+                        answer.correctIndex!,
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ShapeOption(
+                          shape: answer.image!,
+                          isHighlighted: false,
+                          showCheck:
+                              matchedShapes[answer.correctIndex!] ?? false,
+                          originalImageOpacity: 1.0,
+                        ),
+                      );
+              }).toList(),
+            ),
           ),
         ],
       );
     } else {
-      // Vertical layout
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Left column for answers in vertical layout
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: learnings3.matchingAnswers!.map((question) {
-              return _buildDraggable(
-                question.image!,
-                question.correctIndex!,
-              );
-            }).toList(),
-          ),
-          SizedBox(width: 40),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: learnings3.matchingQuestions!.map((answer) {
-              return _buildDragTarget(
-                answer.image!,
-                answer.correctIndex!,
-              );
-            }).toList(),
+          if (isDragEnabled)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: learnings3.matchingAnswers!.map((question) {
+                return _buildDraggable(
+                  question.image!,
+                  question.correctIndex!,
+                );
+              }).toList(),
+            ),
+          if (isDragEnabled) SizedBox(width: 40),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: learnings3.matchingQuestions!.map((answer) {
+                return isDragEnabled
+                    ? _buildDragTarget(
+                        answer.image!,
+                        answer.correctIndex!,
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ShapeOption(
+                          shape: answer.image!,
+                          isHighlighted: false,
+                          showCheck:
+                              matchedShapes[answer.correctIndex!] ?? false,
+                          originalImageOpacity: 1.0,
+                        ),
+                      );
+              }).toList(),
+            ),
           ),
         ],
       );

@@ -1,4 +1,4 @@
-package com.thedhwani.mobile
+package com.thedhwani.app
 
 import io.flutter.embedding.android.FlutterActivity
 
