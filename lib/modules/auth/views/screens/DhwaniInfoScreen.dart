@@ -25,67 +25,71 @@ class DhwaniInfoScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildSectionTitle("Welcome to a New Beginning"),
             const Text(
-              "You’ve come to the right place. We’re here to support and guide you every step of the way on your child’s speech and language development journey. Every child is unique, and our personalized approach ensures that their individual needs are met. This is just the beginning—a meaningful step toward building your child’s communication skills and helping them reach their next milestone.",
+              "Yes, you’ve arrived at the right place.\n\n"
+              "If you’re concerned about your child’s speech or language development — know that you are not alone. "
+              "We're here to walk this journey with you, step by step. "
+              "Think of us as your partner, your guide, and your biggest supporter — as your little one blossoms into a confident communicator.",
               style: TextStyle(fontSize: 16, height: 1.5),
             ),
             const SizedBox(height: 24),
-            _buildSectionTitle("How to Get Best Results"),
+            _buildSectionTitle("What This App Does"),
+            _buildNumberedPoint(1,
+                "Children with Speech and Language Delay\nWe work with children between 2 to 7 years old who are experiencing delays due to conditions like Autism, ADHD, ADD, or any other developmental challenges. Using AI-powered personalization, the app creates a custom learning path based on your child’s unique needs — focusing on improving speech, language, and communication skills."),
+            _buildNumberedPoint(2,
+                "Children with Normal Development\nEven if your child doesn't have a delay, this app can help them enhance their speaking abilities, build stronger vocabulary, and express themselves more confidently."),
+            const SizedBox(height: 24),
+            _buildSectionTitle("Our Goals"),
             _buildBulletPoint(
-              "Our platform is designed to help your child develop strong, age-appropriate speaking & language skills — starting as early as 1.5 years and continuing up to 7 years.",
-            ),
-            Text(
-              'Objective of this journey is to:-',
-              style: const TextStyle(fontSize: 20, height: 1.4),
-            ),
+                "Expand your child’s vocabulary to over 20,000 words"),
+            _buildBulletPoint("Strengthen sentence structure and grammar"),
             _buildBulletPoint(
-              "Expand your child’s vocabulary to around 20,000 words",
-            ),
+                "Deepen their understanding and clarity in communication"),
             _buildBulletPoint(
-              "Build stronger sentence structure and correct grammar.",
-            ),
+                "Improve social interaction and boost confidence"),
             _buildBulletPoint(
-              "Deepen your child’s understanding and ability to express themselves clearly.",
-            ),
+                "Teach storytelling with structure: beginning, characters, challenges, and resolution"),
             _buildBulletPoint(
-              "Strengthen social communication skills and confidence.",
-            ),
-            _buildBulletPoint(
-              "Help your child tell stories with clear beginnings, characters, challenges, and resolutions.",
-            ),
-            _buildBulletPoint(
-              "Develop critical thinking and problem-solving abilities.",
+                "Nurture critical thinking and problem-solving skills"),
+            const SizedBox(height: 24),
+            _buildSectionTitle("Your Role as a Parent"),
+            const Text(
+              "This app is a tool — but you are the most important part of this journey. "
+              "With just 15–20 minutes a day, you can make a world of difference.\nHere’s how you can help:",
+              style: TextStyle(fontSize: 16, height: 1.5),
             ),
             const SizedBox(height: 8),
+            _buildBulletPoint(
+                "Be consistent — do the daily activities with your child"),
+            _buildBulletPoint(
+                "Integrate the learning into everyday life — during meals, playtime, or walks"),
+            _buildBulletPoint(
+                "Be patient — progress may be slow at times, but it will come"),
+            _buildBulletPoint(
+                "Show love and support — your encouragement matters more than anything"),
+            const SizedBox(height: 24),
+            _buildSectionTitle("Benefits for Parents"),
+            _buildBulletPoint("A continuous, guided journey — no guesswork"),
+            _buildBulletPoint("Learn anywhere, anytime — full flexibility"),
+            _buildBulletPoint(
+                "Cost-effective — a meaningful alternative to aimless screen time"),
+            _buildBulletPoint(
+                "Can be used during routine activities like mealtime"),
+            const SizedBox(height: 24),
+            _buildSectionTitle("A Gentle Reminder"),
             const Text(
-              "The program begins with basic sounds and words and gradually progresses to age-appropriate speech and language levels—building a strong foundation and ensuring lasting development.",
+              "This app is not just about speaking — it’s about connecting.\n"
+              "Speak clearly, give your child time to respond, be patient — and never rush or pressure them. "
+              "Let this be a safe, encouraging space where your child feels heard and loved.\n"
+              "And most importantly, always use this app under parental guidance.",
               style: TextStyle(fontSize: 16, height: 1.5),
-            ),
-            const SizedBox(height: 24),
-            _buildSectionTitle("Role of Parents/Guardians"),
-            _buildBulletPoint("Complete the recommended activities daily"),
-            _buildBulletPoint("Spend focused, quality time with your child"),
-            _buildBulletPoint(
-                "Stay patient and positive—this process requires energy and dedication"),
-            _buildBulletPoint(
-                "Encourage your child to use learned skills in real-life situations and different environments"),
-            const SizedBox(height: 24),
-            _buildSectionTitle("Getting Started"),
-            _buildNumberedPoint(1, "Register your child's details"),
-            _buildNumberedPoint(2,
-                "Take an assessment (free screening or detailed evaluation)"),
-            _buildNumberedPoint(3, "Begin daily guided activities"),
-            _buildNumberedPoint(4, "Track your child’s progress regularly"),
-            const SizedBox(height: 12),
-            const Text(
-              "Optional: You may also subscribe to online speech therapy sessions if additional support is needed.",
-              style: TextStyle(
-                  fontSize: 16, height: 1.5, fontStyle: FontStyle.italic),
             ),
             const SizedBox(height: 32),
             const Center(
               child: Text(
-                "Thank you!",
+                "Together, let’s unlock your child’s voice — and let it shine.\nWe're with you, every step of the way.",
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             )
@@ -125,15 +129,15 @@ class DhwaniInfoScreen extends StatelessWidget {
 
   Widget _buildNumberedPoint(int number, String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("$number. ", style: const TextStyle(fontSize: 16)),
+          Text("$number️ ", style: const TextStyle(fontSize: 18)),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontSize: 16, height: 1.4),
+              style: const TextStyle(fontSize: 16, height: 1.5),
             ),
           ),
         ],

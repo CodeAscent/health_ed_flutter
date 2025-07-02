@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
+import 'package:health_ed_flutter/core/services/globals.dart';
 import 'package:health_ed_flutter/modules/activity/views/picture_understanding_Instructions_screen.dart';
 import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
+import 'package:health_ed_flutter/modules/home/views/screens/all_quizzes_screen.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/tts/text_to_speech.dart';
@@ -43,6 +45,7 @@ class _MatchScreenState extends State<MatchScreen>
   int currentIndex = 0;
 
   Map<int, bool> matchedShapes = {};
+  Map<int, bool> matchedAnswerShapes = {};
 
   double handX = 0.0;
   double handY = 0.0;
@@ -57,6 +60,9 @@ class _MatchScreenState extends State<MatchScreen>
 
     for (var answer in learnings3.matchingQuestions!) {
       matchedShapes[answer.correctIndex!] = false;
+    }
+    for (var answer in learnings3.matchingAnswers!) {
+      matchedAnswerShapes[answer.correctIndex!] = false;
     }
   }
 
@@ -233,8 +239,12 @@ class _MatchScreenState extends State<MatchScreen>
       }
 
       matchedShapes.clear();
+      matchedAnswerShapes.clear();
       for (var answer in learnings3.matchingQuestions!) {
         matchedShapes[answer.correctIndex!] = false;
+      }
+      for (var answer in learnings3.matchingAnswers!) {
+        matchedAnswerShapes[answer.correctIndex!] = false;
       }
     });
   }
@@ -292,8 +302,19 @@ class _MatchScreenState extends State<MatchScreen>
                                           child: Text('Cancel'),
                                         ),
                                         ElevatedButton(
-                                          onPressed: () => Navigator.of(context)
-                                              .pop(true), // Confirm
+                                          onPressed: () {
+                                            if (selectedDayName != null) {
+                                              context.read<HomeBloc>().add(
+                                                  GetAllActivityRequested(
+                                                      activityId:
+                                                          selectedDayId!));
+                                              Get.back();
+                                            } else {
+                                              Get.off(() => AllQuizzesScreen());
+                                            }
+                                            Navigator.of(context).pop(true);
+                                          },
+                                          // Confirm
                                           child: Text('Confirm'),
                                         ),
                                       ],
@@ -609,17 +630,48 @@ class _MatchScreenState extends State<MatchScreen>
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (isDragEnabled)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: learnings3.matchingAnswers!.map((question) {
-                return _buildDraggable(
-                  question.image!,
-                  question.correctIndex!,
-                );
-              }).toList(),
+          if (!learnings3.matchingAnswers!.isEmpty)
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: learnings3.matchingAnswers!.map((answer) {
+                  return isDragEnabled
+                      ? _buildDraggable(
+                          answer.image!,
+                          answer.correctIndex!,
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (matchedAnswerShapes[answer.correctIndex!] ??
+                                  false) {
+                                return;
+                              }
+                              bool isMatch = answer.correctIndex! == 1;
+
+                              _playMatchSound(success: isMatch);
+                              if (isMatch) {
+                                setState(() {
+                                  matchedAnswerShapes[answer.correctIndex!] =
+                                      true;
+                                });
+                              }
+                            },
+                            child: ShapeOption(
+                              shape: answer.image!,
+                              isHighlighted: false,
+                              showCheck:
+                                  matchedAnswerShapes[answer.correctIndex!] ??
+                                      false,
+                              originalImageOpacity: 1.0,
+                            ),
+                          ),
+                        );
+                }).toList(),
+              ),
             ),
-          if (isDragEnabled) SizedBox(height: 60),
+          if (!learnings3.matchingAnswers!.isEmpty) SizedBox(height: 30),
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -630,13 +682,28 @@ class _MatchScreenState extends State<MatchScreen>
                         answer.correctIndex!,
                       )
                     : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ShapeOption(
-                          shape: answer.image!,
-                          isHighlighted: false,
-                          showCheck:
-                              matchedShapes[answer.correctIndex!] ?? false,
-                          originalImageOpacity: 1.0,
+                        padding: const EdgeInsets.all(2.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (matchedShapes[answer.correctIndex!] ?? false) {
+                              return;
+                            }
+                            bool isMatch = answer.correctIndex! == 1;
+
+                            _playMatchSound(success: isMatch);
+                            if (isMatch) {
+                              setState(() {
+                                matchedShapes[answer.correctIndex!] = true;
+                              });
+                            }
+                          },
+                          child: ShapeOption(
+                            shape: answer.image!,
+                            isHighlighted: false,
+                            showCheck:
+                                matchedShapes[answer.correctIndex!] ?? false,
+                            originalImageOpacity: 1.0,
+                          ),
                         ),
                       );
               }).toList(),
@@ -648,17 +715,48 @@ class _MatchScreenState extends State<MatchScreen>
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          if (isDragEnabled)
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: learnings3.matchingAnswers!.map((question) {
-                return _buildDraggable(
-                  question.image!,
-                  question.correctIndex!,
-                );
-              }).toList(),
+          if (!learnings3.matchingAnswers!.isEmpty)
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: learnings3.matchingAnswers!.map((answer) {
+                  return isDragEnabled
+                      ? _buildDraggable(
+                          answer.image!,
+                          answer.correctIndex!,
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (matchedAnswerShapes[answer.correctIndex!] ??
+                                  false) {
+                                return;
+                              }
+                              bool isMatch = answer.correctIndex! == 1;
+
+                              _playMatchSound(success: isMatch);
+                              if (isMatch) {
+                                setState(() {
+                                  matchedAnswerShapes[answer.correctIndex!] =
+                                      true;
+                                });
+                              }
+                            },
+                            child: ShapeOption(
+                              shape: answer.image!,
+                              isHighlighted: false,
+                              showCheck:
+                                  matchedAnswerShapes[answer.correctIndex!] ??
+                                      false,
+                              originalImageOpacity: 1.0,
+                            ),
+                          ),
+                        );
+                }).toList(),
+              ),
             ),
-          if (isDragEnabled) SizedBox(width: 40),
+          if (!learnings3.matchingAnswers!.isEmpty) SizedBox(height: 30),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -669,15 +767,29 @@ class _MatchScreenState extends State<MatchScreen>
                         answer.correctIndex!,
                       )
                     : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ShapeOption(
-                          shape: answer.image!,
-                          isHighlighted: false,
-                          showCheck:
-                              matchedShapes[answer.correctIndex!] ?? false,
-                          originalImageOpacity: 1.0,
-                        ),
-                      );
+                        padding: const EdgeInsets.all(2.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (matchedShapes[answer.correctIndex!] ?? false) {
+                              return;
+                            }
+                            bool isMatch = answer.correctIndex! == 1;
+
+                            _playMatchSound(success: isMatch);
+                            if (isMatch) {
+                              setState(() {
+                                matchedShapes[answer.correctIndex!] = true;
+                              });
+                            }
+                          },
+                          child: ShapeOption(
+                            shape: answer.image!,
+                            isHighlighted: false,
+                            showCheck:
+                                matchedShapes[answer.correctIndex!] ?? false,
+                            originalImageOpacity: 1.0,
+                          ),
+                        ));
               }).toList(),
             ),
           ),

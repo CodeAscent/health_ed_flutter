@@ -40,7 +40,7 @@ class AllQuizzesContent extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -69,54 +69,68 @@ class AllQuizzesContent extends StatelessWidget {
                           ),
                           SizedBox(height: 10),
                           Expanded(
-                            child: BlocBuilder<HomeBloc, HomeState>(
-                              builder: (context, state) {
-                                if (state is AllDaysLoading) {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                } else if (state is GetAllDaySuccess) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(1.0),
-                                    child: SingleChildScrollView(
-                                      child: GridView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        gridDelegate:
-                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3,
-                                          childAspectRatio: 1 / 0.7,
-                                          crossAxisSpacing: 10,
-                                          mainAxisSpacing: 30,
-                                        ),
-                                        itemCount: state.getAllDaysResponse
-                                            .data!.days!.length,
-                                        itemBuilder: (context, index) {
-                                          return QuizItem(
-                                            dayIndex: index,
-                                            prevDayProgress: index > 0
-                                                ? state.getAllDaysResponse.data!
-                                                    .days![index - 1].progress!
-                                                    .toDouble()
-                                                : 100.0,
-                                            dayId: state.getAllDaysResponse
-                                                .data!.days![index].sId!,
-                                            day:
-                                                'Day ${state.getAllDaysResponse.data!.days![index].dayNumber}',
-                                            progress: state.getAllDaysResponse
-                                                .data!.days![index].progress!
-                                                .toDouble(),
-                                            isLocked: state.getAllDaysResponse
-                                                .data!.days![index].locked!,
-                                            mContext: context,
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                } else if (state is GetAllDayFailure) {
-                                  return Center(child: Text(state.message));
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final screenWidth = constraints.maxWidth;
+                                int crossAxisCount = 2;
+                                if (screenWidth > 600) {
+                                  crossAxisCount = 3;
                                 }
-                                return CustomLoader();
+                                if (screenWidth > 900) {
+                                  crossAxisCount = 4;
+                                }
+
+                                return BlocBuilder<HomeBloc, HomeState>(
+                                  builder: (context, state) {
+                                    if (state is AllDaysLoading) {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    } else if (state is GetAllDaySuccess) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        child: GridView.builder(
+                                          padding: EdgeInsets.only(top: 10),
+                                          gridDelegate:
+                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: crossAxisCount,
+                                            childAspectRatio: 1 / 0.7,
+                                            crossAxisSpacing: 12,
+                                            mainAxisSpacing: 20,
+                                          ),
+                                          itemCount: state.getAllDaysResponse
+                                              .data!.days!.length,
+                                          itemBuilder: (context, index) {
+                                            final dayData = state
+                                                .getAllDaysResponse
+                                                .data!
+                                                .days![index];
+                                            return QuizItem(
+                                              dayIndex: index,
+                                              prevDayProgress: index > 0
+                                                  ? state
+                                                      .getAllDaysResponse
+                                                      .data!
+                                                      .days![index - 1]
+                                                      .progress!
+                                                      .toDouble()
+                                                  : 100.0,
+                                              dayId: dayData.sId!,
+                                              day: 'Day ${dayData.dayNumber}',
+                                              progress:
+                                                  dayData.progress!.toDouble(),
+                                              isLocked: dayData.locked!,
+                                              mContext: context,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    } else if (state is GetAllDayFailure) {
+                                      return Center(child: Text(state.message));
+                                    }
+                                    return CustomLoader();
+                                  },
+                                );
                               },
                             ),
                           ),
@@ -124,7 +138,7 @@ class AllQuizzesContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 12),
                 ],
               ),
             ),

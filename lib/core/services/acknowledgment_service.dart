@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 class AcknowledgmentService {
   static const Map<String, int> acknowledgmentScores = {
@@ -50,61 +49,71 @@ class AcknowledgmentService {
     return Padding(
       padding:
           const EdgeInsets.only(bottom: 20.0, top: 10, right: 20, left: 20),
-      child: ElevatedButton(
-        onPressed: () async {
-          final result = await showAcknowledgmentDialog(context);
-          if (result != null) {
-            await onAcknowledge(result['acknowledgement'], result['score']);
-          } else if (onNext != null && isAcknowledgementSelected) {
-            onNext();
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 13.0, horizontal: 16.0),
-          child: Stack(
-            children: [
-              Center(
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () async {
+                final result = await showAcknowledgmentDialog(context);
+                if (result != null) {
+                  await onAcknowledge(
+                      result['acknowledgement'], result['score']);
+                } else if (onNext != null && isAcknowledgementSelected) {
+                  onNext();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 13.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       selectedAcknowledgement,
                       style: TextStyle(fontSize: 18, color: Colors.black),
                     ),
+                    SizedBox(width: 6),
                     Icon(Icons.keyboard_arrow_down_outlined,
                         color: secondaryColor),
                   ],
                 ),
               ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                top: 0,
-                child: GestureDetector(
-                  onTap: isAcknowledgementSelected ? onNext : null,
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: isAcknowledgementSelected
-                          ? secondaryColor
-                          : Colors.grey,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.arrow_forward,
-                      color: Colors.white,
-                    ),
-                  ),
+            ),
+          ),
+          SizedBox(width: 6), // 2px space between buttons
+          ElevatedButton(
+            onPressed: isAcknowledgementSelected ? onNext : null,
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.disabled)) {
+                    return Color.fromARGB(255, 111, 138,
+                        220); // Still show the color even when disabled
+                  }
+                  return Color.fromARGB(255, 28, 75, 214); // Active state color
+                },
+              ),
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
-            ],
+              padding: MaterialStateProperty.all<EdgeInsets>(
+                const EdgeInsets.symmetric(vertical: 13, horizontal: 16),
+              ),
+            ),
+            child: Text(
+              "Next",
+              style: TextStyle(fontSize: 16),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

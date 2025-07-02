@@ -113,8 +113,8 @@ class _ActivityUnderstandingScreenContentState
                                           'Are you sure you want to exit the activity?'),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.of(context)
-                                              .pop(false), // Cancel
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
                                           child: Text('Cancel'),
                                         ),
                                         ElevatedButton(
@@ -193,7 +193,7 @@ class _ActivityUnderstandingScreenContentState
                                     child: Text(
                                       titleData,
                                       style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: 20,
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold),
                                       maxLines: 5,

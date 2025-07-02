@@ -35,21 +35,21 @@ class _PlanScreenState extends State<PlanScreen> {
     "The Dhwani application cures delayed speech through extensive and rigorous practices.  The journey enables the child to catch up the lost time and excel further.  The learning cycle includes a proprietary algorithm which caters to different children with different stages of delayed speech and language. Whatever be the reason for delayed speech & language i.e whether it is because of Autism, ADD, ADHD etc. we got you covered.",
     "Does your child (Age between 1-5) speak normally, but still need to ACCELERATE the speaking power?\n\nYes, you are at the right place. Our Accelerated Speech program helps to accelerate the speaking power among children.  The curriculum helps to boost the speaking power and helps the child communicate further.",
     "Dear Parents,\n\nIn this journey we will walk hand in hand in improving the speaking power of the child. A long journey that will bear fruits which will give immense satisfaction to everyone. The Dhwani application is a tool which will act as a force multiplier in the life of a child. Regular practice, consistent effort and a disciplined approach will bring wonders to the child.\n\nThanks,\nThe Dhwani Team",
-    // Add more messages corresponding to each image
   ];
 
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    // Check if the device is a tablet
+    final bool isTablet = MediaQuery.of(context).size.shortestSide >= 600;
+
     // Load user data
     var userData = LocalStorage.prefs.getString('userProfileData') != null
         ? jsonDecode(LocalStorage.prefs.getString('userProfileData')!)['user']
         : '';
 
     print(userData['subscriptionStatus']);
-
-    // Set up images
 
     // Determine onTapAction
     VoidCallback? onTapAction;
@@ -89,218 +89,214 @@ class _PlanScreenState extends State<PlanScreen> {
     } else {
       onTapAction = () {
         Get.to(() => AllQuizzesScreen());
-        // Get.snackbar(
-        //   'Assessment Completed',
-        //   'Your onboarding score is: ${userData['onboardingScore']}',
-        //   backgroundColor: Colors.red.shade100,
-        //   colorText: Colors.black,
-        // );
       };
     }
 
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/bg/auth_bg.png'),
-              ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage('assets/bg/auth_bg.png'),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: CustomTransparentContainer(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 20),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(isTablet ? 16.0 : 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: CustomTransparentContainer(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(height: isTablet ? 30 : 20),
 
-                            // Carousel Section
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Column(
-                                children: [
-                                  CarouselSlider(
-                                    options: CarouselOptions(
-                                      height: 120,
-                                      autoPlay: true,
-                                      enlargeCenterPage: true,
-                                      viewportFraction: 1,
-                                      onPageChanged: (index, reason) {
-                                        setState(() {
-                                          _currentIndex = index;
-                                        });
-                                      },
-                                    ),
-                                    items: carouselImages
-                                        .asMap()
-                                        .entries
-                                        .map((entry) {
-                                      final index = entry.key;
-                                      final image = entry.value;
+                          // Carousel Section
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: isTablet ? 20 : 10),
+                            child: Column(
+                              children: [
+                                CarouselSlider(
+                                  options: CarouselOptions(
+                                    height: isTablet ? 200 : 120,
+                                    autoPlay: true,
+                                    enlargeCenterPage: true,
+                                    viewportFraction: 1,
+                                    onPageChanged: (index, reason) {
+                                      setState(() {
+                                        _currentIndex = index;
+                                      });
+                                    },
+                                  ),
+                                  items: carouselImages
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                    final index = entry.key;
+                                    final image = entry.value;
 
-                                      return GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: Text("Message"),
-                                              content: SingleChildScrollView(
-                                                child: Text(
-                                                    carouselMessages[index]),
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
-                                                  child: Text("Close"),
-                                                ),
-                                              ],
+                                    return GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text("Message"),
+                                            content: SingleChildScrollView(
+                                              child:
+                                                  Text(carouselMessages[index]),
                                             ),
-                                          );
-                                        },
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Image.asset(image,
-                                              fit: BoxFit.fill),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                  SizedBox(height: 10),
-                                  AnimatedSmoothIndicator(
-                                    activeIndex: _currentIndex,
-                                    count: carouselImages.length,
-                                    effect: ExpandingDotsEffect(
-                                      activeDotColor: Colors.black,
-                                      dotColor: Colors.grey.shade300,
-                                      dotHeight: 8,
-                                      dotWidth: 8,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Assessment Card Section
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 2),
-                              child: Card(
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: Text("Close"),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.asset(image,
+                                            fit: BoxFit.fill),
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                                child: InkWell(
-                                  onTap: onTapAction,
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 120,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: buildImage(userData),
-                                    ),
+                                SizedBox(height: isTablet ? 15 : 10),
+                                AnimatedSmoothIndicator(
+                                  activeIndex: _currentIndex,
+                                  count: carouselImages.length,
+                                  effect: ExpandingDotsEffect(
+                                    activeDotColor: Colors.black,
+                                    dotColor: Colors.grey.shade300,
+                                    dotHeight: isTablet ? 10 : 8,
+                                    dotWidth: isTablet ? 10 : 8,
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+
+                          // Assessment Card Section
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: isTablet ? 10 : 2),
+                            child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: InkWell(
+                                onTap: onTapAction,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: isTablet ? 180 : 120,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: buildImage(userData),
+                                  ),
+                                ),
                               ),
                             ),
+                          ),
 
-                            SizedBox(height: 30),
+                          SizedBox(height: isTablet ? 40 : 30),
 
-                            // Grid Buttons Section
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 2),
-                              child: GridView.count(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 8,
-                                mainAxisSpacing: 8,
-                                childAspectRatio: 1.5,
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                children: [
+                          // Grid Buttons Section
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: isTablet ? 10 : 2),
+                            child: GridView.count(
+                              crossAxisCount: isTablet ? 3 : 2,
+                              crossAxisSpacing: isTablet ? 12 : 8,
+                              mainAxisSpacing: isTablet ? 12 : 8,
+                              childAspectRatio: isTablet ? 1.2 : 1.5,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              children: [
+                                _buildGridButton(
+                                  'Contact Us',
+                                  Icons.contact_page,
+                                  [
+                                    Color.fromARGB(255, 244, 0, 0),
+                                    Color.fromARGB(255, 133, 46, 46)
+                                  ],
+                                  1,
+                                  userData,
+                                  isTablet,
+                                ),
+                                _buildGridButton(
+                                    'Get Premium',
+                                    Icons.emoji_events,
+                                    [
+                                      Color.fromARGB(255, 40, 3, 252),
+                                      Color.fromARGB(255, 43, 61, 116)
+                                    ],
+                                    2,
+                                    userData,
+                                    isTablet),
+                                _buildGridButton(
+                                    'How to get best\nresults!',
+                                    Icons.menu_book,
+                                    [
+                                      Color.fromARGB(255, 6, 253, 130),
+                                      Color.fromARGB(255, 18, 72, 42)
+                                    ],
+                                    3,
+                                    userData,
+                                    isTablet),
+                                if (!isTablet) // Only show FAQ in a separate box on mobile
                                   _buildGridButton(
-                                      'Contact Us',
-                                      Icons.contact_page,
-                                      Color.fromARGB(255, 219, 67, 21),
-                                      1,
-                                      userData),
+                                      'FAQ',
+                                      Icons.help,
+                                      [
+                                        Color.fromARGB(255, 255, 196, 1),
+                                        Color.fromARGB(255, 91, 74, 21)
+                                      ],
+                                      4,
+                                      userData,
+                                      isTablet),
+                                if (isTablet) // On tablet, add FAQ and one more button
                                   _buildGridButton(
-                                      'Get Premium',
-                                      Icons.emoji_events,
-                                      Color(0xFF5370C8),
-                                      2,
-                                      userData),
-                                  _buildGridButton(
-                                      'How to get best\nresults!',
-                                      Icons.menu_book,
-                                      Color(0xFF01D15F),
-                                      3,
-                                      userData),
-                                  _buildGridButton('FAQ', Icons.help,
-                                      Color(0xFFF7CE45), 4, userData),
-                                ],
-                              ),
+                                      'FAQ',
+                                      Icons.help,
+                                      [
+                                        Color.fromARGB(255, 255, 196, 1),
+                                        Color.fromARGB(255, 91, 74, 21)
+                                      ],
+                                      4,
+                                      userData,
+                                      isTablet),
+                              ],
                             ),
+                          ),
 
-                            SizedBox(height: 40),
-
-                            // Contact Us Section
-                            // Padding(
-                            //   padding: const EdgeInsets.only(bottom: 30),
-                            //   child: Column(
-                            //     children: [
-                            //       Text(
-                            //         'Contact us:',
-                            //         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            //       ),
-                            //       Text('dhiwani1234@gmail.com'),
-                            //       Text('+91 7878473497'),
-                            //     ],
-                            //   ),
-                            // ),
-                          ],
-                        ),
+                          SizedBox(height: isTablet ? 50 : 40),
+                        ],
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
-                ],
-              ),
+                ),
+                SizedBox(height: isTablet ? 30 : 20),
+              ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
-  Widget _buildGridButton(
-      String title, IconData icon, Color color, int gridNo, userData) {
+  Widget _buildGridButton(String title, IconData icon,
+      List<Color> gradientColors, int gridNo, userData, bool isTablet) {
     return Padding(
-      padding: const EdgeInsets.all(3.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: EdgeInsets.symmetric(vertical: 10),
-        ),
-        onPressed: () {
-          // if ((gridNo == 2) && userData['onboardingScore'] == 0) {
-          //   Get.snackbar(
-          //     'Assessment Incomplete',
-          //     'Please complete the assessment to continue.',
-          //     backgroundColor: Colors.orange.shade100,
-          //     colorText: Colors.black,
-          //   );
-          //   return; // Prevent further navigation
-          // }
+      padding: EdgeInsets.all(isTablet ? 4.0 : 2.0),
+      child: InkWell(
+        onTap: () {
           if (gridNo == 1) {
             Get.to(() => ContactScreen());
           } else if (gridNo == 2) {
@@ -313,21 +309,37 @@ class _PlanScreenState extends State<PlanScreen> {
             Get.to(() => DhwaniInfoScreen());
           } else if (gridNo == 4) {
             Get.to(() => FaqScreen());
+          } else if (gridNo == 5) {
+            // Action for additional tablet button
+            Get.to(() => MainScreen());
           }
         },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.white, size: 30),
-            SizedBox(height: 8),
-            Text(
-              title,
-              style: TextStyle(color: Colors.white),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: gradientColors,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.symmetric(vertical: isTablet ? 24 : 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: isTablet ? 40 : 30),
+              SizedBox(height: isTablet ? 12 : 8),
+              Text(
+                title,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: isTablet ? 18 : 14),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

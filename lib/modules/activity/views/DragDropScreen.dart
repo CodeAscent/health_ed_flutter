@@ -1,8 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:health_ed_flutter/core/services/globals.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
+import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
+import 'package:health_ed_flutter/modules/home/views/screens/all_quizzes_screen.dart';
 
 import '../../../core/utils/custom_widgets.dart';
 
@@ -58,13 +64,22 @@ class _DragDropScreenState extends State<DragDropScreen> {
                                     'Are you sure you want to exit the activity?'),
                                 actions: [
                                   TextButton(
-                                    onPressed: () => Navigator.of(context)
-                                        .pop(false), // Cancel
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
                                     child: Text('Cancel'),
                                   ),
                                   ElevatedButton(
-                                    onPressed: () => Navigator.of(context)
-                                        .pop(true), // Confirm
+                                    onPressed: () {
+                                      if (selectedDayName != null) {
+                                        context.read<HomeBloc>().add(
+                                            GetAllActivityRequested(
+                                                activityId: selectedDayId!));
+                                        Get.back();
+                                      } else {
+                                        Get.off(() => AllQuizzesScreen());
+                                      }
+                                      Navigator.of(context).pop(true);
+                                    }, // Confirm
                                     child: Text('Confirm'),
                                   ),
                                 ],
@@ -72,7 +87,7 @@ class _DragDropScreenState extends State<DragDropScreen> {
                             );
 
                             if (shouldExit == true) {
-                              Navigator.of(context).pop(); // Exit the activity
+                              Navigator.of(context).pop();
                             }
                           },
                         ),

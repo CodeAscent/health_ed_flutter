@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:health_ed_flutter/core/local/local_storage.dart';
 import 'package:health_ed_flutter/core/services/acknowledgment_service.dart';
+import 'package:health_ed_flutter/core/services/globals.dart';
 import 'package:health_ed_flutter/modules/activity/views/MatchScreen.dart';
 import 'package:health_ed_flutter/modules/activity/views/PictureUnderstandingScreen.dart';
 import 'package:health_ed_flutter/modules/activity/views/understanding_instruction.dart';
@@ -12,6 +13,7 @@ import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
 import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/request/AcknowledgementRequest.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
+import 'package:health_ed_flutter/modules/home/views/screens/all_quizzes_screen.dart';
 import 'package:health_ed_flutter/modules/shared_widget/activity_congrats_popup.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -237,8 +239,18 @@ class _PictureSequencingState extends State<PictureSequencingsScreen>
                                           child: Text('Cancel'),
                                         ),
                                         ElevatedButton(
-                                          onPressed: () => Navigator.of(context)
-                                              .pop(true), // Confirm
+                                          onPressed: () {
+                                            if (selectedDayName != null) {
+                                              context.read<HomeBloc>().add(
+                                                  GetAllActivityRequested(
+                                                      activityId:
+                                                          selectedDayId!));
+                                              Get.back();
+                                            } else {
+                                              Get.off(() => AllQuizzesScreen());
+                                            }
+                                            Navigator.of(context).pop(true);
+                                          }, // Confirm
                                           child: Text('Confirm'),
                                         ),
                                       ],

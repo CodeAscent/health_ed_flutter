@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
+import 'package:health_ed_flutter/core/services/globals.dart';
 import 'package:health_ed_flutter/core/theme/app_colors.dart';
+import 'package:health_ed_flutter/modules/home/bloc/home_bloc.dart';
+import 'package:health_ed_flutter/modules/home/bloc/home_event.dart';
 import 'package:health_ed_flutter/modules/home/model/response/ResAllQuestion.dart';
+import 'package:health_ed_flutter/modules/home/views/screens/all_quizzes_screen.dart';
 import 'package:html/parser.dart';
 import '../../../core/tts/text_to_speech.dart';
 import '../../../core/utils/custom_widgets.dart';
@@ -95,9 +100,19 @@ class _PictureUnderstandingScreenState
                                             child: Text('Cancel'),
                                           ),
                                           ElevatedButton(
-                                            onPressed: () =>
-                                                Navigator.of(context)
-                                                    .pop(true), // Confirm
+                                            onPressed: () {
+                                              if (selectedDayName != null) {
+                                                context.read<HomeBloc>().add(
+                                                    GetAllActivityRequested(
+                                                        activityId:
+                                                            selectedDayId!));
+                                                Get.back();
+                                              } else {
+                                                Get.off(
+                                                    () => AllQuizzesScreen());
+                                              }
+                                              Navigator.of(context).pop(true);
+                                            }, // Confirm
                                             child: Text('Confirm'),
                                           ),
                                         ],

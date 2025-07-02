@@ -166,63 +166,65 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                 Text('We have sent an Otp verification to you'),
                                 SizedBox(height: 30),
                                 // OTP Input Fields
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: List.generate(4, (index) {
-                                    return SizedBox(
-                                      width: 60,
-                                      child: TextField(
-                                        controller: controllers[index],
-                                        focusNode: focusNodes[index],
-                                        textAlign: TextAlign.center,
-                                        maxLength: 1,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly
-                                        ],
-                                        decoration: InputDecoration(
-                                          counterText: '',
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.black),
+                                Center(
+                                  child: Wrap(
+                                    spacing:
+                                        16, // consistent space between boxes
+                                    children: List.generate(4, (index) {
+                                      return SizedBox(
+                                        width: 60,
+                                        child: TextField(
+                                          controller: controllers[index],
+                                          focusNode: focusNodes[index],
+                                          textAlign: TextAlign.center,
+                                          maxLength: 1,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                          decoration: const InputDecoration(
+                                            counterText: '',
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.black),
+                                            ),
+                                            focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.blue),
+                                            ),
+                                            fillColor: Colors.transparent,
+                                            filled: true,
                                           ),
-                                          focusedBorder: UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.blue),
-                                          ),
-                                          fillColor: Colors
-                                              .transparent, // Transparent background color
-                                          filled: true, // Apply the fillColor
-                                        ),
-                                        onChanged: (value) {
-                                          if (value.length == 1) {
-                                            // Move to the next unfilled field
-                                            _focusNextEmptyField();
-                                          } else if (value.isEmpty &&
-                                              index > 0) {
-                                            // Move to the previous field if cleared
-                                            FocusScope.of(context).requestFocus(
-                                                focusNodes[index - 1]);
-                                          }
+                                          onChanged: (value) {
+                                            if (value.length == 1) {
+                                              _focusNextEmptyField();
+                                            } else if (value.isEmpty &&
+                                                index > 0) {
+                                              FocusScope.of(context)
+                                                  .requestFocus(
+                                                      focusNodes[index - 1]);
+                                            }
 
-                                          setState(() {
-                                            otp = controllers
-                                                .map((controller) =>
-                                                    controller.text)
-                                                .join();
-                                          });
-                                        },
-                                        onTap: () {
-                                          // If user taps on any field, focus the first unfilled box
-                                          if (controllers[index].text.isEmpty) {
-                                            _focusNextEmptyField();
-                                          }
-                                        },
-                                      ),
-                                    );
-                                  }),
+                                            setState(() {
+                                              otp = controllers
+                                                  .map((c) => c.text)
+                                                  .join();
+                                            });
+                                          },
+                                          onTap: () {
+                                            if (controllers[index]
+                                                .text
+                                                .isEmpty) {
+                                              _focusNextEmptyField();
+                                            }
+                                          },
+                                        ),
+                                      );
+                                    }),
+                                  ),
                                 ),
+
                                 SizedBox(height: 20),
                                 // Resend Button and Timer
                                 Align(

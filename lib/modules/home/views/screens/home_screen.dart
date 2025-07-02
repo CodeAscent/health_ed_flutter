@@ -254,14 +254,10 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Progress/total, progress bar, and label in one row
         Row(
           children: [
-            Text("$progress/$total"), // Progress/total on the left
-            SizedBox(
-                width:
-                    15), // Add some space between the text and the progress bar
-
+            Text("$progress/$total"),
+            SizedBox(width: 15),
             Expanded(
               child: Stack(
                 alignment: Alignment.center,
@@ -281,9 +277,9 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(
-                          "${((total != 0) ? (progress / total) * 100 : 0 * 100).toStringAsFixed(0)}%", // Show percentage
+                          "${((total != 0) ? (progress / total) * 100 : 0 * 100).toStringAsFixed(0)}%",
                           style: TextStyle(
-                            color: Colors.white, // Color of the percentage text
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 10,
                           ),
@@ -294,9 +290,7 @@ class _HomeScreenWidgetState extends State<HomeScreen> {
                 ],
               ),
             ),
-            SizedBox(width: 10), // Add space between progress bar and label
-
-            // Label on the right
+            SizedBox(width: 10),
             Text(label,
                 style:
                     TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
