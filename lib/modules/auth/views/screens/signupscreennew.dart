@@ -86,8 +86,7 @@ class _LoginScreenState extends State<SignupScreenNew> {
               );
             } else {
               customSnackbar(
-                  "${state.loginResponse.message} \nOtp Is ${state.loginResponse.data.otp.toString()}",
-                  ContentType.success);
+                  "${state.loginResponse.message}", ContentType.success);
               Get.to(() => VerifyOtpScreen(_mobileNoController.text));
             }
           }
