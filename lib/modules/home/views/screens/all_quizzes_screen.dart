@@ -120,6 +120,7 @@ class AllQuizzesContent extends StatelessWidget {
                                               progress:
                                                   dayData.progress!.toDouble(),
                                               isLocked: dayData.locked!,
+                                              canOpen: dayData.canOpen ?? false,
                                               mContext: context,
                                             );
                                           },

@@ -50,6 +50,7 @@ class Days {
   int? dayNumber;
   int? progress;
   bool? locked;
+  bool? canOpen;
 
   Days({this.sId, this.dayNumber});
 
@@ -58,6 +59,7 @@ class Days {
     dayNumber = json['dayNumber'];
     progress = json['progress'];
     locked = json['locked'];
+    canOpen = json['canOpen'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -66,6 +68,7 @@ class Days {
     data['dayNumber'] = this.dayNumber;
     data['progress'] = this.progress;
     data['locked'] = this.locked;
+    data['canOpen'] = this.canOpen;
     return data;
   }
 }

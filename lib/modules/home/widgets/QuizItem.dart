@@ -18,6 +18,7 @@ class QuizItem extends StatelessWidget {
   final double progress;
   final String dayId;
   final bool isLocked;
+  final bool canOpen;
   final BuildContext mContext;
 
   const QuizItem({
@@ -27,6 +28,7 @@ class QuizItem extends StatelessWidget {
     required this.progress,
     required this.dayId,
     required this.isLocked,
+    required this.canOpen,
     required this.mContext,
     required this.dayIndex,
   }) : super(key: key);
@@ -35,27 +37,171 @@ class QuizItem extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Locked'),
-          content: Text(
-              'This day is locked. Please upgrade your plan to access it.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Cancel'),
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          elevation: 10,
+          child: Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.purple.shade50, Colors.blue.shade50],
+              ),
+              borderRadius: BorderRadius.circular(20),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Get.to(() => AllPlanScreen())?.then((_) {
-                  mContext.read<HomeBloc>().add(GetAllDayRequested());
-                });
-              },
-              child: Text('Upgrade'),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.lock_outline_rounded,
+                    size: 60, color: Colors.deepPurple),
+                SizedBox(height: 16),
+                Text('Premium Content Locked',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    )),
+                SizedBox(height: 16),
+                Text(
+                  'Upgrade your plan to unlock this exclusive content and access all premium features.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: Colors.grey.shade200,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('Later',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontWeight: FontWeight.w600,
+                          )),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: Colors.deepPurple,
+                        shadowColor: Colors.deepPurple.withOpacity(0.3),
+                        elevation: 5,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Get.to(() => AllPlanScreen())?.then((_) {
+                          mContext.read<HomeBloc>().add(GetAllDayRequested());
+                        });
+                      },
+                      child: Text('Upgrade Now',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          )),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showNextDayUnlockDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          elevation: 10,
+          child: Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.purple.shade50, Colors.blue.shade50],
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    Icon(Icons.lock_clock_rounded,
+                        size: 50, color: Colors.deepPurple),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Text('Content Locked',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    )),
+                SizedBox(height: 12),
+                Text(
+                  'This day will be automatically unlocked tomorrow. '
+                  'Check back then to continue your journey!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                SizedBox(height: 24),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: Colors.deepPurple,
+                    shadowColor: Colors.deepPurple.withOpacity(0.3),
+                    elevation: 5,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Understood',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      )),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -78,6 +224,8 @@ class QuizItem extends StatelessWidget {
                 backgroundColor: Colors.red.withOpacity(0.8),
                 colorText: Colors.white,
               );
+            } else if (!canOpen) {
+              _showNextDayUnlockDialog(context);
             } else {
               selectedDayName = day;
               selectedDayId = dayId;
