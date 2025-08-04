@@ -52,5 +52,7 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>This app requires microphone access to record audio for educational activities and assessments.</string>
 	</dict>
 </plist>
